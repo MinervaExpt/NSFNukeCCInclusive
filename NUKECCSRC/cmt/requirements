@@ -1,0 +1,40 @@
+package NUKECCSRC
+version ${MINERVA_RELEASE}
+
+
+
+#==============================================================================
+
+use MinervaGenEvent     v*   Event
+use MinervaEvent        v*   Event
+use MinervaUtils        v*   Tools
+
+use ProngMaker          v*   Rec
+use ParticleMaker       v*   Rec
+use BlobFormation       v*   Rec
+use EventRecInterfaces  v*   Rec
+use AnaInterfaces       v*   Ana
+use AnaUtils            v*   Ana
+use RecoStudies         v*   Ana
+
+use MNVDetectormc       v*   Sim
+use PlotUtils           v*   Ana
+use UnfoldUtils         v*   Ana
+#use NUKECCSRC        v*   Ana
+use SystemTests         v*   Tools
+#==============================================================================
+#library NukeCCNSF      *.cpp
+#apply_pattern component_library library=NukeCCNSF
+
+#==============================================================================
+private
+set NUKECC_TAG v1        #histogram and plots version
+set HISTS "/pnfs/minerva/persistent/users/${USER}/NukeHists" 
+set HISTS_BLUEARC "/minerva/data/users/${USER}/NukeHists" 
+set NUKECCSRC_ANA "${NUKECCSRCROOT}/ana_common" 
+
+set NUKECCSRC_INCLUDE_PATH "$(includes)" 
+
+path_append LD_LIBRARY_PATH "${NUKECCSRC_ANA}/lib"
+
+end_private

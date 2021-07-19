@@ -1,0 +1,13 @@
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6A_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6B_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6C_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6D_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6E_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6F_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6G_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6H_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6I_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+/pnfs/minerva/persistent/users/zdar/Merged_data_ana_me6J_AnaDev_v1/MasterAnaDev_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_NukeCC_minervame6H/NukeCCInclusive_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_NukeCC_minervame6I/NukeCCInclusive_data_AnaTuple*
+#/pnfs/minerva/persistent/users/zdar/Merged_NukeCC_minervame6J/NukeCCInclusive_data_AnaTuple*
