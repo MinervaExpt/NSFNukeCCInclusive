@@ -8,7 +8,7 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-//#include "include/CommonIncludes.h"
+#include "include/CommonIncludes.h"
 #include "include/CVUniverse.h"
 #include "../include/Variable.h"
 #include "PlotUtils/ChainWrapper.h"
@@ -228,12 +228,12 @@ int main(int argc, char *argv[]){
    FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true, targetID, targetZ, plist_string,doDIS);
        
    for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
-   //for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
+   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
    FillVariable(chainTruth, helicity, utils, cutter,binsDef,variablesTruth,variables2DTruth,false, targetID, targetZ, plist_string,doDIS);
    
    for (auto v : variablesTruth) v->m_selected_truth_reco.SyncCVHistos();
-   //for (auto v : variables2DTruth) v->m_selected_truth_reco.SyncCVHistos();
+   for (auto v : variables2DTruth) v->m_selected_truth_reco.SyncCVHistos();
  
    for (auto v : variablesMC) {
      v->WriteAllHistogramsToFileEff(fout, true);
@@ -282,49 +282,73 @@ int main(int argc, char *argv[]){
 void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef ,std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int targetID, int targetZ, const string playlist, bool doDIS){
  // std::map< std::string, std::vector<CVUniverse*> > error_bands = utils->GetErrorBands(chain);
     
-  std::map<std::string, std::vector<CVUniverse*> > error_bands =GetErrorBands(chain);
-   std::vector<double> Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
-   if (doDIS){
-     Enubin = binsDef->GetDISBins("Enu"); 
-     Emubin = binsDef->GetDISBins("Emu"); 
-     Ehadbin = binsDef->GetDISBins("Ehad");
-     Q2bin = binsDef->GetDISBins("Q2");
-     Wbin = binsDef->GetDISBins("W");
-     xbin = binsDef->GetDISBins("x");
-     ybin = binsDef->GetDISBins("y");
-     }
-   else{
-     Enubin = binsDef->GetEnergyBins("Enu"); 
-     Emubin = binsDef->GetEnergyBins("Emu"); 
-     Ehadbin = binsDef->GetEnergyBins("Ehad");
-     Q2bin = binsDef->GetEnergyBins("Q2");
-     Wbin = binsDef->GetEnergyBins("W");
-     xbin = binsDef->GetEnergyBins("x");
-     ybin = binsDef->GetEnergyBins("y");
-   }
+  std::map<std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chain);
+  
+  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+  //std::vector<double> ANNPlaneProbBin;
+  std::vector<double> vtxzbin;
+  std::vector<double> planeDNNbin; 
+  std::vector<double> pTbin, pZbin;
+  
+  if (doDIS){
+    Enubin = binsDef->GetDISBins("Enu"); 
+    Emubin = binsDef->GetDISBins("Emu"); 
+    Ehadbin = binsDef->GetDISBins("Ehad");
+    Q2bin = binsDef->GetDISBins("Q2");
+    Wbin = binsDef->GetDISBins("W");
+    xbin = binsDef->GetDISBins("x");
+    ybin = binsDef->GetDISBins("y");
+    ThetaMuBin = binsDef->GetDISBins("ThetaMu");
+  }
+  else{
+    Enubin = binsDef->GetEnergyBins("Enu"); 
+    Emubin = binsDef->GetEnergyBins("Emu"); 
+    Ehadbin = binsDef->GetEnergyBins("Ehad");
+    Q2bin = binsDef->GetEnergyBins("Q2");
+    Wbin = binsDef->GetEnergyBins("W");
+    xbin = binsDef->GetEnergyBins("x");
+    ybin = binsDef->GetEnergyBins("y");
+    ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
+    //ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
+    vtxzbin = binsDef->GetEnergyBins("vtxz");
+    planeDNNbin = binsDef->GetEnergyBins("planeDNN");
+    pTbin = binsDef->GetEnergyBins("muonPt"); 
+    pZbin = binsDef->GetEnergyBins("muonPz"); 
+  }
    //Q2bin = binsDef->GetSidebandBins("Q2");
    //Wbin = binsDef->GetSidebandBins("W");
 
-   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
-   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
-   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
-   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
-   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
-   Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
-   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
-   //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {emu,enu};//{enu,ehad}; 
+  // 1D Variables
+  Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+  Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
+  Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
+  Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
+  Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
+  Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
+  Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
+
+  Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
+  Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
+  Var* vtxz = new Var("vtxz", "Vertex Z", vtxzbin, &CVUniverse::GetVertexZMy, &CVUniverse::GetVertexZTrueMy);
+  //Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
+  Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
+
+  variables = {emu, ehad, enu, thetaMu, x, y, Q2, W, vtxz, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+
+  // 2D Variables 
+  Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
+  Var2D* W_Q2 = new Var2D(*W, *Q2);
+  Var2D* enu_ehad = new Var2D(*enu, *ehad);
+  Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
+  Var2D* x_y = new Var2D(*x, *y);  // y var
+  Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
+  
+  variables2d = {emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };
    
-   Var2D* W_Q2 = new Var2D(*W, *Q2);
-   Var2D* x_Q2 = new Var2D(*x, *Q2);
-   Var2D* enu_ehad = new Var2D(*enu, *ehad);
-   Var2D* emu_enu = new Var2D(*emu, *enu);
-   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
-   Var2D* x_y = new Var2D(*x, *y);  // y var
-   //variables2d = {emu_ehad, W_Q2, x_Q2, x_y};//{enu_ehad, Q2_W};
-   
-   //smakefor (auto v : variables2d) v->InitializeAllHistograms(error_bands);
-   for (auto v : variables) v->InitializeAllHistograms(error_bands);
+  //smakefor (auto v : variables2d) v->InitializeAllHistograms(error_bands);
+  for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
+  for (auto v : variables) v->InitializeAllHistograms(error_bands);
 
    int mc0=0;
    int mc1=0;
@@ -401,18 +425,16 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	    if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
       mc6++;
     
-	   /*for (auto v : variables2d){
+	   for (auto v : variables2d){
 	     if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	     if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-	     if( v->GetNameX()=="Enu");//mc14++;
-
 
        if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
 	     if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
-	     if( v->GetNameX()=="Enu");//mc15++;
 
         v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
-        }*/
+      }
+
 	   for (auto v : variables){
 	     if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
@@ -431,19 +453,16 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	    if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
       mc_truth1++;
 
-	   //for (auto v : variables2d){
-	    // if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;	     
-	    //if(v->GetNameX()=="Enu" );// mc_truth2++;
-	    // if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	    //if(v->GetNameX()=="Enu" );// mc_truth3++;
-	    // //if( !cutter->PassTrueDISCut( universe )) continue;    
-	    // v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
-	   //}
+	   for (auto v : variables2d){
+	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;	     
+	    if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
+	    v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+	   }
 	   for (auto v : variables){
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
-             mc_truth2++;
-	     if( v->GetName()!="Enu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-             mc_truth3++;
+       if( v->GetName()=="Enu") mc_truth2++;
+	     if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
+       if( v->GetName()=="Enu") mc_truth3++;
       v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
 	   }
 	 }
