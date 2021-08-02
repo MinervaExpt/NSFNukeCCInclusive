@@ -196,7 +196,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {thetaMu, x, y, emu, enu};//{enu,ehad}; 
+   variables = {x, enu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -356,7 +356,7 @@ int main(int argc, char *argv[]){
 	 int targetID = atoi(argv[2]);
 	 int targetZ  = atoi(argv[3]);
 
-		bool doDIS = true;
+		bool doDIS = false; 
 	 // TString dir(argv[1]);
 	 // int targetID = 1;
 	 // int targetZ = 26;

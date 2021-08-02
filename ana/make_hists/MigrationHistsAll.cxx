@@ -397,7 +397,7 @@ int main(int argc, char *argv[]){
 	 int targetID = atoi(argv[2]);
 	 int targetZ  = atoi(argv[3]);
 
-		bool doDIS = true;
+		bool doDIS = false;
 	 // TString dir(argv[1]);
 	 // int targetID = 1;
 	 // int targetZ = 26;
@@ -445,7 +445,7 @@ int main(int argc, char *argv[]){
 	 
 	 std::cout<<" MCScale= "<<MCscale<<std::endl; 
 	 std::vector<Var*> variablesMC,variablesData; 
-	 std::vector<Var2D*> variables2DMC,variables2DData; 
+	 std::vector<Var2D*> variables2DMC,variables2DData;  
 
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	 TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ, helicity ); 
