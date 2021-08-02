@@ -159,7 +159,8 @@ double CVUniverse::GetlepPzTrue()  const{
 
 double CVUniverse::calcTrueQ2(const double EnuTrue,const double EmuTrue,const double ThetamuTrue)	
 const {
-double Q2 = 4*EnuTrue*EmuTrue*pow( sin( ThetamuTrue/2), 2.);
+double lepMass = 0.1057;
+double Q2 = 4*EnuTrue*EmuTrue*pow( sin( ThetamuTrue/2), 2.) - pow(lepMass,2);
 //std::cout<<" True Enu = "<< EnuTrue <<"\t"<<" True Emu = "<< EmuTrue <<"\t"<<" True ThetaMu = "<< ThetamuTrue <<"\t"<<" True Q2 = "<<Q2<<std::endl;
 return Q2; 
 }
