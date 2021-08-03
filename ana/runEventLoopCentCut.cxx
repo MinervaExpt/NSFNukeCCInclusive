@@ -363,11 +363,11 @@ int main(int argc, char *argv[]){
 
 		
 	   
-	 bool doDIS = true;
+	 bool doDIS = false;
 	 bool isSYS = true;
-	 const std::string mc_file_list("../include/playlists/NukeCC_minervame1A_MC_Inextinguishable_merged.txt");
-	 const std::string data_file_list("../include/playlists/NukeCC_minervame1A_DATA_Inextinguishable_merged.txt");
-	 const std::string plist_string("minervame1A");
+	 const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+	 const std::string plist_string("minervame6A");
 	 const std::string reco_tree_name("NukeCC");
 	 const bool wants_truth = false;
 	 const bool is_grid = false;
@@ -388,7 +388,7 @@ int main(int argc, char *argv[]){
          PlotUtils::MinervaUniverse::SetNuEConstraint(true);
        //  PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
          PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
-       //  PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
+        PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
          PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
          PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
 
