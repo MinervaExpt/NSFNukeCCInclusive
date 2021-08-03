@@ -174,20 +174,20 @@ TString NukeCCUtilsNSF::GetHistFileName( const std::string& histType, FileType::
     TString variation = GetVariationTag();
     if( FileType::kAny == fType )
     {
-        histFileName += Form("/Hists_%s_t%d_z%02d_%s_%s_%s.root",
+        histFileName += Form("/Hists_%s_t%d_z%02d_%s.root",
                              histType.c_str(),
                              targetID, targetZ,
-                             GetHelicityString( helicity ).c_str(),
-                             getenv("NUKECC_TAG"),variation.Data());
+                             GetHelicityString( helicity ).c_str());
+                             //getenv("NUKECC_TAG"),variation.Data());
     }
     else
     {
-        histFileName += Form("/Hists_%s_%s_t%d_z%02d_%s_%s_%s.root",
+        histFileName += Form("/Hists_%s_%s_t%d_z%02d_%s.root",
                              histType.c_str(),
                              GetFileTypeString(fType).c_str(),
                              targetID, targetZ,
-                             GetHelicityString( helicity ).c_str(),
-                             getenv("NUKECC_TAG"),variation.Data());
+                             GetHelicityString( helicity ).c_str());
+                             //getenv("NUKECC_TAG"),variation.Data());
                              
     }
     return histFileName; 
