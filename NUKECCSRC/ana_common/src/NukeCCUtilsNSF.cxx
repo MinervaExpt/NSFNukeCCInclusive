@@ -2,20 +2,20 @@
 #define MNV_NUKECCUTILSNSF_cxx 1
 
 //#include "NukeCCUtilsNSF.h"
-#include "include/NukeCCUtilsNSF.h"
+#include "../include/NukeCCUtilsNSF.h"
 
 //#include "../include/NukeCC_Cuts.h"
 //#include "CCQENuUtilsNSF.h"
-#include "include/CVUniverse.h"
+#include "../include/CVUniverse.h"
 //#include "include/GlobalIncludes.h" 
-#include "include/LateralSystematics.h"
+#include "../include/LateralSystematics.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/HyperDimLinearizer.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/HistWrapper.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
@@ -38,7 +38,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF(string playlist){
     cvhistos2D.clear();
      cutter = new NukeCC_Cuts();
 //   GlobalParameters::Get().m_useFluxConstraint = false;
-   DefaultCVUniverse::SetPlaylist(playlist);
+   MinervaUniverse::SetPlaylist(playlist);
   // GlobalParameters::Get().m_usePPFX1Flux = false;
    use_merged_files = false;
    
@@ -51,7 +51,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF(string playlist){
    cout<<"Initializing NukeCCUtils in Antineutrino Mode"<<endl;
    
    }
-   DefaultCVUniverse::SetAnalysisNuPDG(incoming_pdg);
+   MinervaUniverse::SetAnalysisNuPDG(incoming_pdg);
   if( neutrinoMode ){
     //Use neutrino weights for general constructor
     //Vector declared in header file
@@ -88,7 +88,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF()
    cout<<"Initializing NukeCCUtils in Antineutrino Mode"<<endl;
    
    }
-   DefaultCVUniverse::SetAnalysisNuPDG(incoming_pdg);
+   MinervaUniverse::SetAnalysisNuPDG(incoming_pdg);
   if( neutrinoMode ){
     //Use neutrino weights for general constructor
     //Vector declared in header file

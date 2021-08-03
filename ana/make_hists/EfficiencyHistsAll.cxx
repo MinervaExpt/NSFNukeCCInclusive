@@ -9,29 +9,30 @@
 //==============================================================================
 
 //#include "include/CommonIncludes.h"
-#include "include/CVUniverse.h"
+#include "../../NUKECCSRC/ana_common/include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
 #include "../include/Variable.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "include/LateralSystematics.h"
+#include "../../NUKECCSRC/ana_common/include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
-#include "Cintex/Cintex.h"
-#include "include/NukeCCUtilsNSF.h"
-#include "include/NukeCC_Cuts.h"
+//#include "Cintex/Cintex.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
 #include "PlotUtils/MinosEfficiencySystematics.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/AngleSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/ResponseSystematics.h"
@@ -148,7 +149,7 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
 
 
 int main(int argc, char *argv[]){
-   ROOT::Cintex::Cintex::Enable();
+   //ROOT::Cintex::Cintex::Enable();
    TH1::AddDirectory(false);
 
  if(argc==1){
