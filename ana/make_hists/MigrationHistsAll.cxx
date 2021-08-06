@@ -306,7 +306,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
       reco4++;
 
-      if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial, true CC, true antinu
+      if (!cutter->PassTrueCC(universe, helicity)) continue; //true CC, true antinu
+      if (!cutter->PassTrueDistToDivisionCut(universe)) continue; // True fiducial z distance,  NO APOTHEM CUT
       reco5++;
 
       //if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
@@ -316,11 +317,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       for (auto v : variables2d){
         if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
         if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-        if( v->GetNameX()=="Enu") ;
         
         if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
         if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
-        if( v->GetNameX()=="Enu") ;
         
         v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
         v->m_selected_Migration.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
@@ -335,7 +334,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         if( v->GetName()=="Enu") reco7++;
         
         if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-        if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
+        //if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
+        // NO TRUE angle cut, efficiency corrected
         if( v->GetName()=="Enu") reco8++;
 
         v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());

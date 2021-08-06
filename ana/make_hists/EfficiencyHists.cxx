@@ -399,7 +399,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	 // CUTS in each universe
 	 //=========================================
 	 
-	if(isMC){ 
+	if(isMC){ // NUMERATOR
 /////////////////////////////////////////////////////////////////
 	
 	   universe->SetEntry(i);
@@ -420,7 +420,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
       mc4++;
 
-      if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial, true CC, true antinu
+      if (!cutter->PassTrueCC(universe, helicity)) continue; //true CC, true antinu
+      if (!cutter->PassTrueDistToDivisionCut(universe)) continue; // True fiducial z distance,  NO APOTHEM CUT
       mc5++;
 
 	    if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
@@ -431,7 +432,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	     if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
 
        if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	     if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
+       // NO TRUE angle cut, efficiency corrected
 
         v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
       }
@@ -442,13 +443,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	     if( v->GetName()=="Enu") mc7++;
 
        if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	     if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
+	     // NO TRUE angle cut, efficiency corrected
 	     if( v->GetName()=="Enu") mc8++;
 	       v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
 	     //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
 	   }
-	 } else if(!isMC ){
-	   if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial, true CC, true antinu
+	 } else if(!isMC ){ // DENOMINATOR
+	   if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial z distance+apothem, true CC, true antinu
       mc_truth0++;
 
 	    if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
