@@ -23,3 +23,6 @@ CVS/
 */*/CVS/
 */*/*/CVS/
 */*/*/*/CVS/
+../../NUKECCSRC/x86_64-slc7-gcc49-opt/setup.make
+../../NUKECCSRC/x86_64-slc7-gcc49-opt/x86_64-slc7-gcc49-opt.make
+../../x86_64-slc7-gcc49-opt/x86_64-slc7-gcc49-opt.make
