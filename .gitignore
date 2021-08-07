@@ -18,6 +18,7 @@ ana/make_hists/MigrationHistsAll.o
 ana/make_hists/runEventLoop.o
 ana/make_hists/runEventLoopALL.o
 ana/make_hists/runEventLoop_purity.o
+ana/make_hists/runEventLoop_bkg.o
 CVS/
 */CVS/
 */*/CVS/
