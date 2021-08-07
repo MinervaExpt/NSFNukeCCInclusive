@@ -421,7 +421,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       mc4++;
 
       if (!cutter->PassTrueCC(universe, helicity)) continue; //true CC, true antinu
-      if (!cutter->PassTrueDistToDivisionCut(universe)) continue; // True fiducial z distance,  NO APOTHEM CUT
+      // NO xy separation,  NO APOTHEM CUT
       mc5++;
 
 	    if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
