@@ -139,7 +139,7 @@ int main(int argc, char *argv[]){
   std::vector<Var*> variablesMC,variablesData; 
   std::vector<Var2D*> variables2DMC,variables2DData; 
 
-  TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
+  TString histFileName = utils->GetHistFileName( "EventSelection_PurityNumerator_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
 
   //Works good for the grid submission
   //TString histFileName = utils->GetHistFileName( "EventSelection", FileType::kAny, targetID, targetZ );
