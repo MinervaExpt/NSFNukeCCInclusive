@@ -141,6 +141,7 @@ bool NukeCC_Cuts::PassGoodTrackingCut(CVUniverse* cv)
     return true;
 }
 
+// in passive target region
 bool NukeCC_Cuts::PassZDistCut(CVUniverse* cv,double  lowZ /*= 1001. */, double highZ /*= 1001.*/ )
 {
 NukeCC_targetID=cv->GetInt("NukeCC_targetID");
