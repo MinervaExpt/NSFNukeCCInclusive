@@ -252,17 +252,17 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
       //binsLowEdge.push_back(1.75);
 
     }
-    /*else if( var == "x" ){
+    else if( var == "xBrian" ){
 
       binsLowEdge.push_back(0.);
-      binsLowEdge.push_back(0.05);
       binsLowEdge.push_back(0.1);
-      binsLowEdge.push_back(0.2);
       binsLowEdge.push_back(0.3);
-      binsLowEdge.push_back(0.5);
-      binsLowEdge.push_back(1.75);
+      binsLowEdge.push_back(0.7);
+      binsLowEdge.push_back(0.9);
+      binsLowEdge.push_back(1.1);
+      binsLowEdge.push_back(1.5);
 
-    }*/
+    }
     /*else if( var == "x" ){
 
       binsLowEdge.push_back(0.0001);

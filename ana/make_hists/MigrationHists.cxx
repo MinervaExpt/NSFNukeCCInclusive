@@ -158,7 +158,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    std::map<std::string, const int>::iterator itr_m;
    
-   std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+   std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
 
    if (doDIS){
      Enubin  = binsDef->GetDISBins("Enu"); 
@@ -177,6 +177,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      Q2bin = binsDef->GetEnergyBins("Q2");
      Wbin = binsDef->GetEnergyBins("W");
      xbin    = binsDef->GetEnergyBins("x");
+     xbinBrian    = binsDef->GetEnergyBins("xBrian");
      ybin    = binsDef->GetEnergyBins("y");
    }
   
@@ -191,12 +192,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
    Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
    Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu};//{enu,ehad}; 
+   variables = {x, xBrian, enu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -269,6 +271,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
       if (!cutter->PassTrueCC(universe, helicity)) continue; //true CC, true antinu
       // NO xy separation,  NO APOTHEM CUT
+      reco5++;
 
 	   if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
      reco6++;
