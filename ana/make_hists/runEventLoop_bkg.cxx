@@ -420,8 +420,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int NotEmu = 0;
   int WrongMaterialOrTarget = 0;
   int Bkg = 0;
-  int WrongSign = 0;
-  int NC = 0;
+  int WrongSign = 0; // just CC antinu
+  int NC = 0; // both nu and antinu
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
     
@@ -511,13 +511,14 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="Enu") Bkg++;
 
-                  if( -14 != universe->GetInt("mc_incoming") ){ // neutrino (category before NC)
-                    v->m_selected_mc_sb.GetComponentHist("WrongSign")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                    if (v->GetName()=="Enu") WrongSign++;
-                  }
-                  else if( 1 != universe->GetInt("mc_current")){ // neutral current
+                  if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
                     v->m_selected_mc_sb.GetComponentHist("NC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") NC++;
+                  }
+
+                  else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
+                    v->m_selected_mc_sb.GetComponentHist("WrongSign")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    if (v->GetName()=="Enu") WrongSign++;
                   }
                 }
               }
@@ -604,8 +605,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Signal  = "<< Signal<< std::endl;
   std::cout << "All background = "<< Bkg << std::endl;
   std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
-  std::cout << "Wrong sign = "<< WrongSign << std::endl;
-  std::cout << "Neutral current = "<< NC<< std::endl;
+  std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
+  std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
   std::cout << "Not muon energy = "<< NotEmu << std::endl;
   std::cout << "**********************************" << std::endl;
   
