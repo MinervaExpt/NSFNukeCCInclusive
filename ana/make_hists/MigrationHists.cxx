@@ -159,6 +159,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    std::map<std::string, const int>::iterator itr_m;
    
    std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
+   std::vector<double> x09bin, xfinebin;
 
    if (doDIS){
      Enubin  = binsDef->GetDISBins("Enu"); 
@@ -170,6 +171,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      ybin    = binsDef->GetDISBins("y");
      ThetaMuBin = binsDef->GetDISBins("ThetaMu");
      }
+     
    else{
      Enubin  = binsDef->GetEnergyBins("Enu"); 
      Emubin  = binsDef->GetEnergyBins("Emu"); 
@@ -177,6 +179,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      Q2bin = binsDef->GetEnergyBins("Q2");
      Wbin = binsDef->GetEnergyBins("W");
      xbin    = binsDef->GetEnergyBins("x");
+     x09bin = binsDef->GetEnergyBins("x09");
+     xfinebin = binsDef->GetEnergyBins("xfine");
      xbinBrian    = binsDef->GetEnergyBins("xBrian");
      ybin    = binsDef->GetEnergyBins("y");
    }
@@ -192,13 +196,15 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
    Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
    Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, xBrian, enu};//{enu,ehad}; 
+   variables = {x, x09, xfine, xBrian, enu};//{enu,ehad}; 
    
    //For 2D variable
 
