@@ -80,6 +80,7 @@ int main(){
   h_background_mc_scale = (MnvH1D*)bkg->Clone("h_background_mc_scale");
   h_background_mc_scale->Scale(POTNormalization);
   // subtract scaled bkg
+  h_background_subtracted_data->AddMissingErrorBandsAndFillWithCV(*h_background_mc_scale);
   h_background_subtracted_data->Add(h_background_mc_scale,-1);  
 
   // write all the histogramt to file
