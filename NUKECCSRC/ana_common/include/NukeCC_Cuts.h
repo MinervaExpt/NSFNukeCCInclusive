@@ -5,10 +5,10 @@
 #define MNV_NUKECC_CUTS_h 1
 
 #include "GlobalIncludes.h"
-#include "PlotUtils/MinervaUniverse.h"
+#include "PlotUtils/DefaultCVUniverse.h"
 #include "PlotUtils/TargetUtils.h"
-#include "CVUniverse.h"
-#include "CommonIncludes.h"
+#include "include/CVUniverse.h"
+#include "include/CommonIncludes.h"
 //#include "include/GlobalIncludes.h"
 
 

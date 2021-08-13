@@ -43,7 +43,7 @@ using namespace PlotUtils;
 #include <THStack.h>
 #include <TPie.h>
 #include <TGraphAsymmErrors.h>
-//#include <TStyle.h>
+#include <TStyle.h>
 #include <TMath.h>
 #include <TLatex.h>
 //#include <TObject.h>

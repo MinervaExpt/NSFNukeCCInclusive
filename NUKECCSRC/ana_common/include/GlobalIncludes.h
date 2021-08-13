@@ -56,9 +56,9 @@ using std::vector;
 #include "TAxis.h"
 #include "TProfile.h"
 #include "TVector3.h"
-//#include "TStyle.h"
+#include "TStyle.h"
 #include "TText.h"
-//#include "TStyle.h"
+#include "TStyle.h"
 #include "TRandom.h"
 #include "TArrow.h"
 #include "TLine.h"
@@ -78,7 +78,7 @@ using std::vector;
 #endif
 
 #ifndef ROOT6
-//#include "Cintex/Cintex.h"
+#include "Cintex/Cintex.h"
 #endif
 
 //-----------------------------------------------------------

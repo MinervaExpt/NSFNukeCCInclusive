@@ -1,7 +1,7 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
+#include "include/CVUniverse.h"
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/HistWrapper.h"
 
