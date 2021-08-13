@@ -9,30 +9,30 @@
 //==============================================================================
 
 //#include "include/CommonIncludes.h"
-#include "include/CVUniverse.h"
-//#include "../include/Variable_v1.h"
+#include "../../NUKECCSRC/ana_common/include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
 #include "../include/Variable.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "include/LateralSystematics.h"
+#include "../../NUKECCSRC/ana_common/include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
-#include "Cintex/Cintex.h"
-#include "include/NukeCCUtilsNSF.h"
-#include "include/NukeCC_Cuts.h"
+//#include "Cintex/Cintex.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
 #include "PlotUtils/MinosEfficiencySystematics.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/AngleSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/ResponseSystematics.h"
@@ -158,7 +158,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    std::map<std::string, const int>::iterator itr_m;
    
-   std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+   std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
+   std::vector<double> x09bin, xfinebin;
 
    if (doDIS){
      Enubin  = binsDef->GetDISBins("Enu"); 
@@ -170,6 +171,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      ybin    = binsDef->GetDISBins("y");
      ThetaMuBin = binsDef->GetDISBins("ThetaMu");
      }
+     
    else{
      Enubin  = binsDef->GetEnergyBins("Enu"); 
      Emubin  = binsDef->GetEnergyBins("Emu"); 
@@ -177,6 +179,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      Q2bin = binsDef->GetEnergyBins("Q2");
      Wbin = binsDef->GetEnergyBins("W");
      xbin    = binsDef->GetEnergyBins("x");
+     x09bin = binsDef->GetEnergyBins("x09");
+     xfinebin = binsDef->GetEnergyBins("xfine");
+     xbinBrian    = binsDef->GetEnergyBins("xBrian");
      ybin    = binsDef->GetEnergyBins("y");
    }
   
@@ -191,12 +196,15 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
    Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
    Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+   Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu};//{enu,ehad}; 
+   variables = {x, x09, xfine, xBrian, enu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -267,8 +275,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
      reco4++;
 
-     if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial, true CC, true antinu
-     reco5++;
+      if (!cutter->PassTrueCC(universe, helicity)) continue; //true CC, true antinu
+      // NO xy separation,  NO APOTHEM CUT
+      reco5++;
 
 	   if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
      reco6++;
@@ -276,11 +285,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 		 for (auto v : variables2d){
 	    if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-	    if( v->GetNameX()=="Enu") ;
       
       if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
-	    if( v->GetNameX()=="Enu") ;
+	    //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
+      // NO TRUE angle cut, efficiency corrected
+	  
       
       v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
       v->m_selected_Migration.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
@@ -295,7 +304,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	     if( v->GetName()=="Enu") reco7++;
        
        if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	     if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
+	     //if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
+       // NO TRUE angle cut, efficiency corrected
 	     if( v->GetName()=="Enu") reco8++;
 
 	     v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
@@ -338,7 +348,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 //============================================================================================================================
 
 int main(int argc, char *argv[]){
-	 ROOT::Cintex::Cintex::Enable();
+	 //ROOT::Cintex::Cintex::Enable();
 	 TH1::AddDirectory(false);
 
 	 if(argc==1){

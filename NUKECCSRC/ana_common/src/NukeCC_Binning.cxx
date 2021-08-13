@@ -4,15 +4,15 @@
 #ifndef MNV_NUKECC_BINNING_CXX
 #define MNV_NUKECC_BINNING_CXX 1
 
-#include "include/NukeCC_Binning.h"
+#include "../include/NukeCC_Binning.h"
 #include "PlotUtils/TargetUtils.h"
-#include "include/CVUniverse.h"
-#include "include/GlobalIncludes.h" 
-#include "include/CommonIncludes.h"
+#include "../include/CVUniverse.h"
+#include "../include/GlobalIncludes.h" 
+#include "../include/CommonIncludes.h"
 #include <PlotUtils/MnvNormalization.h>
 #include <PlotUtils/NuclModUtils.h>
 #include <PlotUtils/FluxReweighter.h>
-#include <PlotUtils/FluxReweighterWithWiggleFit.h>
+//#include <PlotUtils/FluxReweighterWithWiggleFit.h>
 #include <PlotUtils/MnvNuclearModelWeight.h>
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
 
@@ -240,35 +240,50 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     else if( var == "x" ){
 
       binsLowEdge.push_back(0.);
-      //binsLowEdge.push_back(0.05);
+      binsLowEdge.push_back(0.05);
       binsLowEdge.push_back(0.1);
-      //binsLowEdge.push_back(0.2);
-      binsLowEdge.push_back(0.3);
-      binsLowEdge.push_back(0.5);
-      binsLowEdge.push_back(0.7);
-      binsLowEdge.push_back(0.9);
-      binsLowEdge.push_back(1.1);  
-      binsLowEdge.push_back(1.5);
-      //binsLowEdge.push_back(1.75);
-
+      binsLowEdge.push_back(0.2);
+      binsLowEdge.push_back(0.4);
+      binsLowEdge.push_back(1); 
+      binsLowEdge.push_back(2.2);
     }
-    /*else if( var == "x" ){
+    else if( var == "x09" ){
 
       binsLowEdge.push_back(0.);
       binsLowEdge.push_back(0.05);
       binsLowEdge.push_back(0.1);
       binsLowEdge.push_back(0.2);
+      binsLowEdge.push_back(0.4);
+      binsLowEdge.push_back(0.9);
+      binsLowEdge.push_back(2.2);
+    }
+    else if( var == "xBrian" ){
+
+      binsLowEdge.push_back(0.);
+      binsLowEdge.push_back(0.1);
       binsLowEdge.push_back(0.3);
-      binsLowEdge.push_back(0.5);
-      binsLowEdge.push_back(1.75);
+      binsLowEdge.push_back(0.7);
+      binsLowEdge.push_back(0.9);
+      binsLowEdge.push_back(1.1);
+      binsLowEdge.push_back(1.5);
 
-    }*/
-    /*else if( var == "x" ){
+    }
+     else if( var == "xfine" ){
 
-      binsLowEdge.push_back(0.0001);
-      binsLowEdge.push_back(1.0);
+      binsLowEdge.push_back(0.);
+      binsLowEdge.push_back(0.01);
+      binsLowEdge.push_back(0.02);
+      binsLowEdge.push_back(0.03);
+      binsLowEdge.push_back(0.04);
+      binsLowEdge.push_back(0.05);
+      binsLowEdge.push_back(0.1);
+      binsLowEdge.push_back(0.3);
+      binsLowEdge.push_back(0.7);
+      binsLowEdge.push_back(0.9);
+      binsLowEdge.push_back(1.1);
+      binsLowEdge.push_back(1.5);
 
-    }*/
+    }
     else if( var == "y" )
     {
        double tmpBins[] = { 0, 0.03, 0.15, 0.3, 0.45, 0.6, 1.};

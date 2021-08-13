@@ -8,31 +8,31 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "include/CommonIncludes.h"
-#include "include/CVUniverse.h"
+//#include "include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
 #include "../include/VariableRun.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "include/LateralSystematics.h"
+#include "../../NUKECCSRC/ana_common/include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
-#include "Cintex/Cintex.h"
-#include "include/NukeCCUtilsNSF.h"
-#include "include/NukeCC_Cuts.h"
-#include "PlotUtils/MnvPlotter.h" 
+//#include "Cintex/Cintex.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
 #include "PlotUtils/MinosEfficiencySystematics.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/AngleSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/ResponseSystematics.h"
@@ -71,7 +71,7 @@ std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int tar
 int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
 int main(int argc, char *argv[]){
-  ROOT::Cintex::Cintex::Enable();
+  //ROOT::Cintex::Cintex::Enable();
   TH1::AddDirectory(false);
 
   if(argc==1){
@@ -303,7 +303,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   
   std::map<std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chain);
   
-  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin,xbinBrian;
+  std::vector<double> x09bin, xfinebin;
   std::vector<double> ANNPlaneProbBin;
   std::vector<double> vtxzbin;
   std::vector<double> planeDNNbin; 
@@ -326,6 +327,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     Q2bin = binsDef->GetEnergyBins("Q2");
     Wbin = binsDef->GetEnergyBins("W");
     xbin = binsDef->GetEnergyBins("x");
+    x09bin = binsDef->GetEnergyBins("x09");
+    xfinebin = binsDef->GetEnergyBins("xfine");
+    xbinBrian    = binsDef->GetEnergyBins("xBrian");
     ybin = binsDef->GetEnergyBins("y");
     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
     ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
@@ -345,6 +349,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
   Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
   Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
@@ -353,7 +360,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, ehad, enu, thetaMu, x, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);

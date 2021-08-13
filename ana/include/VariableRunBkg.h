@@ -32,7 +32,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   //=======================================================================================
   // HISTWRAPPER
   // selected mc reco histwrapper
-  HW m_selected_mc_reco,m_selected_data_reco,m_selected_data_reco_sb;
+  HW m_selected_mc_reco,m_selected_mc_reco_bkg,m_selected_data_reco,m_selected_data_reco_sb;
 
   // HISTFOLIO
   // selected mc reco - signal background histfolio
@@ -53,6 +53,10 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
                                       GetNBins(), bins.data());
     m_selected_mc_reco = HW(dummy_selected_mc_reco, univs, clear_bands);
 
+    MH1D* dummy_selected_mc_reco_bkg = new MH1D(Form("selected_mc_reco_bkg_%s", name), name,
+                                      GetNBins(), bins.data());
+    m_selected_mc_reco_bkg = HW(dummy_selected_mc_reco_bkg, univs, clear_bands);
+
     MH1D* dummy_selected_data_reco = new MH1D(Form("selected_data_reco_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco = HW(dummy_selected_data_reco, univs, clear_bands);
 
@@ -65,19 +69,17 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     
    m_selected_mc_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("selected_mc_sb_%s", name), name, GetNBins(), bins.data());
     
- // PlotUtils::MnvH1D* data = new PlotUtils::MnvH1D(
-   //   "dummy", "dummy", plotting::nbins, plotting::xmin, plotting::xmax);
-  //  m_selected_data_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(
-    //    Form("selected_data_sb_%s", name), name, GetNBins(), bins.data());
-   
-    //m_selected_mc_sb.AddComponentHist("DIS");
-    m_selected_mc_sb.AddComponentHist("NC");
-    m_selected_mc_sb.AddComponentHist("WRGsign");
+    m_selected_mc_sb.AddComponentHist("Signal");
+  
     m_selected_mc_sb.AddComponentHist("Bkg");
-    m_selected_mc_sb.AddComponentHist("Sig");
+    m_selected_mc_sb.AddComponentHist("WrongSign");
+    m_selected_mc_sb.AddComponentHist("NC");
+    m_selected_mc_sb.AddComponentHist("NotEmu");
+    m_selected_mc_sb.AddComponentHist("WrongMaterialOrTarget");
     //m_selected_mc_sb.AddComponentHist("MC");
     //m_selected_data_sb.AddComponentHist("Data");
 delete dummy_selected_mc_reco;
+delete dummy_selected_mc_reco_bkg;
 delete dummy_selected_data_reco;
   }
 
@@ -88,7 +90,10 @@ delete dummy_selected_data_reco;
     f.cd();
 
     // selected mc reco
-    if(isMC)  m_selected_mc_reco.hist->Write();
+    if(isMC) {
+      m_selected_mc_reco.hist->Write();
+      m_selected_mc_reco_bkg.hist->Write();
+    }
     else m_selected_data_reco.hist->Write();
 
     // selected mc  histfolio fir Hist Stacking

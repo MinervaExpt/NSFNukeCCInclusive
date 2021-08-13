@@ -2,20 +2,20 @@
 #define MNV_NUKECCUTILSNSF_cxx 1
 
 //#include "NukeCCUtilsNSF.h"
-#include "include/NukeCCUtilsNSF.h"
+#include "../include/NukeCCUtilsNSF.h"
 
 //#include "../include/NukeCC_Cuts.h"
 //#include "CCQENuUtilsNSF.h"
-#include "include/CVUniverse.h"
+#include "../include/CVUniverse.h"
 //#include "include/GlobalIncludes.h" 
-#include "include/LateralSystematics.h"
+#include "../include/LateralSystematics.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/HyperDimLinearizer.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/HistWrapper.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
@@ -38,7 +38,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF(string playlist){
     cvhistos2D.clear();
      cutter = new NukeCC_Cuts();
 //   GlobalParameters::Get().m_useFluxConstraint = false;
-   DefaultCVUniverse::SetPlaylist(playlist);
+   MinervaUniverse::SetPlaylist(playlist);
   // GlobalParameters::Get().m_usePPFX1Flux = false;
    use_merged_files = false;
    
@@ -51,7 +51,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF(string playlist){
    cout<<"Initializing NukeCCUtils in Antineutrino Mode"<<endl;
    
    }
-   DefaultCVUniverse::SetAnalysisNuPDG(incoming_pdg);
+   MinervaUniverse::SetAnalysisNuPDG(incoming_pdg);
   if( neutrinoMode ){
     //Use neutrino weights for general constructor
     //Vector declared in header file
@@ -88,7 +88,7 @@ NukeCCUtilsNSF::NukeCCUtilsNSF()
    cout<<"Initializing NukeCCUtils in Antineutrino Mode"<<endl;
    
    }
-   DefaultCVUniverse::SetAnalysisNuPDG(incoming_pdg);
+   MinervaUniverse::SetAnalysisNuPDG(incoming_pdg);
   if( neutrinoMode ){
     //Use neutrino weights for general constructor
     //Vector declared in header file
@@ -174,20 +174,20 @@ TString NukeCCUtilsNSF::GetHistFileName( const std::string& histType, FileType::
     TString variation = GetVariationTag();
     if( FileType::kAny == fType )
     {
-        histFileName += Form("/Hists_%s_t%d_z%02d_%s_%s_%s.root",
+        histFileName += Form("/Hists_%s_t%d_z%02d_%s.root",
                              histType.c_str(),
                              targetID, targetZ,
-                             GetHelicityString( helicity ).c_str(),
-                             getenv("NUKECC_TAG"),variation.Data());
+                             GetHelicityString( helicity ).c_str());
+                             //getenv("NUKECC_TAG"),variation.Data());
     }
     else
     {
-        histFileName += Form("/Hists_%s_%s_t%d_z%02d_%s_%s_%s.root",
+        histFileName += Form("/Hists_%s_%s_t%d_z%02d_%s.root",
                              histType.c_str(),
                              GetFileTypeString(fType).c_str(),
                              targetID, targetZ,
-                             GetHelicityString( helicity ).c_str(),
-                             getenv("NUKECC_TAG"),variation.Data());
+                             GetHelicityString( helicity ).c_str());
+                             //getenv("NUKECC_TAG"),variation.Data());
                              
     }
     return histFileName; 

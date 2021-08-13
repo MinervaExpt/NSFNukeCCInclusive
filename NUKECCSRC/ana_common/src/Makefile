@@ -6,8 +6,9 @@ CFLAGS = -Wall -fPIC
 OBJS = CVUniverse.o NukeCC_Cuts.o NukeCCUtilsNSF.o NukeCC_Binning.o
 #SRC = $(PWD)/*.cxx
 SRC = $(NUKECCSRC_ANA)/src/*.cxx
-INCLUDE += -I$(UNFOLDUTILSROOT) -I$(NUKECCSRC_ANA) -I$(PWD)/*.h  -I$(PLOTUTILSROOT) -I$(MINERVAKERNELROOT) -I$(NUKECCSRC_INCLUDE_PATH) -I$(TEST)/ 
+INCLUDE += -I$(NUKECCSRC_ANA) -I$(PWD)/*.h  -I$(PLOTUTILSROOT)/../include -I$(MINERVAKERNELROOT) -I$(NUKECCSRC_INCLUDE_PATH) -I$(TEST)/ 
 LDFLAGS += -shared -Wl,-soname
+LDLIBS += -L$(NUKECCSRC_ANA)/src -lNukeCC -lUnfoldUtils
 
 TARGET = libNukeCC.so
 

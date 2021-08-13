@@ -31,9 +31,9 @@ namespace NUKECC_ANA
 {
 class CVUniverse : public PlotUtils::MinervaUniverse {
   public:
-    #include "PlotUtils/SystCalcs/MuonFunctions.h" // GetMinosEfficiencyWeight
-    #include "PlotUtils/SystCalcs/TruthFunctions.h" //Getq3True
-    #include "PlotUtils/SystCalcs/WeightFunctions.h"
+    #include "PlotUtils/MuonFunctions.h" // GetMinosEfficiencyWeight
+    #include "PlotUtils/TruthFunctions.h" //Getq3True
+    #include "PlotUtils/WeightFunctions.h"
     // Constructor
     CVUniverse(PlotUtils::ChainWrapper* chw, double nsigma=0);
     CVUniverse();

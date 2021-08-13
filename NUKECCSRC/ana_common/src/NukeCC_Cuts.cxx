@@ -7,11 +7,11 @@
 #include "../include/NukeCC_Cuts.h"
 #include "../include/NukeCCvars.h"
 #include "PlotUtils/TargetUtils.h"
-#include "include/CVUniverse.h"
+#include "../include/CVUniverse.h"
 
-#include "include/GlobalIncludes.h" 
+#include "../include/GlobalIncludes.h" 
 
-#include "include/CommonIncludes.h"
+#include "../include/CommonIncludes.h"
 //#include "../include/NukeCCvars.h"
 //#include "CCQENuUtilsNSF.h"
 //#include "include/NukeUtils.h"
@@ -19,7 +19,7 @@
 #include <PlotUtils/MnvNormalization.h>
 #include <PlotUtils/NuclModUtils.h>
 #include <PlotUtils/FluxReweighter.h>
-#include <PlotUtils/FluxReweighterWithWiggleFit.h>
+//#include <PlotUtils/FluxReweighterWithWiggleFit.h>
 //#include "include/CondorInput.h"
 #include <PlotUtils/MnvNuclearModelWeight.h>
 //#include <PlotUtils/MnvNormalizerME.h>
@@ -141,6 +141,7 @@ bool NukeCC_Cuts::PassGoodTrackingCut(CVUniverse* cv)
     return true;
 }
 
+// in passive target region
 bool NukeCC_Cuts::PassZDistCut(CVUniverse* cv,double  lowZ /*= 1001. */, double highZ /*= 1001.*/ )
 {
 NukeCC_targetID=cv->GetInt("NukeCC_targetID");

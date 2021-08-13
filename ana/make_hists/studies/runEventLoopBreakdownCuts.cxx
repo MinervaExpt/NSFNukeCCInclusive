@@ -8,31 +8,31 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "include/CommonIncludes.h"
-#include "include/CVUniverse.h"
-#include "../include/VariableRun.h"
+//#include "include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CommonIncludes.h"
+#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
+#include "../include/VariableRun.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "include/LateralSystematics.h"
+#include "../../NUKECCSRC/ana_common/include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
-#include "Cintex/Cintex.h"
-#include "include/NukeCCUtilsNSF.h"
-#include "include/NukeCC_Cuts.h"
-#include "PlotUtils/MnvPlotter.h" 
+//#include "Cintex/Cintex.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/ana_common/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
 #include "PlotUtils/MinosEfficiencySystematics.h"
 #include "PlotUtils/MnvHadronReweight.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/AngleSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/ResponseSystematics.h"
@@ -71,7 +71,7 @@ std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int tar
 int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
 int main(int argc, char *argv[]){
-  ROOT::Cintex::Cintex::Enable();
+  //ROOT::Cintex::Cintex::Enable();
   TH1::AddDirectory(false);
 
   if(argc==1){
@@ -303,7 +303,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   
   std::map<std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chain);
   
-  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin,xbinBrian;
+  std::vector<double> x09bin, xfinebin;
   std::vector<double> ANNPlaneProbBin;
   std::vector<double> vtxzbin;
   std::vector<double> planeDNNbin; 
@@ -326,6 +327,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     Q2bin = binsDef->GetEnergyBins("Q2");
     Wbin = binsDef->GetEnergyBins("W");
     xbin = binsDef->GetEnergyBins("x");
+    x09bin = binsDef->GetEnergyBins("x09");
+    xfinebin = binsDef->GetEnergyBins("xfine");
+    xbinBrian    = binsDef->GetEnergyBins("xBrian");
     ybin = binsDef->GetEnergyBins("y");
     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
     ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
@@ -345,6 +349,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
   Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
   Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
@@ -353,7 +360,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, ehad, enu, thetaMu, x, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -408,10 +415,17 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco4=0; 
   int reco5=0; 
   int reco6=0; 
-  int reco7=0;
-  int reco8=0;
   //int neutralcur = 0;
   //int wrongsign = 0;
+
+  int hel = 0;
+  int fiducial = 0;
+  int Zdist = 0;
+  int separation = 0;
+  int Annecut = 0;
+  int deadTime=0;
+  int curvesig =0;
+  int coil =0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
     
@@ -443,8 +457,25 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	            universe->SetEntry(i);
               reco0++;
 
-              if(!cutter->PassReco(universe,helicity)) continue;
-              reco1++;
+              // Breakdown of PassReco()
+              //if(!cutter->PassReco(universe,helicity)) continue;
+              //reco1++;
+              if( !cutter-> PassHelicityCut(universe,helicity))  continue; //! Is this event the right helicity?
+              hel++;
+              if( ! universe->GetInt("NukeCC_in_fiducial_area") ) continue; //! Is the event in the fiducial area?
+              fiducial++;
+              if( ! cutter->PassZDistCut(universe))   continue; //! Is the event vertex close enough in Z to the NuclearTarget?
+              Zdist++;
+              if( !cutter-> PassDistToDivisionCut(universe) ) continue; //! Is the event vertex far enough away from the separation of target sections?
+              separation++;
+              if( 120. < universe->GetEnu() * mev_to_gev ) continue; //! Anne's neutrino Energy cut
+              Annecut++;
+              if( 1 < universe->GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj") ) continue; //! Gabe's tdead cut
+              deadTime++;
+              if( ! cutter->PassMuCurveCut(universe, helicity) ) continue; //! Is the curvature significant?
+              curvesig++;
+              if( ! cutter->PassMuCoilCut(universe) ) continue;
+              coil++;
               
               if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
               //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
@@ -457,30 +488,33 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
-
-              if (!cutter->PassTruth(universe, helicity)) continue; // True fiducial, true CC, true antinu
-              reco5++;
-
-	            if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
-              reco6++;
               
+              
+              /* GLOBAL VS LOCAL CUT*/
+              //if(!cutter->PassMuEnergyCut(universe)) continue;
+              //reco5++;
+
+              //if(!cutter->PassThetaCut(universe)) continue;
+              //reco6++;
+
+              //pure signal cuts on MC to estimate bkg (counts)    
+              //if( 1 != universe->GetInt("mc_current") ) continue; 
+              //neutralcur++;
+              //if(-14 != universe->GetInt("mc_incoming") ) continue;
+              //wrongsign++;
 
               for (auto v : variables2d){
 	              if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	              if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-                if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	              if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
 	              v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
 	            }
 	
 	            for (auto v : variables){
 	              if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
+	              if( v->GetName()=="Enu") reco5++;
+             
 	              if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
-	              if (v->GetName()=="Enu") reco7++;
-
-                if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	              if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
-                if (v->GetName()=="Enu") reco8++;
+	              if (v->GetName()=="Enu") reco6++;
 	     
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                 //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
@@ -510,9 +544,30 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         dataverse->SetEntry(i);
         reco0++;
 	 
-	      if(!cutter->PassReco(dataverse,helicity)) continue;
-	      reco1++;
+	      ///if(!cutter->PassReco(dataverse,helicity)) continue;
+	      //reco1++;
         
+        // Breakdown of PassReco()
+        //if(!cutter->PassReco(universe,helicity)) continue;
+        //reco1++;
+        if( !cutter-> PassHelicityCut(dataverse,helicity))  continue; //! Is this event the right helicity?
+        hel++;
+        if( ! dataverse->GetInt("NukeCC_in_fiducial_area") ) continue; //! Is the event in the fiducial area?
+        fiducial++;
+        if( ! cutter->PassZDistCut(dataverse))   continue; //! Is the event vertex close enough in Z to the NuclearTarget?
+        Zdist++;
+        if( !cutter-> PassDistToDivisionCut(dataverse) ) continue; //! Is the event vertex far enough away from the separation of target sections?
+        separation++;
+        if( 120. < dataverse->GetEnu() * mev_to_gev ) continue; //! Anne's neutrino Energy cut
+        Annecut++;
+        if( 1 < dataverse->GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj") ) continue; //! Gabe's tdead cut
+        deadTime++;
+        if( ! cutter->PassMuCurveCut(dataverse, helicity) ) continue; //! Is the curvature significant?
+        curvesig++;
+        if( ! cutter->PassMuCoilCut(dataverse) ) continue;
+        coil++;
+
+
         if(!cutter->IsInMaterial(dataverse,targetID,targetZ, false)) continue;
         //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
@@ -541,9 +596,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	   
 	      for (auto v : variables){
 	        if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(dataverse)) continue; 
-	        if (v->GetName()=="Enu") reco7++;
+	        if (v->GetName()=="Enu") reco5++;
 	        if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(dataverse))continue;
-	        if (v->GetName()=="Enu") reco8++;
+	        if (v->GetName()=="Enu") reco6++;
 	     
 	        v->m_selected_data_reco.hist->Fill(v->GetRecoValue(*dataverse, 0));
 	        v->m_selected_data_reco_sb.hist->Fill(v->GetRecoValue(*dataverse, 0));
@@ -568,14 +623,24 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     isMC? std::cout << "MC ": std::cout << "Data ";
   std::cout << "Summary " << std::endl;
   std::cout << "No cuts = " << reco0 << std::endl;
-  std::cout << "Reco Cut = " << reco1 << std::endl;
+  std::cout << "Reco Cuts" << std::endl;
+  std::cout << "Helicity = " << hel << std::endl;
+  std::cout << "Fiducial area = " << fiducial << std::endl;
+  std::cout << "Z in passive target region = " << Zdist << std::endl;
+  std::cout << "Separation = " << separation << std::endl;
+  std::cout << "Enu less than 120 GeV = " << Annecut << std::endl;
+  std::cout << "Dead time = " << deadTime << std::endl;
+  std::cout << "Muon curve significance = " << curvesig << std::endl;
+  std::cout << "Within coil region = " << coil << std::endl;
   std::cout << "Material Cut = " << reco2 << std::endl;
   std::cout << "TargetID Cuts = " << reco3 << std::endl;
   std::cout << "Plane prob. cut = " << reco4 << std::endl;
-  std::cout << "Truth cut (fiducial, CC, antinu) = " << reco5 << std::endl;
-  std::cout << "True Material cut  = "<< reco6 << std::endl;
-  std::cout << "Muon kinematics cut  = " << reco7 << std::endl;
-  std::cout << "True muon kinematics cut  = " << reco8 << std::endl;
+  //std::cout<<" Neutral Current cuts = " << neutralcur << std::endl;
+  //std::cout<<" Wrong Sign Cuts = " << wrongsign << std::endl;
+  //std::cout<<" In Hexagon Cuts = "<<reco4<<std::endl;
+  //std::cout<<" Muon Kinematics Cuts = "<<reco4<<std::endl;
+  std::cout << "Muon Energy cut  = "<< reco5 << std::endl;
+  std::cout << "Muon theta cut  = " << reco6 << std::endl;
   std::cout << "**********************************" << std::endl;
   
   //return variables;
