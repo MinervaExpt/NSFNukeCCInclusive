@@ -5,7 +5,6 @@
 *
 !/**/
 !*.*
-NUKECCSRC/ana_common/lib/libNukeCC.so
 NUKECCSRC/ana_common/src/CVUniverse.o
 NUKECCSRC/ana_common/src/NukeCCUtilsNSF.o
 NUKECCSRC/ana_common/src/NukeCC_Binning.o
