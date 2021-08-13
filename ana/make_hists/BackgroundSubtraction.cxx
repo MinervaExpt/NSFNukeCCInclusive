@@ -57,7 +57,6 @@ int main(){
   TFile *out1 = new TFile("BackgroundSubtracted_EventSelection_bkgSubtract.root","RECREATE");
   TFile *out2 = new TFile("BackgroundSubtracted_EventSelection_Purity.root","RECREATE");
 
-
   TParameter<double> *mcPOT = (TParameter<double>*)f1.Get("MCPOT");
   TParameter<double> *dataPOT = (TParameter<double>*)f1.Get("DataPOT");
   double mcpot = mcPOT->GetVal();
@@ -75,12 +74,14 @@ int main(){
   h_background_subtracted_mc->Add(bkg,-1); 
 
   // Data subtracted
-  h_background_subtracted_data = (MnvH1D*)data->Clone("h_background_subtracted_data");
   // scale backgroud to data
   h_background_mc_scale = (MnvH1D*)bkg->Clone("h_background_mc_scale");
   h_background_mc_scale->Scale(POTNormalization);
+  
   // subtract scaled bkg
-  h_background_subtracted_data->AddMissingErrorBandsAndFillWithCV(*h_background_mc_scale);
+  data->ClearAllErrorBands(); 
+  data->AddMissingErrorBandsAndFillWithCV(*h_background_mc_scale);
+  h_background_subtracted_data = (MnvH1D*)data->Clone("h_background_subtracted_data");
   h_background_subtracted_data->Add(h_background_mc_scale,-1);  
 
   // write all the histogramt to file
@@ -88,32 +89,18 @@ int main(){
   h_background_subtracted_mc->Write();
   h_background_mc_scale->Write();
   h_background_subtracted_data->Write();  
-
-//  string legLoc  = "TL";
-//  PlotUtils::MnvPlotter plotter(kCCQENuInclusiveStyle);
-//  plotter.DrawErrorSummary( h_background_subtracted_mc, legLoc, true, true, 0.0001, true, "", "", "bkg"); 
  
   // Purity background subtraction
   out2->cd();
   MnvH1D* purity;
   purity = (MnvH1D*)purityNum->Clone("purity");
-  purity->Divide(purity,reco);
-  
-  /*
-  for (int i = 1; i <= data->GetNbinsX(); i++){
-     for (int j = 1; j <= data->GetNbinsY(); j++){
-//        std::cout << std::boolalpha;
-//        std::cout << "(Binx Biny Signal Bkg Reco Bool Diff Purity): " << i << " " << j << " " << num->GetBinContent(i,j) << " " << bkg->GetBinContent(i,j) << " " << dem->GetBinContent(i,j) << " " << ((num->GetBinContent(i,j) + bkg->GetBinContent(i,j)) == dem->GetBinContent(i,j))  << " " << dem->GetBinContent(i,j) -(num->GetBinContent(i,j) + bkg->GetBinContent(i,j))  << " " << (num->GetBinContent(i,j)/(dem->GetBinContent(i,j))) << " " <<std::endl;
-     double content = (purity->GetBinContent(i, j))*(data->GetBinContent(i, j));
-     data->SetBinContent(i, j, content);
-     double content1 = (purity->GetBinContent(i, j))*(reco->GetBinContent(i, j));
-     reco->SetBinContent(i, j, content1);
-     }
-  }
-  */ 
+  purity->Divide(purity,reco, 1.0, 1.0, "B"); // binomial because numerator is the subset of the denominator, to make the stat error correct
 
   MnvH1D* h_purity_background_subtracted_mc;
   MnvH1D* h_purity_background_subtracted_data;
+
+  data->ClearAllErrorBands(); 
+  data->AddMissingErrorBandsAndFillWithCV(*reco);
 
   h_purity_background_subtracted_mc= (MnvH1D*)reco->Clone("h_purity_background_subtracted_mc");
   h_purity_background_subtracted_data = (MnvH1D*)data->Clone("h_purity_background_subtracted_data");
