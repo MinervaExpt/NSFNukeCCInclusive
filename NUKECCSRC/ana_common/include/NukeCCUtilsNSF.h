@@ -6,7 +6,7 @@
 //#include "GlobalParameters.h" 
 //#include "CCQENuCutsNSF.h"
 
-#include "../include/NukeCC_Cuts.h"
+#include "include/NukeCC_Cuts.h"
 //#include "CCQENuBinning.h"
 //#include "include/ComputeUtils.h"
 //#include "include/NeutronBlob.h"
@@ -14,7 +14,7 @@
 //#include "include/NeutronBlobBinning.h"
 //#include "include/NeutronBlobCuts.h"
 #include "CVUniverse.h"
-#include "PlotUtils/MinervaUniverse.h"
+#include "PlotUtils/DefaultCVUniverse.h"
 #include "PlotUtils/HistWrapper.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/ChainWrapper.h"

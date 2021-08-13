@@ -2,7 +2,7 @@
 #define VARIABLE_H
 
 #include <iterator>
-#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
+#include "include/CVUniverse.h"
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/HistWrapper.h"
 

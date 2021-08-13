@@ -6,7 +6,7 @@
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/HyperDimLinearizer.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-//#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
+#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
 #include "PlotUtils/PlotUtilsPhysicalConstants.h"
 
 #include "PlotUtils/MinervaUniverse.h"
@@ -354,7 +354,6 @@ double CVUniverse::GetWeight() const {
    double wgt_flux=1., wgt_2p2h=1.;
    double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
    double wgt_genie=1., wgt_mueff=1.;
-   double wgt_target_mass = 1;
    //double wgt_anisodd=1.;
  
    // genie
@@ -369,7 +368,6 @@ double CVUniverse::GetWeight() const {
    wgt_rpa = GetRPAWeight();
 
    wgt_mueff = GetMinosEfficiencyWeight(); 
-   wgt_target_mass = GetTargetMassWeight();
    // non-res pi
    //wgt_nrp = GetNonResPiWeight();
    //if (do_warping)
@@ -391,7 +389,7 @@ double CVUniverse::GetWeight() const {
    //if (do_warping)
     // wgt_anisodd = GetVecElem("truth_genie_wgt_Theta_Delta2Npi",4);
  
-   return wgt_flux*wgt_genie*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass ;
+   return wgt_flux*wgt_genie*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h;
    // return 1.0;
 
 }
@@ -401,7 +399,6 @@ double CVUniverse::GetTruthWeight()const{
    double wgt_flux=1., wgt_2p2h=1.;
    double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
    double wgt_genie=1., wgt_mueff=1.;
-   double wgt_target_mass = 1;
    //double wgt_anisodd=1.;
  
    //There need to be flags added to this to turn on and off different tunes. Same goes for GetWeight().  -- ANF 2020-3-18
@@ -416,10 +413,8 @@ double CVUniverse::GetTruthWeight()const{
    wgt_2p2h = GetLowRecoil2p2hWeight();
    // rpa
    wgt_rpa = GetRPAWeight();
-
-   wgt_target_mass = GetTargetMassWeight();
      
-   return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass;
+   return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h;
 }
 
 // Plastic background

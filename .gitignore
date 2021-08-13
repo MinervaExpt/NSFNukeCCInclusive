@@ -5,7 +5,7 @@
 *
 !/**/
 !*.*
-*.root
+NUKECCSRC/ana_common/lib/libNukeCC.so
 NUKECCSRC/ana_common/src/CVUniverse.o
 NUKECCSRC/ana_common/src/NukeCCUtilsNSF.o
 NUKECCSRC/ana_common/src/NukeCC_Binning.o
@@ -17,16 +17,8 @@ ana/make_hists/MigrationHists.o
 ana/make_hists/MigrationHistsAll.o
 ana/make_hists/runEventLoop.o
 ana/make_hists/runEventLoopALL.o
-ana/make_hists/runEventLoop_purity.o
-ana/make_hists/runEventLoop_bkg.o
-ana/make_hists/BackgroundSubtraction.o
 CVS/
 */CVS/
 */*/CVS/
 */*/*/CVS/
 */*/*/*/CVS/
-NUKECCSRC/x86_64-slc7-gcc49-opt/setup.make
-NUKECCSRC/x86_64-slc7-gcc49-opt/x86_64-slc7-gcc49-opt.make
-x86_64-slc7-gcc49-opt/x86_64-slc7-gcc49-opt.make
-
-
