@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
   TString dir(argv[1]);
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
-   
+
   bool doDIS=false;
 
   // MasterAnaDev tuples?
@@ -140,7 +140,16 @@ int main(int argc, char *argv[]){
   std::vector<Var*> variablesMC,variablesData; 
   std::vector<Var2D*> variables2DMC,variables2DData; 
 
-  TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
+  TString histFileName;
+  if(RunCodeWithSystematics){
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+  }
+
+  else{
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+  } 
+
+  //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
 
   //Works good for the grid submission
   //TString histFileName = utils->GetHistFileName( "EventSelection", FileType::kAny, targetID, targetZ );

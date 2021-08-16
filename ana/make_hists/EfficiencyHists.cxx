@@ -219,9 +219,17 @@ int main(int argc, char *argv[]){
  
     std::cout<<" MCScale= "<<MCscale<<std::endl; 
    std::vector<Var*> variablesMC,variablesTruth; 
-   std::vector<Var2D*> variables2DMC,variables2DTruth; 
+   std::vector<Var2D*> variables2DMC,variables2DTruth;
 
-   TString histFileName = utils->GetHistFileName( "Efficiency", FileType::kAny, targetID, targetZ, helicity );
+  TString histFileName;
+  if(RunCodeWithSystematics){
+    histFileName = utils->GetHistFileName( "Efficiency_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+  }
+
+  else{
+    histFileName = utils->GetHistFileName( "Efficiency_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+  } 
+   
      
    TFile fout(dir.Append(histFileName),"RECREATE");	
    

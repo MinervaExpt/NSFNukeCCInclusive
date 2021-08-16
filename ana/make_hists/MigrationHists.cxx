@@ -417,9 +417,16 @@ int main(int argc, char *argv[]){
 	 std::vector<Var2D*> variables2DMC,variables2DData; 
 
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
-	 TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ, helicity ); 
-	   
-	 TFile fout(dir.Append(histFileName),"RECREATE");	
+	TString histFileName;
+  if(RunCodeWithSystematics){
+    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+  }
+
+  else{
+    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+  } 
+   	   
+	TFile fout(dir.Append(histFileName),"RECREATE");	
 	   
 	 // For 1D variables 
 	 FillVariable(chainMC, helicity, utils, cutter, binsDef, variablesMC, variables2DMC, true, targetID, targetZ, plist_string, doDIS);
