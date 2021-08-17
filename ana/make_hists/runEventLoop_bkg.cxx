@@ -160,6 +160,7 @@ int main(int argc, char *argv[]){
   FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_reco_bkg.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_reco_signal.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
