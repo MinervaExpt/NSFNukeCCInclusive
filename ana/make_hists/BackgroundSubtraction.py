@@ -16,9 +16,6 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 ROOT.TH1.AddDirectory(False)
 
 infile = ROOT.TFile("/minerva/data/users/anezkak/ME6A_T3Fe/ROOT_files/Hists_EventSelection_Bkg_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
-# purity numerator = efficiency numerator
-# for purity subtraction
-infile2 = ROOT.TFile("/minerva/data/users/anezkak/ME6A_T3Fe/ROOT_files/Hists_Efficiency_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -36,7 +33,7 @@ for var in vars:
   reco = infile.Get("selected_mc_reco_%s"%var)
   bkg = infile.Get("selected_mc_reco_bkg_%s"%var)
   data = infile.Get("selected_data_reco_%s"%var)
-  purityNum = infile2.Get("h_mc_%s"%var)
+  purityNum = infile.Get("selected_mc_reco_signal_%s"%var)
 
   ##########################################################
   # Bkg Subtration: subtract absolute number of bkg events

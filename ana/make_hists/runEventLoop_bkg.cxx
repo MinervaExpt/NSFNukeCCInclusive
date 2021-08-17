@@ -492,6 +492,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   if(cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) { // true fiducial z distance
                     if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
                       v->m_selected_mc_sb.GetComponentHist("Signal")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu")  Signal++;
                     }
                     else{
