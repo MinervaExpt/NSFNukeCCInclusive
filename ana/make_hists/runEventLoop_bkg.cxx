@@ -9,23 +9,23 @@
 //==============================================================================
 
 //#include "include/CommonIncludes.h"
-#include "../../NUKECCSRC/ana_common/include/CommonIncludes.h"
-#include "../../NUKECCSRC/ana_common/include/CVUniverse.h"
+#include "../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../NUKECCSRC/include/CVUniverse.h"
 #include "../include/VariableRunBkg.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/ana_common/include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "../../NUKECCSRC/ana_common/include/LateralSystematics.h"
+#include "../../NUKECCSRC/include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
 //#include "Cintex/Cintex.h"
-#include "../../NUKECCSRC/ana_common/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/ana_common/include/NukeCC_Cuts.h"
+#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
 #include "PlotUtils/MinosEfficiencySystematics.h"
