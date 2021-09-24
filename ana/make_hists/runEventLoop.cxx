@@ -104,6 +104,8 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+  PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
   NukeCC_Cuts     *cutter  = new NukeCC_Cuts();

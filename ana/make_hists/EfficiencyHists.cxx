@@ -91,6 +91,7 @@ int main(int argc, char *argv[]){
    PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
    PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
 
      
    NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
