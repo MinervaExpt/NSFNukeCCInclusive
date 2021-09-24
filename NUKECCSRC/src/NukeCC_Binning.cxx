@@ -239,7 +239,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     }
     else if( var == "x" ){
 
-      binsLowEdge.push_back(0.);
+      binsLowEdge.push_back(0.001);
       binsLowEdge.push_back(0.05);
       binsLowEdge.push_back(0.1);
       binsLowEdge.push_back(0.2);
@@ -259,7 +259,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     }
     else if( var == "xBrian" ){
 
-      binsLowEdge.push_back(0.);
+      binsLowEdge.push_back(0.001);
       binsLowEdge.push_back(0.1);
       binsLowEdge.push_back(0.3);
       binsLowEdge.push_back(0.7);
@@ -270,7 +270,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     }
      else if( var == "xfine" ){
 
-      binsLowEdge.push_back(0.);
+      binsLowEdge.push_back(0.001);
       binsLowEdge.push_back(0.01);
       binsLowEdge.push_back(0.02);
       binsLowEdge.push_back(0.03);
