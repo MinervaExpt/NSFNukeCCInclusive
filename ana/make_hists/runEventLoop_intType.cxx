@@ -8,42 +8,26 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "include/CommonIncludes.h"
-#include "include/CVUniverse.h"
-#include "../../include/VariableRun_IntType.h"
+#include "../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../NUKECCSRC/include/CVUniverse.h"
+#include "../include/VariableRun_IntType.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/include/NukeCC_Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
-#include "PlotUtils/GenieSystematics.h"
-#include "PlotUtils/FluxSystematics.h"
-#include "PlotUtils/MnvTuneSystematics.h"
-#include "include/LateralSystematics.h"
 #include <iostream>
 #include <stdlib.h>
-#include "Cintex/Cintex.h"
-#include "include/NukeCCUtilsNSF.h"
-#include "include/NukeCC_Cuts.h"
-#include "PlotUtils/MnvPlotter.h" 
+#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
+#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
 #include "TParameter.h"
 
-#include "PlotUtils/MinosEfficiencySystematics.h"
-#include "PlotUtils/MnvHadronReweight.h" 
-#include "PlotUtils/FluxReweighter.h"
-#include "PlotUtils/MinosMuonEfficiencyCorrection.h"
-#include "PlotUtils/MinosMuonPlusEfficiencyCorrection.h"
-#include "PlotUtils/AngleSystematics.h"
-#include "PlotUtils/MuonSystematics.h"
-#include "PlotUtils/ResponseSystematics.h"
-#include "PlotUtils/MuonResolutionSystematics.h"
-#include "PlotUtils/MnvTuneSystematics.h"
-#include "PlotUtils/TargetMassSystematics.h"
+#include "../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
 #ifndef __CINT__
-#include "../../include/plotting_functions.h"
+#include "../include/plotting_functions.h"
 #endif
 #include "PlotUtils/MacroUtil.h" 
 //using namespace globalV;
@@ -71,7 +55,6 @@ std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int tar
 int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
 int main(int argc, char *argv[]){
-  ROOT::Cintex::Cintex::Enable();
   TH1::AddDirectory(false);
 
   if(argc==1){
@@ -97,8 +80,8 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
   const std::string reco_tree_name("NukeCC");
   
   const std::string plist_string("minervame6A");
@@ -120,6 +103,8 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+  PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
   NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
@@ -212,90 +197,6 @@ int main(int argc, char *argv[]){
 // OTHER FUNCTIONS
 //=============================================================================
 //=============================================================================
-
-// Error Bands
-std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainWrapper* chain) {
-  
-  typedef std::map<std::string, std::vector<CVUniverse*> > SystMap;
-  
-  // return map
-  SystMap error_bands;
-
-  // CV 
-  error_bands[std::string("CV")].push_back(new CVUniverse(chain));
-
-  if(RunCodeWithSystematics) {
-  
-    //========================================================================
-    // FLUX
-    //========================================================================
-    int n_flux_universes = 100 ;
-    SystMap flux_systematics = 
-    PlotUtils::GetFluxSystematicsMap<CVUniverse>(chain,n_flux_universes);
-  
-    error_bands.insert(flux_systematics.begin(), flux_systematics.end());
-
-    //========================================================================
-    // GENIE
-    //========================================================================
-    SystMap genie_systematics = PlotUtils::GetGenieSystematicsMap<CVUniverse>(chain);
-    // change that true to a switch on do_nonrespi_tune
-    error_bands.insert(genie_systematics.begin(), genie_systematics.end());
-    // includes standard Genie + Rvx1pi (final state pion normalization) + FaCCQE
-
-    //========================================================================
-    // MnvTunes
-    //======================================================================== 
-  
-    // RPA
-    SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<CVUniverse>(chain);
-    error_bands.insert(RPA_systematics.begin(),RPA_systematics.end());
-
-    // 2p2h
-    SystMap _2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<CVUniverse>(chain);
-    error_bands.insert(_2p2h_systematics.begin(),_2p2h_systematics.end());
-
-  
-    //========================================================================
-    //  Muons
-    //========================================================================
-
-    // Muon momentum
-    // MINOS
-    SystMap muonminosP_systematics = PlotUtils::GetMinosMuonSystematicsMap<CVUniverse>(chain);
-    error_bands.insert(muonminosP_systematics.begin(), muonminosP_systematics.end());
-  
-    // Muon momentum
-    // MINERvA
-    SystMap muonminervaP_systematics = PlotUtils::GetMinervaMuonSystematicsMap<CVUniverse>(chain);
-    error_bands.insert(muonminervaP_systematics.begin(), muonminervaP_systematics.end());
-
-    //Muon Momentum Resolution
-    SystMap muonP_resolutions = PlotUtils::GetMuonResolutionSystematicsMap<CVUniverse>(chain);
-    error_bands.insert(muonP_resolutions.begin(),muonP_resolutions.end());
-  
-    //MINOS Efficiency
-    SystMap minos_efficiency = PlotUtils::GetMinosEfficiencySystematicsMap<CVUniverse>(chain);
-    error_bands.insert(minos_efficiency.begin(),minos_efficiency.end());
-
-    //========================================================================
-    // Detector
-    //========================================================================
-  
-    SystMap angle_systematics = PlotUtils::GetAngleSystematicsMap<CVUniverse>(chain);
-    ///////////////////////NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err);
-    error_bands.insert(angle_systematics.begin(), angle_systematics.end());
-
-
-    // Target Mass Systematics
-    SystMap targetMass_systematics = PlotUtils::GetTargetMassSystematicsMap<CVUniverse>(chain);
-    error_bands.insert(targetMass_systematics.begin(), targetMass_systematics.end());
-
-  }
-
-  return error_bands;
-}
-
 
 // Fill Variables
    
@@ -417,7 +318,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   // Targets combining Loop
   //=========================================
 
-  for(int t = 0; t < targetIDs.size(); t++){
+  //for(int t = 0; t < targetIDs.size(); t++){
 
     //=========================================
     // Entry Loop
@@ -444,12 +345,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if(!cutter->PassReco(universe,helicity)) continue;
               reco1++;
               
-              //if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
-              if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
+              if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
+              //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              //if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
-              if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
               reco3++;
               
               if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
@@ -534,12 +435,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	      if(!cutter->PassReco(dataverse,helicity)) continue;
 	      reco1++;
         
-        //if(!cutter->IsInMaterial(dataverse,targetID,targetZ, false)) continue;
-        if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
+        if(!cutter->IsInMaterial(dataverse,targetID,targetZ, false)) continue;
+        //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        //if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
-        if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
         reco3++;
 	 
         if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
@@ -572,7 +473,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       }
 
     }//End entries loop
-  }//Target loop closed
+  //}//Target loop closed
 
 
   for(auto band : error_bands){

@@ -19,6 +19,6 @@ ana/make_hists/runEventLoopALL.o
 ana/make_hists/runEventLoop_purity.o
 ana/make_hists/runEventLoop_bkg.o
 ana/make_hists/BackgroundSubtractionOLD_notCorrected.o
-ana/make_hists/*
-
+ana/make_hists/*.o
+../../NUKECCSRC/src/*.o
 
