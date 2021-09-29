@@ -24,6 +24,7 @@ ana/make_hists/MigrationHistsAll
 ana/make_hists/runEventLoop
 ana/make_hists/runEventLoopALL
 ana/make_hists/runEventLoop_bkg
+ana/make_hists/runEventLoopModel
 NUKECCSRC/src/CVUniverse.o
 NUKECCSRC/src/NukeCCUtilsNSF.o
 NUKECCSRC/src/NukeCC_Binning.o
