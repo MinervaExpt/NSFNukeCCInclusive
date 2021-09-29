@@ -409,7 +409,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     }
                     else{
                       // Background: out of muon energy range !
-                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu") Bkg++;
                       v->m_selected_mc_sb.GetComponentHist("NotEmu")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
@@ -418,7 +418,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   }
                   else{ 
                     //Background: different material !
-                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") Bkg++;
                     v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
@@ -427,7 +427,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 }
                 // Background: wrong sign events and neutral current events
                 else { 
-                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
+                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="Enu") Bkg++;
 
