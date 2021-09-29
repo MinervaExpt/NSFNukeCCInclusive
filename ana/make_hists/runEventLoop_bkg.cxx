@@ -341,6 +341,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int Bkg = 0;
   int WrongSign = 0; // just CC antinu
   int NC = 0; // both nu and antinu
+  int otherneutrinotype = 0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
     
@@ -387,7 +388,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
               
-              
 
 	            for (auto v : variables){
 	              if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
@@ -409,7 +409,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     }
                     else{
                       // Background: out of muon energy range !
-                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
                       v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu") Bkg++;
                       v->m_selected_mc_sb.GetComponentHist("NotEmu")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
@@ -418,7 +418,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   }
                   else{ 
                     //Background: different material !
-                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
                     v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") Bkg++;
                     v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
@@ -427,13 +427,18 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 }
                 // Background: wrong sign events and neutral current events
                 else { 
-                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
                   v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="Enu") Bkg++;
 
                   if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
                     v->m_selected_mc_sb.GetComponentHist("NC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") NC++;
+                    if (-14 != universe->GetInt("mc_incoming") && 14 != universe->GetInt("mc_incoming")){
+                      // if not muon antineutrino or muon neutrino -> print
+                      std::cout << universe->GetInt("mc_incoming") << std::endl;
+                      otherneutrinotype++;
+                    }
                   }
 
                   else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
@@ -526,6 +531,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "All background = "<< Bkg << std::endl;
   std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
   std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
+  std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
   std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
   std::cout << "Not muon energy = "<< NotEmu << std::endl;
   std::cout << "**********************************" << std::endl;
