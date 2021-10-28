@@ -198,6 +198,22 @@ void NukeCC_Cuts::Show(CVUniverse *cv,Long64_t entry)
 // Analysis Helpers/Cuts
 //=======================================================
 //
+// Tracker CUT
+
+bool NukeCC_Cuts::TrackerOnly(CVUniverse* cv){
+    if (cv->GetVecElem("NukeCC_vtx",2) >= 5980 && cv->GetVecElem("NukeCC_vtx",2) <= 8422)
+        return true;
+    else
+        return false;
+} // from Maria 
+
+bool NukeCC_Cuts::TrackerOnlyTrue(CVUniverse* cv){
+    if (cv->GetVecElem("mc_vtx",2) >= 5980 && cv->GetVecElem("mc_vtx",2) <= 8422)
+        return true;
+    else
+        return false;
+} // from Maria
+
 //Faiza Material Cut
 
 bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bool anyTrackerMod /*false*/ )

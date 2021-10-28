@@ -31,35 +31,36 @@ static NukeCC_Cuts &Get();
 
 
     //!Set up a vector of bad events
-      std::vector< pair< pair<int, int>, pair<int, int> > > InitBadEventVector();
+    std::vector< pair< pair<int, int>, pair<int, int> > > InitBadEventVector();
 
-      //===== Public member variables =====//
-      //! Is this tree made from MC?
-      bool isMC;
+    //===== Public member variables =====//
+    //! Is this tree made from MC?
+    bool isMC;
+
+    //===== BEGIN ANALYSIS CUTS =====//
+    // Tracker region cut
+
+    bool TrackerOnly(CVUniverse* cv);
+    bool TrackerOnlyTrue(CVUniverse* cv);
+
+    bool PassMuCurveCut( CVUniverse *cv, double minCut, HelicityType::t_HelicityType h);
+    bool PassMuCurveCut( CVUniverse *cv, HelicityType::t_HelicityType h);
+      
+    bool PassMuCoilCut( CVUniverse *cv );
+
+    bool PassMuQualityCut(CVUniverse *cv, int qual = 2 );
 
       
-      //===== BEGIN ANALYSIS CUTS =====//
-
-
-       
-      bool PassMuCurveCut( CVUniverse *cv, double minCut, HelicityType::t_HelicityType h);
-      bool PassMuCurveCut( CVUniverse *cv, HelicityType::t_HelicityType h);
-      
-       bool PassMuCoilCut( CVUniverse *cv );
-
-      bool PassMuQualityCut(CVUniverse *cv, int qual = 2 );
-
-      
-        bool PassHelicityCut(CVUniverse *cv, HelicityType::t_HelicityType h );
-      //! Do the true nu and true theta mu cuts
-      bool PassTrueMuEnergyCut(CVUniverse *cv );
+    bool PassHelicityCut(CVUniverse *cv, HelicityType::t_HelicityType h );
+    //! Do the true nu and true theta mu cuts
+    bool PassTrueMuEnergyCut(CVUniverse *cv );
 
 
    //   virtual bool PassMuEnergyCut( );
-       bool PassMuEnergyCut(CVUniverse *cv );
+    bool PassMuEnergyCut(CVUniverse *cv );
 
-       bool PassThetaCut(CVUniverse *cv);
-       bool PassTrueThetaCut(CVUniverse *cv);
+    bool PassThetaCut(CVUniverse *cv);
+    bool PassTrueThetaCut(CVUniverse *cv);
 
        //void Show(CVUniverse *cv,Long64_t entry);
        bool PassGoodTrackingCut(CVUniverse *cv);
