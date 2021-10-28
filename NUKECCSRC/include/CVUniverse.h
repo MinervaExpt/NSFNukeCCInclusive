@@ -64,6 +64,16 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
 
     ////// Dipak's study equivalent: ML vertex plane prob cut /////
     double virtual GetANNPlaneProb() const;
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // MC initial momentum of the struck nucleons 
+    // mc_initNucVec (px,py,pz,E) in MeV/c
+
+    virtual double GetInNuclMomentumX() const;
+    virtual double GetInNuclMomentumY() const;
+    virtual double GetInNuclMomentumZ() const;
+    virtual double GetInNuclMomentum() const;
+
     /////////////////////////////////////////////////////////////////////////////////
     // NEW for vertex position
     double virtual GetVertexXMy() const;
@@ -137,6 +147,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
 
 
     virtual double calcXTrue(const double Q2True,const double EnuTrue, const double EmuTrue)const;
+    virtual double readXTrue() const;
 
     virtual double calcXReco(const double Q2,const double Enu, const double Emu)
     const ;

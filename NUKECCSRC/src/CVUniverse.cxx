@@ -46,6 +46,36 @@ double CVUniverse::GetANNPlaneProb() const {
     return prob;
 }
 /////////////////////////////////////////////////////////////////////////////////
+// MC initial momentum of the struck nucleons 
+// mc_initNucVec (px,py,pz,E) in MeV/c
+
+double CVUniverse::GetInNuclMomentumX() const {
+    double initNuclpX = GetVecElem("mc_initNucVec",0); // in MeV ..
+    return initNuclpX;
+}
+
+double CVUniverse::GetInNuclMomentumY() const {
+    double initNuclpY = GetVecElem("mc_initNucVec",1); // in MeV ..
+    return initNuclpY;
+}
+
+double CVUniverse::GetInNuclMomentumZ() const {
+    double initNuclpZ = GetVecElem("mc_initNucVec",2); // in MeV ..
+    return initNuclpZ;
+}
+
+double CVUniverse::GetInNuclMomentum() const {
+    double initNuclpX = GetVecElem("mc_initNucVec",0); // in MeV ..
+    double initNuclpY = GetVecElem("mc_initNucVec",1); // in MeV ..
+    double initNuclpZ = GetVecElem("mc_initNucVec",2); // in MeV ..
+
+    double InNuclMomentum = sqrt(initNuclpX*initNuclpX + initNuclpY*initNuclpY + initNuclpZ*initNuclpZ);
+
+    return InNuclMomentum;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
 // NEW for vertex position
 // Reco
 
@@ -213,7 +243,12 @@ double nuclMass = M_nucleon;
                 nuclMass = M_proton;
 double x = Q2True / (2. * ( EnuTrue -  EmuTrue) * nuclMass);
 return x;
-}  
+}
+
+double CVUniverse::readXTrue() const{ // read true GENIE value from Monte Carlo
+    double x = GetDouble("mc_Bjorkenx");
+    return x;
+}
 
 double CVUniverse::calcXReco(const double Q2,const double Enu, const double Emu)
 const {
