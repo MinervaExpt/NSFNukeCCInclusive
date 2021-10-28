@@ -1,7 +1,7 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include "include/CVUniverse.h"
+#include "../../NUKECCSRC/include/CVUniverse.h"
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/HistWrapper.h"
 
@@ -129,31 +129,6 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     m_hists_tgt_regDS = HW(hists_tgt_regDS, univs, clear_bands);
 }
 //-------------------------------------------------------------------------------------------------------------------------
-/*
-   m_selected_mc_US = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("US_t%d_z%d_%s", targetID, targetZ, name), name, GetNBins(), bins.data());
-    if(targetZ == 26)m_selected_mc_US.AddComponentHist("Fe");
-    if(targetZ == 82)m_selected_mc_US.AddComponentHist("Pb");
-    if(targetZ == 6)m_selected_mc_US.AddComponentHist("C");
-    m_selected_mc_US.AddComponentHist("Other");
-    m_selected_mc_US.AddComponentHist("regUS");
-    m_selected_mc_US.AddComponentHist("regDS");
-    
-   m_selected_mc_DS = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("DS_t%d_z%d_%s", targetID, targetZ, name), name, GetNBins(), bins.data());
-    if(targetZ == 26)m_selected_mc_DS.AddComponentHist("Fe");
-    if(targetZ == 82)m_selected_mc_DS.AddComponentHist("Pb");
-    if(targetZ == 6)m_selected_mc_DS.AddComponentHist("C");
-    m_selected_mc_DS.AddComponentHist("Other");
-    m_selected_mc_DS.AddComponentHist("regUS");
-    m_selected_mc_DS.AddComponentHist("regDS");
- 
-   m_selected_mc_tgt = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("Target_t%d_z%d_%s", targetID, targetZ, name), name, GetNBins(), bins.data());
-    if(targetZ == 26)m_selected_mc_tgt.AddComponentHist("Fe");
-    if(targetZ == 82)m_selected_mc_tgt.AddComponentHist("Pb");
-    if(targetZ == 6)m_selected_mc_tgt.AddComponentHist("C");
-    m_selected_mc_tgt.AddComponentHist("Other");
-    m_selected_mc_tgt.AddComponentHist("regUS");
-    m_selected_mc_tgt.AddComponentHist("regDS");
-*/
 delete selected_data_reco_US;
 delete selected_data_reco_DS;
 delete selected_data_reco_tgt;
