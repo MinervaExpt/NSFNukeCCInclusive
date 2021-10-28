@@ -190,7 +190,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	  
       
       v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-      v->m_selected_Migration.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
+      //v->m_selected_Migration.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
       
       //Migration stuff
       v->FillResponse(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe),v->GetTrueValueX(*universe), v->GetTrueValueY(*universe),universe->ShortName(),universe->GetWeight(),unv_count); 
@@ -207,6 +207,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	     if( v->GetName()=="Enu") reco8++;
 
 	     v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
+       v->m_selected_Migration.univHist(universe)->Fill(v->GetRecoValue(*universe), v->GetTrueValue(*universe), universe->GetWeight()); 
        //1D response
        v->FillResponse1D(v->GetRecoValue(*universe),v->GetTrueValue(*universe),universe->ShortName(),universe->GetWeight(),unv_count); 
 	   	}
@@ -332,6 +333,9 @@ int main(int argc, char *argv[]){
 	     
          	 
 	 for (auto v : variablesMC) v-> mresp1D.SyncCVHistos();
+   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos(); 
+   for (auto v : variablesMC) v->m_selected_Migration.SyncCVHistos(); 
+
 	 for (auto v : variables2DMC) v-> mresp.SyncCVHistos();
 	 
 	 
