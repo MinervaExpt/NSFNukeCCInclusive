@@ -33,6 +33,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   // selected mc reco histwrapper
   HW m_selected_mc_reco,m_selected_data_reco,m_selected_data_reco_sb;
+  HW m_selected_mc_plastic;
 
   // HISTFOLIO
   // selected mc reco - signal background histfolio
@@ -59,6 +60,10 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
     MH1D* selected_data_reco_sb = new MH1D(Form("selected_data_reco_sb_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco_sb = HW(selected_data_reco_sb, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_plastic = new MH1D(Form("selected_mc_plastic_%s", name), name,
+                                      GetNBins(), bins.data());
+    m_selected_mc_plastic = HW(dummy_selected_mc_plastic, univs, clear_bands);
   
   // HISTFOLIO
     // selected mc reco - signal background histfolio
@@ -88,6 +93,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     //m_selected_data_sb.AddComponentHist("Data");
 delete dummy_selected_mc_reco;
 delete dummy_selected_data_reco;
+delete dummy_selected_mc_plastic;
   }
 
   //=======================================================================================
@@ -97,7 +103,10 @@ delete dummy_selected_data_reco;
     f.cd();
 
     // selected mc reco
-    if(isMC)  m_selected_mc_reco.hist->Write();
+    if(isMC)  {
+      m_selected_mc_reco.hist->Write();
+      m_selected_mc_plastic.hist->Write();
+    }
     else m_selected_data_reco.hist->Write();
 
     // selected mc  histfolio fir Hist Stacking
