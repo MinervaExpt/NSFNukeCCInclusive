@@ -33,6 +33,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   // selected mc reco histwrapper
   HW m_selected_mc_reco,m_selected_mc_reco_bkg,m_selected_mc_reco_signal,m_selected_data_reco,m_selected_data_reco_sb;
+  HW m_selected_mc_USplastic, m_selected_mc_DSplastic, m_selected_mc_plastic  ;
 
   // HISTFOLIO
   // selected mc reco - signal background histfolio
@@ -67,6 +68,18 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
     MH1D* selected_data_reco_sb = new MH1D(Form("selected_data_reco_sb_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco_sb = HW(selected_data_reco_sb, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_plastic = new MH1D(Form("selected_mc_plastic_%s", name), name,
+                                      GetNBins(), bins.data());
+    m_selected_mc_plastic = HW(dummy_selected_mc_plastic, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_USplastic = new MH1D(Form("selected_mc_USplastic_%s", name), name,
+                                      GetNBins(), bins.data());
+    m_selected_mc_USplastic = HW(dummy_selected_mc_USplastic, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_DSplastic = new MH1D(Form("selected_mc_DSplastic_%s", name), name,
+                                      GetNBins(), bins.data());
+    m_selected_mc_DSplastic = HW(dummy_selected_mc_DSplastic, univs, clear_bands);
   
   // HISTFOLIO
     // selected mc reco - signal background histfolio
@@ -80,12 +93,16 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     m_selected_mc_sb.AddComponentHist("NC");
     m_selected_mc_sb.AddComponentHist("NotEmu");
     m_selected_mc_sb.AddComponentHist("WrongMaterialOrTarget");
+    m_selected_mc_sb.AddComponentHist("Plastic");
     //m_selected_mc_sb.AddComponentHist("MC");
     //m_selected_data_sb.AddComponentHist("Data");
 delete dummy_selected_mc_reco;
 delete dummy_selected_mc_reco_bkg;
 delete dummy_selected_mc_reco_signal;
 delete dummy_selected_data_reco;
+delete dummy_selected_mc_USplastic;
+delete dummy_selected_mc_DSplastic;
+delete dummy_selected_mc_plastic;
   }
 
   //=======================================================================================
@@ -99,6 +116,9 @@ delete dummy_selected_data_reco;
       m_selected_mc_reco.hist->Write();
       m_selected_mc_reco_bkg.hist->Write();
       m_selected_mc_reco_signal.hist->Write();
+      m_selected_mc_plastic.hist->Write();
+      m_selected_mc_USplastic.hist->Write();
+      m_selected_mc_DSplastic.hist->Write();
     }
     else m_selected_data_reco.hist->Write();
 
