@@ -156,6 +156,9 @@ int main(int argc, char *argv[]){
   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_reco_bkg.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_reco_signal.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_plastic.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_USplastic.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_DSplastic.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
@@ -338,6 +341,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int Signal = 0;
   int NotEmu = 0;
   int WrongMaterialOrTarget = 0;
+  int plastic = 0;
   int Bkg = 0;
   int WrongSign = 0; // just CC antinu
   int NC = 0; // both nu and antinu
@@ -422,7 +426,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") Bkg++;
                     v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                    if (v->GetName()=="Enu") WrongMaterialOrTarget++;
+                    if (v->GetName()=="Enu") WrongMaterialOrTarget++; 
+                    
+                    if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
+                      v->m_selected_mc_plastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      if (v->GetName()=="Enu") plastic++;
+                    }
                   }
                 }
                 // Background: wrong sign events and neutral current events
@@ -530,6 +539,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Signal  = "<< Signal<< std::endl;
   std::cout << "All background = "<< Bkg << std::endl;
   std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
+  std::cout << "Out of that is Plastic = " << plastic << std::endl;
   std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
   std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
   std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
