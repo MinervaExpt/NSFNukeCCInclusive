@@ -40,6 +40,8 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
   typedef PlotUtils::Hist2DWrapper<NUKECC_ANA::CVUniverse> HW2D;
   HW2D mresp1D;
+  typedef PlotUtils::MnvH2D MH2D;
+  HW2D m_selected_Migration;
   std::map<std::string,MinervaUnfold::MnvResponse*> Response1D;
   std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr;
   std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr2; 
@@ -94,8 +96,14 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     m_selected_mc_sb.AddComponentHist("DIS");
     m_selected_mc_sb.AddComponentHist("MC");
    // m_selected_data_sb.AddComponentHist("Data");
+
+    MH2D* dummy_selected_Migration = new MH2D(Form("selected_Migration_%s", name), name, GetNBins(),GetBinVec().data(), GetNBins(), GetBinVec().data());
+    m_selected_Migration = HW2D(dummy_selected_Migration, univs, clear_bands);
+
+
 delete dummy_selected_mc_reco;
 delete dummy_selected_truth_reco;
+delete dummy_selected_Migration;
 delete dummy_selected_mc_true;
 delete dummy_selected_data_reco;
   }
@@ -136,8 +144,6 @@ delete dummy_selected_data_reco;
   }
 
 
-
-
 void SetupResponse1D(std::map<const std::string, int> systematics){
 //void SetupResponse(T univs){
 	   std::vector<double> bins = GetBinVec();
@@ -146,16 +152,16 @@ void SetupResponse1D(std::map<const std::string, int> systematics){
 	   axis_binning bin_x;
 	   bin_x.uniform=false;
 	
-     	vector<double> vx;
+     vector<double> vx;
      	   
 	   for(int i=0; i<=GetNBins(); i++){vx.push_back(GetBinVec().data()[i]);}
      	   
 	   bin_x.bin_edges = vx;
-	   bin_x.nbins	   = GetNBins();
-	   bin_x.min 	   = GetBinVec().data()[0];
-	   bin_x.max       = GetBinVec().data()[GetNBins()];
+	   bin_x.nbins	= GetNBins();
+	   bin_x.min 	  = GetBinVec().data()[0];
+	   bin_x.max    = GetBinVec().data()[GetNBins()];
            
-           cout<<"bins min = "<<bin_x.min<<"bins max = "<<bin_x.max<<"Number of bins = "<<bin_x.nbins<<endl;
+      cout<<"bins min = "<<bin_x.min<<"bins max = "<<bin_x.max<<"Number of bins = "<<bin_x.nbins<<endl;
             
 	   //Response1D.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("selected_mc_response1d_%s", name), name, bin_x, bin_x, systematics))); 
 	   Response1D.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("response1d_%s", name), name, bin_x, bin_x, systematics))); 
@@ -220,6 +226,7 @@ void getResponseObjects1D(T univs)
     // selected mc reco
     if(isMC) { m_selected_mc_reco.hist->Write();
                m_selected_mc_true.hist->Write();
+               m_selected_Migration.hist->Write();
                mresp1D.hist->Write();
 }
     else {m_selected_data_reco.hist->Write();
@@ -304,8 +311,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     
 
     /////For 2D analysis
-    MH2D* dummy_selected_Migration =
-        new MH2D(Form("Migration_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    MH2D* dummy_selected_Migration = new MH2D(Form("Migration_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsX(), GetBinVecX().data());
     m_selected_Migration = HW2D(dummy_selected_Migration, univs, clear_bands);///For 2D Migration
    
 
