@@ -224,11 +224,16 @@ void PlotStacked(PlotUtils::MnvH1D* data,const TObjArray& array_mc, double mcSca
   if (ymax > 0) mnv_plotter.axis_maximum = ymax;
   std::string outfile_name = Form("StackedBreakdown_%s", outfile_tag.c_str());
   TCanvas cE("c1", "c1");
+  double infoX = .68;
+  double infoY = .78;
+  std::string x_label = var.c_str();
+  std::string y_label = ((PlotUtils::MnvH1D*)array.At(0))->GetYaxis()->GetTitle();
 
-  std::string x_label = "Plane Number"; //var.c_str();
+
+  //std::string x_label = "Plane Number"; //var.c_str();
   //std::string x_label = ((PlotUtils::MnvH1D*)array.At(0))->GetXaxis()->GetTitle();
   //td::string y_label = ((PlotUtils::MnvH1D*)array.At(0))->GetYaxis()->GetTitle();
-  std::string y_label = "Events (norm.)";
+  //std::string y_label = "Events (norm.)";
 
 //  double mcScale = 1.;
 //  PlotUtils::MnvH1D* data = new PlotUtils::MnvH1D(
@@ -238,12 +243,12 @@ void PlotStacked(PlotUtils::MnvH1D* data,const TObjArray& array_mc, double mcSca
   // x and y labels. Given that this is much more commonly used with MC, this
   // seems like a bad choice, but who am I to break backwards compatibility?
   // Anyway, it means that we need to provide the x and y labels manually.
-  mnv_plotter.ApplyStyle(kCCQENuInclusiveStyle);
+  //mnv_plotter.ApplyStyle(kCCQENuInclusiveStyle);
   mnv_plotter.DrawDataStackedMC(data, &array, mcScale, "TR", "Data", -2, -2, 3001, x_label.c_str(), y_label.c_str());
                                                                     // base color, offset colot, fill style
   // TLegend* l was already defined and drawn
   //mnv_plotter.DrawDataStackedMC(data, &array, mcScale, "TR", "Data", 2, 1, 1001, x_label.c_str(), y_label.c_str());
-
+  mnv_plotter.WriteNorm("Abs-Normalized", infoX, infoY);
   //mnv_plotter.WritePreliminary("TL");
   mnv_plotter.AddHistoTitle(plot_title.c_str());
   mnv_plotter.MultiPrint(&cE, outfile_name, "png");
@@ -271,25 +276,15 @@ void PlotRatio(PlotUtils::MnvH1D* dataHist, PlotUtils::MnvH1D* mcHist, double mc
   std::string outfile_name = Form("RatioPlot_%s", outfile_tag.c_str());
   TCanvas cE("c1", "c1");
 
-  dataHist->GetXaxis()->SetTitle(var.c_str());
-  mcHist->GetXaxis()->SetTitle(var.c_str());
-
-  dataHist->GetXaxis()->SetTitle("Plane Number");
-  mcHist->GetXaxis()->SetTitle("Plane Number");
-
-  //mcHist->GetXaxis()->SetTitle(var.c_str());
-   dataHist->GetXaxis()->CenterTitle();
-   dataHist->GetYaxis()->CenterTitle();
-   mcHist->GetXaxis()->CenterTitle();
-   mcHist->GetYaxis()->CenterTitle();
+  std::string x_label = var.c_str();
+  std::string y_label = "Ratio";
 
  // hist->GetYaxis()->SetRangeUser(0.0,5.0);
  // hist->GetXaxis()->SetRangeUser(0.0,3.0);
 
   //mnv_plotter.DrawDataMCRatio(dataHist, mcHist, mcScale, true, 0.95, 1.05, y_label.c_str());
-  mnv_plotter.DrawDataMCRatio(dataHist, mcHist, mcScale, true, true, 0.0, 2.0);
+  mnv_plotter.DrawDataMCRatio(dataHist, mcHist, mcScale, true, true, 0.0, 2.0, x_label.c_str(), y_label.c_str());
   mnv_plotter.AddChi2Label(dataHist, mcHist, mcScale, "TL");
-
   //mnv_plotter.WritePreliminary("TL");
   //mnv_plotter.AddPOTNormBox(dataPOT, mcPOT, 0.3, 1.2, 0.03);
   mnv_plotter.AddHistoTitle(plot_title.c_str());
