@@ -56,7 +56,7 @@ void PlotTotalError(PlotUtils::MnvH1D* hist, std::string method_str) {
 
 void PlotErrorSummary(PlotUtils::MnvH1D* h/*ist*/, std::string label) {
   PlotUtils::MnvH1D* hist = (PlotUtils::MnvH1D*)h->Clone("hist"); //added based on MAT tut
-  PlotUtils::MnvPlotter mnvPlotter /*(PlotUtils::kNukeCCStyle)*/(PlotUtils::kCCNuPionIncStyle);
+  PlotUtils::MnvPlotter mnvPlotter (PlotUtils::kNukeCCStyle);//(PlotUtils::kCCNuPionIncStyle);
   TCanvas cE("c1", "c1");
   hist->GetXaxis()->SetTitle(label.c_str());
 
@@ -226,14 +226,17 @@ void PlotStacked(PlotUtils::MnvH1D* data,const TObjArray& array_mc, double mcSca
   TCanvas cE("c1", "c1");
   double infoX = .68;
   double infoY = .78;
-  std::string x_label = var.c_str();
-  std::string y_label = ((PlotUtils::MnvH1D*)array.At(0))->GetYaxis()->GetTitle();
 
+  std::string x_label;
+  if (var == "Enu") {x_label = "Neutrino Energy [GeV]";}
+  if (var == "x") {x_label= "Bjorken x";}
+  if (var == "planeDNN") {x_label = "Plane Number";}
 
-  //std::string x_label = "Plane Number"; //var.c_str();
-  //std::string x_label = ((PlotUtils::MnvH1D*)array.At(0))->GetXaxis()->GetTitle();
-  //td::string y_label = ((PlotUtils::MnvH1D*)array.At(0))->GetYaxis()->GetTitle();
-  //std::string y_label = "Events (norm.)";
+  std::string y_label;
+  if (var == "Enu") {y_label = "Events/GeV";}
+  if (var == "x") {y_label= "Events (norm.)";}
+  if (var == "planeDNN") {y_label = "Events (norm.)";}
+
 
 //  double mcScale = 1.;
 //  PlotUtils::MnvH1D* data = new PlotUtils::MnvH1D(
@@ -244,11 +247,10 @@ void PlotStacked(PlotUtils::MnvH1D* data,const TObjArray& array_mc, double mcSca
   // seems like a bad choice, but who am I to break backwards compatibility?
   // Anyway, it means that we need to provide the x and y labels manually.
   //mnv_plotter.ApplyStyle(kCCQENuInclusiveStyle);
+  data->GetYaxis()->CenterTitle();
   mnv_plotter.DrawDataStackedMC(data, &array, mcScale, "TR", "Data", -2, -2, 3001, x_label.c_str(), y_label.c_str());
                                                                     // base color, offset colot, fill style
-  // TLegend* l was already defined and drawn
-  //mnv_plotter.DrawDataStackedMC(data, &array, mcScale, "TR", "Data", 2, 1, 1001, x_label.c_str(), y_label.c_str());
-  mnv_plotter.WriteNorm("Abs-Normalized", infoX, infoY);
+  //mnv_plotter.WriteNorm("Abs-Normalized", infoX, infoY);
   //mnv_plotter.WritePreliminary("TL");
   mnv_plotter.AddHistoTitle(plot_title.c_str());
   mnv_plotter.MultiPrint(&cE, outfile_name, "png");
@@ -268,8 +270,8 @@ void Plot2D(PlotUtils::MnvH2D* hist, std::string name, std::string label_xaxis,
     c.Print(Form("%s_2D.png", name.c_str()));
 }
 
-void PlotRatio(PlotUtils::MnvH1D* dataHist, PlotUtils::MnvH1D* mcHist, double mcScale, double dataPOT, double mcPOT, const string var,  std::string outfile_tag = "", std::string plot_title = "", double ymax = -1){
-//void PlotRatio(PlotUtils::MnvH1D* dataHist, PlotUtils::MnvH1D* mcHist, double mcScale, const string var, std::string outfile_tag = "", std::string plot_title = "", double ymax = -1 ){
+//void PlotRatio(PlotUtils::MnvH1D* dataHist, PlotUtils::MnvH1D* mcHist, double mcScale){
+void PlotRatio(PlotUtils::MnvH1D* dataHist, PlotUtils::MnvH1D* mcHist, double mcScale, const string var, std::string outfile_tag = "", std::string plot_title = "", double ymax = -1 ){
 
   PlotUtils::MnvPlotter mnv_plotter;
   if (ymax > 0) mnv_plotter.axis_maximum = ymax;
