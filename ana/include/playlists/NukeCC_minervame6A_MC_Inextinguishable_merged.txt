@@ -1,4 +1,0 @@
-#/pnfs/minerva/persistent/users/zdar/Merged_mc_ana_me6G_AnaDev/MasterAnaDev_mc_AnaTuple_run*
-#/pnfs/minerva/persistent/users/zdar/Merged_mc_ana_me6H_AnaDev/MasterAnaDev_mc_AnaTuple_run*
-#/pnfs/minerva/persistent/users/zdar/Merged_mc_ana_me6I_AnaDev/MasterAnaDev_mc_AnaTuple_run*
-/pnfs/minerva/persistent/users/zdar/Merged_mc_ana_me6J_AnaDev/MasterAnaDev_mc_AnaTuple_run*
