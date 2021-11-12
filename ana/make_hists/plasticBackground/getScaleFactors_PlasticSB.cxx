@@ -210,8 +210,10 @@ int main(int argc, char * argv[]){
     scaleFactor->cd();
       
     //pass the vectors of histos for background fitting (USING MINUIT2MINIMIZER) and tuning
+    cout<<"************ Upstream ******************"<<endl;
     CalcScaleFactorAndTuneBG( mnvPlotter, histos_fit_US, histos_mc_tuning_US, vars[i], targetID, targetZ, dataMCScale, scaleFactor, false, true, playlist, makeDISPlots, outdir.c_str() );
-      
+    
+    cout<<"************ Downstream ******************"<<endl;
     CalcScaleFactorAndTuneBG( mnvPlotter, histos_fit_DS, histos_mc_tuning_DS, vars[i], targetID, targetZ, dataMCScale, scaleFactor, true, false, playlist, makeDISPlots, outdir.c_str() );
       
     //clear vector before going to the next variable 
