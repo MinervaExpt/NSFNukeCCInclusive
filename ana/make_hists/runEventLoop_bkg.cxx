@@ -159,6 +159,7 @@ int main(int argc, char *argv[]){
   for (auto v : variablesMC) v->m_selected_mc_plastic.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_USplastic.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_DSplastic.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_other.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
@@ -346,6 +347,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int WrongSign = 0; // just CC antinu
   int NC = 0; // both nu and antinu
   int otherneutrinotype = 0;
+  int US=0;
+  int DS=0;
+  int other=0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
     
@@ -425,12 +429,30 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") Bkg++;
-                    v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    //v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") WrongMaterialOrTarget++; 
                     
                     if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
                       v->m_selected_mc_plastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu") plastic++;
+                      
+                      // DS
+                      if(universe->GetVecElem("NukeCC_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
+                        v->m_selected_mc_DSplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                        v->m_selected_mc_sb.GetComponentHist("DS_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+                        if (v->GetName()=="Enu") DS++;
+                      }
+                      // US
+                      else if(universe->GetVecElem("NukeCC_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
+                      v->m_selected_mc_USplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_sb.GetComponentHist("US_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+                      if (v->GetName()=="Enu") US++;
+                      }
+                    }
+                    else{
+                      v->m_selected_mc_other.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_sb.GetComponentHist("Other_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+                      if (v->GetName()=="Enu") other++;
                     }
                   }
                 }
@@ -539,7 +561,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Signal  = "<< Signal<< std::endl;
   std::cout << "All background = "<< Bkg << std::endl;
   std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
+  std::cout << "Out of that is NOT Plastic = " << other << std::endl;
   std::cout << "Out of that is Plastic = " << plastic << std::endl;
+  std::cout << "Out of that is US plastic  = " << US << std::endl;
+  std::cout << "Out of that is DS plastic  = " << DS << std::endl;
   std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
   std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
   std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
