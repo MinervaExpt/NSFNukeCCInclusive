@@ -95,8 +95,8 @@ int main(int argc, char * argv[]){
   vector<string> vars;
   vars.clear();
   vars.push_back("Enu");
-  vars.push_back("x");
-  vars.push_back("planeDNN");
+  //vars.push_back("x");
+  //vars.push_back("planeDNN");
 
   TFile *f1 = new TFile( histFileName,"read" );
 
@@ -326,9 +326,9 @@ void PlotStackedSideband(MnvPlotter mnvPlotter, vector<MnvH1D*> histos_mc, const
   TCanvas cE("c1", "c1");
 
   string x_label;
-  if (var == "Enu") {x_label = "Neutrino Energy [GeV]";}
-  if (var == "x") {x_label= "Bjorken x";}
-  if (var == "planeDNN") {x_label = "Plane Number";}
+  if (var == "Enu") {x_label = "Reconstructed Neutrino Energy [GeV]";}
+  if (var == "x") {x_label= "Reconstructed Bjorken x";}
+  if (var == "planeDNN") {x_label = "Reconstructed Plane Number";}
 
   string y_label;
   if (var == "Enu") {y_label = "Events/GeV";}
@@ -371,11 +371,11 @@ void PlotRatiowithChi2Stat( MnvPlotter &mnvPlotter, MnvH1D* dataHisto, TObjArray
   }
   
   cout << "total MC = " << totalMC->Integral() << endl; 
-  if( data_cv->GetSumw2N() == 0 ) 
-    data_cv->Sumw2();
-  if( totalMC->GetSumw2N() == 0 ){ 
-    totalMC->Sumw2();
-  }
+  //if( data_cv->GetSumw2N() == 0 ) 
+  //  data_cv->Sumw2();
+  //if( totalMC->GetSumw2N() == 0 ){ 
+  //  totalMC->Sumw2();
+  //}
 
   // Calculate chi2 stats
   int ndfStat = 1;
@@ -398,13 +398,36 @@ void PlotRatiowithChi2Stat( MnvPlotter &mnvPlotter, MnvH1D* dataHisto, TObjArray
 
   TCanvas c("c1", "c1", 1200, 800 );
   cout << "plotting " << cName << endl;
-  if (var == "Enu") {totalMC->GetXaxis()->SetTitle("Neutrino Energy [GeV]");}
-  if (var == "x") {totalMC->GetXaxis()->SetTitle("Bjorken x");}
-  if (var == "planeDNN") {totalMC->GetXaxis()->SetTitle("Plane Number");}
+  if (var == "Enu") {totalMC->GetXaxis()->SetTitle("Reconstructed Neutrino Energy [GeV]");}
+  if (var == "x") {totalMC->GetXaxis()->SetTitle("Reconstructed Bjorken x");}
+  if (var == "planeDNN") {totalMC->GetXaxis()->SetTitle("Reconstructed Plane Number");}
   totalMC->GetXaxis()->CenterTitle();
   totalMC->GetYaxis()->CenterTitle();
+
+  /*
+  totalMC->Scale(dataMCScale);
+  data_cv->Divide(data_cv, totalMC);
+  data_cv->Draw("HIST");
+  data_cv->SetMinimum(0.5);
+  data_cv->SetMaximum(1.5);
+  
+  MnvH1D* sysError = (MnvH1D*)data_cv->Clone();
+  sysError->SetFillColor(kRed-10);
+  sysError->SetFillStyle(1001);
+  sysError->SetMarkerStyle(0);
+  sysError->Draw("E2 SAME");
+  
+  data_cv->Draw("HIST SAME");
+  */
   mnvPlotter.DrawDataMCRatio( data_cv, totalMC, dataMCScale, true, true, 0.5, 1.5, "Data/Total MC" );
   mnvPlotter.AddPlotLabel( labelStat, .41, .875, .04 );
+
+  //mnvPlotter.AddChi2Label(data_cv, totalMC, dataMCScale, "BL", 0.037, 0.0, true, false);
+  /*
+  Chi2DataMC( dataHist, mcHist, ndf, mcScale, useDataErrorMatrix, useOnlyShapeErrors)
+  If your data distribution has ONLY STATISTICAL uncertainties, useDataErrorMatrix should be FALSE
+  If you are using POT-normalization, then useOnlyShapeErrors should be FALSE
+  */
   
   if( WRITE_PRELIMINARY ) mnvPlotter.WritePreliminary("BR");
 
@@ -450,9 +473,9 @@ void PlotFracUncertainty( MnvPlotter &mnvPlotter, MnvH1D* dataHisto, TObjArray m
 
   TCanvas c("c1", "c1", 1200, 800 );
   cout << "plotting " << cName << endl;
-  if (var == "Enu") {totalMC->GetXaxis()->SetTitle("Neutrino Energy [GeV]");}
-  if (var == "x") {totalMC->GetXaxis()->SetTitle("Bjorken x");}
-  if (var == "planeDNN") {totalMC->GetXaxis()->SetTitle("Plane Number");}
+  if (var == "Enu") {totalMC->GetXaxis()->SetTitle("Reconstructed Neutrino Energy [GeV]");}
+  if (var == "x") {totalMC->GetXaxis()->SetTitle("Reconstructed Bjorken x");}
+  if (var == "planeDNN") {totalMC->GetXaxis()->SetTitle("Reconstructed Plane Number");}
   totalMC->GetXaxis()->CenterTitle();
   totalMC->GetYaxis()->CenterTitle();
   
