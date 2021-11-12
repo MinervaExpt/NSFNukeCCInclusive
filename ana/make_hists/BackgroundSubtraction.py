@@ -6,7 +6,7 @@ from ROOT import PlotUtils
 def BkgSubtractionMC(mc_hist, bkg_hist, var):
   #MC subtracted
   h_background_subtracted_mc = mc_hist.Clone("h_background_subtracted_mc_%s"%var)
-  h_background_subtracted_mc.Add(bkg,-1)
+  h_background_subtracted_mc.Add(bkg_hist,-1)
 
   return h_background_subtracted_mc
 
@@ -15,7 +15,7 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 
 ROOT.TH1.AddDirectory(False)
 
-infile = ROOT.TFile("/minerva/data/users/anezkak/ME6A_T3Fe/ROOT_files/Hists_EventSelection_Bkg_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
+infile = ROOT.TFile("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/make_hists/Hists_EventSelection_Bkg_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -24,7 +24,7 @@ mcScale =  dataPOT/mcPOT
 
 # files to write results in
 out1 = ROOT.TFile("BackgroundSubtracted_EventSelection_bkgSubtract.root","RECREATE")
-out2 = ROOT.TFile("BackgroundSubtracted_EventSelection_Purity.root","RECREATE")
+#out2 = ROOT.TFile("BackgroundSubtracted_EventSelection_Purity.root","RECREATE")
 
 vars = ["Enu", "x"]
 
@@ -52,6 +52,7 @@ for var in vars:
   h_background_subtracted_mc.Write()
   h_background_subtracted_data.Write()
 
+  '''
   #######################################################
   # Purity subtraction
   out2.cd()
@@ -71,11 +72,12 @@ for var in vars:
   h_purity_background_subtracted_mc.Write()
   h_purity_background_subtracted_data.Write()
   purity.Write()
+  '''
 
 out1.Close()
-out2.Clear()
+#out2.Clear()
 out1.Close()
-out2.Close() 
+#out2.Close() 
 
 '''
 #MC subtracted

@@ -1,7 +1,7 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-#include "include/CVUniverse.h"
+#include "../../NUKECCSRC/include/CVUniverse.h"
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/HistWrapper.h"
 
@@ -82,6 +82,10 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     m_selected_mc_sb.AddComponentHist("DS");
     m_selected_mc_sb.AddComponentHist("US");
     m_selected_mc_sb.AddComponentHist("Other");
+    m_selected_mc_sb.AddComponentHist("True_Target_trueval");
+    m_selected_mc_sb.AddComponentHist("DS_trueval");
+    m_selected_mc_sb.AddComponentHist("US_trueval");
+    m_selected_mc_sb.AddComponentHist("Other_trueval");
 
     //m_selected_mc_sb.AddComponentHist("MC");
     //m_selected_data_sb.AddComponentHist("Data");
