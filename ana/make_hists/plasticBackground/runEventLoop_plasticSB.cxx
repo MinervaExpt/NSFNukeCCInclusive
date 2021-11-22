@@ -230,13 +230,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   }
   else{
     if(targetZ==26){
-      targetIDs.push_back(1);
+      //targetIDs.push_back(1); // not including T1
       targetIDs.push_back(2);
       targetIDs.push_back(3);
       targetIDs.push_back(5);
     }
     if(targetZ==82){
-      targetIDs.push_back(1);
+      //targetIDs.push_back(1); // not including T1
       targetIDs.push_back(2);
       targetIDs.push_back(3);
       targetIDs.push_back(4);

@@ -2,6 +2,12 @@ import os, sys
 import ROOT
 from ROOT import PlotUtils
 from ROOT import TParameter
+import math as m
+
+# Background subtraction using plastic scale factors
+# Description:
+# MC: Subtract absolute number of events predicted
+# Data: Subtract POT scaled, plastic scaled number of events predicted from MC
 
 # Bkg Subtration: subtract absolute number of bkg events
 def BkgSubtractionMC(mc_hist, bkg_hist, var):
@@ -17,7 +23,8 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 ROOT.TH1.AddDirectory(False)
 
 infile = ROOT.TFile("Hists_EventSelection_Bkg_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
-infile2 = ROOT.TFile("Plastic_ScaleFactors_t3_z26_minervame6A.root", "READ")
+infileUntuned = ROOT.TFile.Open("Hists_PlasticBkg_sys_t3_z26_AntiNu.root", "READ")#%(str(targetID),str(targetZ)))
+scale = ROOT.TFile("Plastic_ScaleFactors_t3_z26_minervame6A.root", "READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -41,31 +48,39 @@ for var in vars:
   #purityNum = infile.Get("selected_mc_reco_signal_%s"%var)
 
   # plastic scaling factors
-  scaleUS = infile2.Get("scaleFactor_US_%s"%var)
-  scaleDS = infile2.Get("scaleFactor_DS_%s"%var)
+  scaleUS = scale.Get("scaleFactor_US_%s"%var)
+  scaleDS = scale.Get("scaleFactor_DS_%s"%var)
+
+  hists_US_regUS = infileUntuned.Get("US_regUS_Iron_%s"%var)
+  hists_DS_regDS = infileUntuned.Get("DS_regDS_Iron_%s"%var)
+
+  integralUS = hists_US_regUS.Integral()
+  statErrUS = 1/ m.sqrt(integralUS)
+  for bin in range(scaleUS.GetNbinsX() + 1):
+    scaleUS.SetBinError(bin,0+statErrUS)
+
+  # Downstream: Remove original stat error and update it with 1/sqrt(N) in each bin
+  integralDS = hists_DS_regDS.Integral()
+  statErrDS = 1/ m.sqrt(integralDS)
+  for bin in range(scaleDS.GetNbinsX() + 1):
+    scaleDS.SetBinError(bin,0+statErrDS)
 
   ##########################################################
-  # Bkg Subtration: subtract absolute number of bkg events
+  # Bkg Subtraction: subtract absolute number of bkg events
 
-  #1 subtract other background 
-  bkg_subtracted_mc = BkgSubtractionMC(reco, bkgOther, var)
-
+  # subtract absolute number of bkg events predicted
+  # all events at the same time
+  bkg_subtracted_mc = BkgSubtractionMC(reco, bkg, var)
+  
+  # -------------------------------------------------------------
+  # SUBTRACT SCALED BKG FROM DATA
+  # -------------------------------------------------------------
   # multiply bkgPlasticUS and plastic DS by the corresponding scaling factor
   bkgPlasticUS_CHScaled = bkgPlasticUS.Clone("h_bkgPlasticUS_CHScaled_%s"%var)
   bkgPlasticDS_CHScaled = bkgPlasticDS.Clone("h_bkgPlasticDS_CHScaled_%s"%var)
 
   bkgPlasticUS_CHScaled.Multiply(bkgPlasticUS_CHScaled, scaleUS)
   bkgPlasticDS_CHScaled.Multiply(bkgPlasticDS_CHScaled, scaleDS)
-
-  # subtract scaled US and DS plastic
-  bkg_subtracted_mc = BkgSubtractionMC(bkg_subtracted_mc, bkgPlasticUS_CHScaled, var)
-  bkg_subtracted_mc = BkgSubtractionMC(bkg_subtracted_mc, bkgPlasticDS_CHScaled, var)
-
-  # save all background (other + plastic scaled US and DS)
-  bkgAdded = bkgOther.Clone("h_bkgAdded_mc_%s"%var)
-  bkgAdded.Add(bkgOther)
-  bkgAdded.Add(bkgPlasticUS_CHScaled)
-  bkgAdded.Add(bkgPlasticDS_CHScaled)
 
   # scale by MC scale (POT normalisation)
   otherBkg_mc_scale = bkgOther.Clone("h_bkgOther_mc_scaled_%s"%var)
@@ -80,41 +95,24 @@ for var in vars:
   bkgAdded_mc_scale = otherBkg_mc_scale.Clone("h_bkgAdded_mc_scaled_%s"%var)
   bkgAdded_mc_scale.Add(bkgPlasticUS_mc_scale)
   bkgAdded_mc_scale.Add(bkgPlasticDS_mc_scale)
-  
-  # -------------------------------------------------------------
-  # SUBTRACT SCALED BKG FROM DATA
-  # -------------------------------------------------------------
+
   data.ClearAllErrorBands()
   data.AddMissingErrorBandsAndFillWithCV(reco)
 
   bkg_subtracted_data = data.Clone("h_bkg_subtracted_data_%s"%var)
   bkg_subtracted_data.Add(bkgAdded_mc_scale,-1) 
 
+  bkg_subtracted_data_notConstrained = data.Clone("h_bkg_subtracted_data_notConstrained_%s"%var)
+  bkg.Scale(mcScale)
+  bkg_subtracted_data_notConstrained.Add(bkg,-1) 
+
   # write all the histograms to file
   out1.cd()
-
-  # original
-  bkg.Write()
-  bkgOther.Write()
-  bkgPlasticUS.Write()
-  bkgPlasticDS.Write()
-
-  # scaled by plastic scaling factors
-  bkgPlasticUS_CHScaled.Write()
-  bkgPlasticDS_CHScaled.Write()
-
-  # MC scaled
-  otherBkg_mc_scale.Write()
-  bkgPlasticUS_mc_scale.Write()
-  bkgPlasticDS_mc_scale.Write()
-
-  # added backgrounds
-  bkgAdded.Write()
-  bkgAdded_mc_scale.Write()
   
   # subtracted
   bkg_subtracted_mc.Write()
   bkg_subtracted_data.Write()
+  bkg_subtracted_data_notConstrained.Write()
 
 # write down POTs
 dataPOTout = TParameter(float)("DataPOT", dataPOT)
