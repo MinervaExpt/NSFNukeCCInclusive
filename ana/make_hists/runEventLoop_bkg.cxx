@@ -565,7 +565,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Out of that is Plastic = " << plastic << std::endl;
   std::cout << "Out of that is US plastic  = " << US << std::endl;
   std::cout << "Out of that is DS plastic  = " << DS << std::endl;
-  std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
+  std::cout << "Neutral current (nu+antinu) = "<< NC<< std::endl;
   std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
   std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
   std::cout << "Not muon energy = "<< NotEmu << std::endl;
