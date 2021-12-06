@@ -655,7 +655,9 @@ bool NukeCC_Cuts::PassReco(CVUniverse* cv,HelicityType::t_HelicityType h)
     if( ! PassHelicityCut( cv,h) )   return false; //! Is this event the right helicity?
     if( ! cv->GetInt("NukeCC_in_fiducial_area") ) return false; //! Is the event in the fiducial area?
     if( ! PassZDistCut( cv) )   return false; //! Is the event vertex close enough in Z to the NuclearTarget?
+    // all events pass for tracker
     if( ! PassDistToDivisionCut(cv) ) return false; //! Is the event vertex far enough away from the separation of target sections?
+    // all events pass for tracker
     if( 120. < cv->GetEnu() * mev_to_gev ) return false; //! Anne's neutrino Energy cut
     if( 1 < cv->GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj") ) return false; //! Gabe's tdead cut
     if( ! PassMuCurveCut(cv, h) ) return false; //! Is the curvature significant?
