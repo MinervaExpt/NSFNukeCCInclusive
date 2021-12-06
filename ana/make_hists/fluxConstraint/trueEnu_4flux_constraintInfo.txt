@@ -1,0 +1,181 @@
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_Data_AnaTuple_minervame6A_v1_newAnneML.root
+Added 1 files from playlist ../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220000_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220001_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220002_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220003_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220004_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220005_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220006_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220007_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220008_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220009_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220010_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220011_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220012_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220013_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220014_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220015_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220016_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220017_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220018_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220019_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220020_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220021_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220022_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220023_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220024_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220025_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220026_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220027_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220028_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220029_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220030_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220031_v1_newAnneML.root
+Added 32 files from playlist ../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220000_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220001_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220002_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220003_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220004_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220005_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220006_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220007_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220008_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220009_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220010_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220011_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220012_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220013_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220014_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220015_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220016_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220017_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220018_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220019_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220020_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220021_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220022_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220023_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220024_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220025_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220026_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220027_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220028_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220029_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220030_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220031_v1_newAnneML.root
+Added 32 files from playlist ../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_Data_AnaTuple_minervame6A_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220000_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220001_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220002_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220003_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220004_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220005_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220006_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220007_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220008_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220009_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220010_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220011_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220012_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220013_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220014_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220015_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220016_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220017_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220018_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220019_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220020_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220021_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220022_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220023_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220024_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220025_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220026_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220027_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220028_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220029_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220030_v1_newAnneML.root
+	adding file: /minerva/data/users/fakbar/NukeTuples/v1_newAnneML/NukeCC_MC_AnaTuple_minervame6A_run001220031_v1_newAnneML.root
+
+MacroUtil configuration of this macro main
+** Number of data files is 1
+** Number of MC reco files is 32
+** Number of Truth files is 32
+** Data POT extracted from anatuples is 1.52897e+20
+** MC POT extracted from anatuples is 3.16338e+20
+** Playlist string is minervame6A
+** Grid is false
+
+WARNING: YOU ATTEMPTED SETTING THE PLAYLIST A SECOND TIME. THIS IS NOT ALLOWED FOR CONSISTENCY.
+Initializing NukeCCUtils in Antineutrino Mode
+WARNING: YOU ATTEMPTED SETTING THE NU PDG A SECOND TIME. THIS IS NOT ALLOWED FOR CONSISTENCY.
+MC Scale = 0.483335
+Data POT: 1.52897e+20
+MC POT: 3.16338e+20
+Processing MC and filling histograms
+FRW: this is the flux file I'm using: /minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux/flux-gen2thin-pdg14-minervame6A_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux/flux-gen2thin-pdg-14-minervame6A_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux/flux-g4numiv6-pdg14-minervame6A_rearrangedUniverses.root
+FRW: this is the flux file I'm using: /minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux/flux-g4numiv6-pdg-14-minervame6A_rearrangedUniverses.root
+# of entries = 7203078
+0k 
+TH1.Print Name  = hrelratio, Entries= 1331229, Total sum= 1.33123e+06
+weightRPA: have read in ratios from file /minerva/app/users/anezkak/MAT_GitHub/opt/etc/MParamFiles/data/Reweight//outNievesRPAratio-nu12C-20GeV-20170202.root
+500k 
+1000k 
+1500k 
+2000k 
+2500k 
+3000k 
+3500k 
+4000k 
+4500k 
+5000k 
+5500k 
+6000k 
+6500k 
+7000k 
+# of entries = 7203078
+0k 
+500k 
+1000k 
+1500k 
+2000k 
+2500k 
+3000k 
+3500k 
+4000k 
+4500k 
+5000k 
+5500k 
+6000k 
+6500k 
+7000k 
+# of entries = 7203078
+0k 
+500k 
+1000k 
+1500k 
+2000k 
+2500k 
+3000k 
+3500k 
+4000k 
+4500k 
+5000k 
+5500k 
+6000k 
+6500k 
+7000k 
+**********************************
+Printing the MC Summary 
+No cuts = -2112434662
+True CC antinu in the fiducial volume = 709076055
+Material Cut = 12140200
+TargetID Cuts = 12140200
+After excluding 2p2h = 11435220
+**********************************
+DONE
