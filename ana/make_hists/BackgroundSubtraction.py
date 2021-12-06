@@ -21,9 +21,12 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 
 ROOT.TH1.AddDirectory(False)
 
-infile = ROOT.TFile("Hists_EventSelection_Bkg_ML_ME6A_sys_t3_z26_AntiNu.root","READ")
-infileUntuned = ROOT.TFile.Open("Hists_PlasticBkg_sys_t3_z26_AntiNu.root", "READ")#%(str(targetID),str(targetZ)))
-scale = ROOT.TFile("Plastic_ScaleFactors_t3_z26_minervame6A.root", "READ")
+targetID = sys.argv[1] 
+targetZ = sys.argv[2]
+
+infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+infileUntuned = ROOT.TFile.Open("/minerva/data2/users/anezkak/ME6A_Targets/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
+scale = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -31,7 +34,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile("BackgroundSubtracted_EventSelection_bkgSubtract_wPlastic.root","RECREATE")
+out1 = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 
