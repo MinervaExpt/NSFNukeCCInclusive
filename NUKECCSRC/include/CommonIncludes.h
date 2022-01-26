@@ -205,8 +205,15 @@ namespace Playlist{
   const std::string minervame1P  = "minervame1P"; 
   const std::string minervame5A  = "minervame5A"; 
   const std::string minervame6A  = "minervame6A"; 
-  const std::string minervame6B  = "minervame6B"; 
+  const std::string minervame6B  = "minervame6B";
+  const std::string minervame6C  = "minervame6C";  
+  const std::string minervame6D  = "minervame6D"; 
+  const std::string minervame6E  = "minervame6E"; 
+  const std::string minervame6F  = "minervame6F"; 
+  const std::string minervame6G  = "minervame6G"; 
   const std::string minervame6H  = "minervame6H"; 
+  const std::string minervame6I  = "minervame6I"; 
+  const std::string minervame6J  = "minervame6J"; 
  
   const std::string all_nu = "Nu"; 
   const std::string all_antinu = "AntiNu"; 
