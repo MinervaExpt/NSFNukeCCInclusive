@@ -14,12 +14,12 @@
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
+#include "../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
 #include "../include/systematics/Systematics.h"
@@ -88,9 +88,10 @@ int main(int argc, char *argv[]){
   
   const std::string plist_string("minervame6A");
   const bool wants_truth = false;
-  const bool is_grid = false;
+  //const bool is_grid = false;
+  // is grid removed after update of MAT 07/12/2021
 
-  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
+  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
   util.PrintMacroConfiguration("main");
 
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]){
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelectionTracker_ML_ME6A_nosys_noPlaneProbCut", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -206,7 +207,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin,xbinBrian;
   std::vector<double> x09bin, xfinebin;
   std::vector<double> ANNPlaneProbBin;
-  std::vector<double> vtxzbin;
+  std::vector<double> vtxxbin, vtxybin, vtxzbin;
   std::vector<double> planeDNNbin; 
   std::vector<double> pTbin, pZbin;
   
@@ -233,6 +234,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     ybin = binsDef->GetEnergyBins("y");
     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
     ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
+    vtxxbin = binsDef->GetEnergyBins("vtxx"); 
+    vtxybin = binsDef->GetEnergyBins("vtxy");
     vtxzbin = binsDef->GetEnergyBins("vtxz");
     planeDNNbin = binsDef->GetEnergyBins("planeDNN");
     pTbin = binsDef->GetEnergyBins("muonPt"); 
@@ -256,11 +259,14 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
   Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
   Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
+  Var* vtxx = new Var("vtxx", "Vertex X", vtxxbin, &CVUniverse::GetVertexXMy, &CVUniverse::GetVertexXTrueMy);
+  Var* vtxy = new Var("vtxy", "Vertex Y", vtxybin, &CVUniverse::GetVertexYMy, &CVUniverse::GetVertexYTrueMy);
   Var* vtxz = new Var("vtxz", "Vertex Z", vtxzbin, &CVUniverse::GetVertexZMy, &CVUniverse::GetVertexZTrueMy);
+  
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -405,6 +411,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     if (v->GetName()=="x") Bkg++;
 
                     v->m_selected_mc_sb.GetComponentHist("NotTracker")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_sb.GetComponentHist("NotTracker_true")->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="x") NotTracker++;
                   }
                 }

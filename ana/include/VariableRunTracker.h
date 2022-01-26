@@ -70,6 +70,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     
     m_selected_mc_sb.AddComponentHist("Signal");
     m_selected_mc_sb.AddComponentHist("NotTracker");
+    m_selected_mc_sb.AddComponentHist("NotTracker_true");
     m_selected_mc_sb.AddComponentHist("WrongSign");
     m_selected_mc_sb.AddComponentHist("NC");
     m_selected_mc_sb.AddComponentHist("NotEmu");

@@ -14,19 +14,19 @@
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
+#include "../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
 #include "../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
-#ifndef __CINT__
+#ifndef __CINT__ 
 #include "../include/plotting_functions.h"
 #endif
 #include "PlotUtils/MacroUtil.h" 
@@ -72,9 +72,10 @@ int main(int argc, char *argv[]){
   bool doDIS=false;
   const std::string plist_string("minervame6A");
   const bool wants_truth = true;
-  const bool is_grid = false;
+  //const bool is_grid = false;
+  // is grid removed after update of MAT 07/12/2021
 
-  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, plist_string, wants_truth, is_grid);
+  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, plist_string, wants_truth);
    //PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
 
     util.PrintMacroConfiguration("main");
@@ -87,7 +88,7 @@ int main(int argc, char *argv[]){
 
    PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
    PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-   PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
+   PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
    PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
    PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
