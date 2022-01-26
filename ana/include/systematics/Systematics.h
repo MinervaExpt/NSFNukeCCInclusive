@@ -38,9 +38,8 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
     //========================================================================
     // FLUX
     //========================================================================
-    int n_flux_universes = 100 ;
     SystMap flux_systematics = 
-    PlotUtils::GetFluxSystematicsMap<CVUniverse>(chain,n_flux_universes);
+    PlotUtils::GetFluxSystematicsMap<CVUniverse>(chain,CVUniverse::GetNFluxUniverses());
   
     error_bands.insert(flux_systematics.begin(), flux_systematics.end());
 
