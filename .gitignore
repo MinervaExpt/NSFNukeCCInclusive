@@ -63,3 +63,8 @@ ana/studies/runEventLoop_US
 ana/studies/runEventLoop_US.o
 ana/studies/runEventLoop_intType
 ana/studies/runEventLoop_intType.o
+ana/make_hists/EfficiencyHists_Tracker
+ana/make_hists/MigrationHists_Tracker
+ana/make_hists/runEventLoop_tracker
+ana/make_hists/fluxConstraint/runEventLoop_trueCCwo2p2h_optimised
+ana/make_hists/fluxConstraint/runEventLoop_trueCCwo2p2h_optimised.o
