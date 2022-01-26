@@ -1,0 +1,25 @@
+
+
+// defined globally 
+vector<double> results;
+/////////////////////////////////
+
+////
+((TH1D*)tmp_scale_factor)->Divide( ((TH1D*)tmp_scale_factor), ((TH1D*)tmp_scale_factor), results_cv[0], 1.0);
+for( int i = 0; i < tmp_scale_factor->GetNbinsX() + 1; i++ )
+	tmp_scale_factor->SetBinError(i, results_cv[2]);
+
+////
+
+results.push_back(scale_factor);
+results.push_back(minChi2);
+results.push_back(scale_factor_error);
+const double *bestfit = fitter->X();
+const double *error = fitter->Errors();
+scale_factor = bestfit[0];
+minChi2 = getChi2( bestfit );
+results[0] = scale_factor; //scale factor
+results[1] = minChi2; //Chi2
+results[2] = error[0]; //scale factor error
+
+// same pocedure for universes
