@@ -49,6 +49,7 @@ namespace VarLoop {
       m_selected_mc_truth = HW(dummy_selected_mc_truth, univs, clear_bands);
     
       delete dummy_selected_mc_truth;
+
     }
 
     //=======================================================================================
@@ -58,7 +59,9 @@ namespace VarLoop {
       f.cd();
 
       // selected mc reco
-      if(isMC)  m_selected_mc_truth.hist->Write();
+      if(isMC) {
+        m_selected_mc_truth.hist->Write();
+      }
     }
   };
 

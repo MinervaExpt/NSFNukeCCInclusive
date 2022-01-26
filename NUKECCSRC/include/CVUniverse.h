@@ -56,8 +56,9 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetWeightQ2() const;
     virtual double GetWeighty() const;
     virtual double GetTruthWeight() const;
+    virtual double GetTruthWeightFlux() const;
     virtual Long64_t GetMaxEntries(); 
-    virtual double GetMuonE() const { return GetVecElem("NukeCC_leptonE",3); }
+    virtual double GetMuonE() const { return GetVecElem("MasterAnaDev_leptonE",3); }
 
     //      virtual void  Show(Long64_t entry = -1);
 
