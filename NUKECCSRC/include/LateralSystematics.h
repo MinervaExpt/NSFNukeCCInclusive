@@ -15,7 +15,7 @@ public:
   // MeV
   virtual double GetMuonE() const override { 
     //double muon_E_shift = GetDouble("CCNuPionInc_minosRangeCurveShift");
-    double muon_E_shift = GetDouble("NukeCC_sys_muon_energy_shift");
+    double muon_E_shift = GetDouble((GetAnaToolName() + "_sys_muon_energy_shift").c_str());
     //double muon_E_shift = NukeCC_sys_muon_energy_shift[1];
     double shift_val    = m_nsigma*muon_E_shift;
     return shift_val+CVUniverse::GetMuonE();

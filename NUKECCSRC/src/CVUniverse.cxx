@@ -80,7 +80,7 @@ double CVUniverse::GetInNuclMomentum() const {
 // Reco
 
 double CVUniverse::GetVertexXMy() const {
-    double vertex_y = GetVecElem("NukeCC_vtx",0)/10; // y position in cm...
+    double vertex_y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),0)/10; // y position in cm...
     return vertex_y;
 }
 
@@ -90,7 +90,7 @@ double CVUniverse::GetVertexXTrueMy() const {
 
 
 double CVUniverse::GetVertexYMy() const {
-    double vertex_y = GetVecElem("NukeCC_vtx",1)/10; // y position
+    double vertex_y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),1)/10; // y position
     return vertex_y;
 }
 
@@ -100,7 +100,7 @@ double CVUniverse::GetVertexYTrueMy() const {
 
 
 double CVUniverse::GetVertexZMy() const {
-    double vertex = GetVecElem("NukeCC_vtx", 2)/10; // in this current ntuple, Z position in mm not cm, hence divide
+    double vertex = GetVecElem((GetAnaToolName() + "_vtx").c_str(), 2)/10; // in this current ntuple, Z position in mm not cm, hence divide
     return vertex;
 }
 
@@ -111,14 +111,14 @@ double CVUniverse::GetVertexZTrueMy() const {
 
 // ORIGINAL
 //calling branches and variables
-double CVUniverse::GetMuonCurve()  const { return 1/GetDouble("NukeCC_minos_trk_eqp_qp"); }
-double CVUniverse::GetHelicity()  const { return GetInt("NukeCC_nuHelicity"); }
+double CVUniverse::GetMuonCurve()  const { return 1/GetDouble((GetAnaToolName() + "_minos_trk_eqp_qp").c_str()); }
+double CVUniverse::GetHelicity()  const { return GetInt((GetAnaToolName() + "_nuHelicity").c_str()); }
 double CVUniverse::GetTrueHelicity()  const { return GetInt("mc_incomig"); }
-double CVUniverse::GetFiducial()  const { return GetInt("NukeCC_in_fiducial_area"); }
+double CVUniverse::GetFiducial()  const { return GetInt((GetAnaToolName() + "_in_fiducial_area").c_str()); }
 double CVUniverse::GetTdead()  const { return GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj"); }
-double CVUniverse::GetTargetID()   const{return GetInt("NukeCC_targetID");}
+double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_targetID").c_str());}
 
-double CVUniverse::GetRecoilEnergy()  const { return GetDouble("NukeCC_recoil_E"); }
+double CVUniverse::GetRecoilEnergy()  const { return GetDouble((GetAnaToolName() + "_recoil_E").c_str()); }
 //double CVUniverse::GetThetamu()       const {return GetDouble("muon_theta");}
 double CVUniverse::GetEnu()           const {return GetEmu()+ GetRecoilEnergy();} 
 double CVUniverse::GetQ2Reco()        const { return calcRecoQ2(GetEnu(),  GetEmu(), GetThetamu()); }
@@ -457,6 +457,22 @@ double CVUniverse::GetTruthWeight()const{
    return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass;
 }
 
+double CVUniverse::GetTruthWeightFlux()const{
+     
+    double wgt_flux=1.;
+    double wgt_genie=1.;
+
+    double Enu  = GetDouble("mc_incomingE")*1e-3;
+    int nu_type = GetInt("mc_incoming");
+    
+    // flux
+    wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
+    // genie
+    wgt_genie = GetGenieWeight();
+
+   return wgt_flux*wgt_genie;
+}
+
 // Plastic background
 
 double CVUniverse::Var( const std::string& name, bool useTrue )
@@ -551,7 +567,7 @@ double CVUniverse::Var( const std::string& name, bool useTrue )
     if( name == "moduleDNN" )
     {
         if( useTrue ) return GetInt("truth_vtx_module");
-        else          return GetInt("NukeCC_vtx_module");
+        else          return GetInt((GetAnaToolName() + "_vtx_module").c_str());
     }
     if( name == "planeDNN" )
     {
