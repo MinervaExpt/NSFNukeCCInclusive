@@ -3,7 +3,7 @@
 #include "TArrow.h"
 #include "TLegend.h"
 #include "TCanvas.h"
-#include "../../../NUKECCSRC/include/NukeCCUtilsNSF.h"
+#include "../../../NUKECCSRC/include/UtilsNSF.h"
 #include "PlotUtils/MnvH1D.h"
 #include "PlotUtils/MnvPlotter.h"
 #include "TArrayD.h"
@@ -18,7 +18,7 @@
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include "../../include/systematics/Systematics.h"
 #include <iostream>
