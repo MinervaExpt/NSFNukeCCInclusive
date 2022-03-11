@@ -12,7 +12,7 @@
 
 #include "TH1.h"
 #include <PlotUtils/MnvH1D.h>
-#include <PlotUtils/MnvH2D.h>
+#include <PlotUtils/MnvH2D.h>   
 
 #include <cstdlib>
 
@@ -33,13 +33,13 @@ public:
         const double PI = atan(1.0)*4;
         const double deg_to_rad = PI / 180.0;
         const double rad_to_deg = 1. / deg_to_rad;
-        
+          
         double muon_E     = (double)chw.GetValue("mc_primFSLepton",entry,3);
-        double muon_theta = (double)chw.GetValue("truth_muon_theta",entry);
+        //double muon_theta = (double)chw.GetValue("truth_muon_theta",entry);
         ROOT::Math::AxisAngle toBeamFrame(ROOT::Math::XYZVector(1., 0., 0.), -0.05887); //NuMI beam angle in mrad from PlotUtils
         ROOT::Math::XYZVector muon(chw.GetValue("mc_primFSLepton", entry, 0), //In MeV
-                               chw.GetValue("mc_primFSLepton", entry, 1),
-                               chw.GetValue("mc_primFSLepton", entry, 2));
+                              chw.GetValue("mc_primFSLepton", entry, 1),
+                              chw.GetValue("mc_primFSLepton", entry, 2));
         
         const double thetamu = (toBeamFrame * muon).theta();
         if(thetamu*rad_to_deg>=17.0) return false; //This is a YAML parameter
@@ -51,8 +51,41 @@ public:
         return true;
     }
 
+    virtual bool InHex( ChainWrapper& chw, int entry, double apothem )
+    {
+      if( apothem == 0. )
+        return false;
+        
+      double x = (double)chw.GetValue("mc_vtx",entry,0);
+      double y = (double)chw.GetValue("mc_vtx",entry,1);
+        
+      //Hexagon is symmetric about its x and y
+      x = fabs(x);
+      y = fabs(y);
+        
+      if( pow(x,2) + pow(y,2) < pow(apothem,2) )
+        return true;
+        
+      double lenOfSide = apothem * ( 2 / sqrt(3) );
+        
+      if( x > apothem )
+        return false;
+        
+      if( y < lenOfSide/2.0 )
+        return true;
+        
+      double slope = (lenOfSide / 2.0) / apothem;
+      if( y < lenOfSide - x*slope )
+        return true;
+        
+      return false;
+    }
+
     virtual bool passesCuts(ChainWrapper& chw, int entry)
     {
+        if( (double)chw.GetValue("mc_vtx", entry, 2) < 5980. || (double)chw.GetValue("mc_vtx", entry, 2) > 8422. ) return false;
+        if(!InHex(chw,entry,850.0)) return false;
+        // fiducial
         if((int)chw.GetValue("mc_incoming", entry)!=-14) return false;
         if((int)chw.GetValue("mc_current", entry)!=1) return false;
         if(!passesKinematics(chw, entry)) return false;
@@ -99,19 +132,44 @@ int runXSecLooper(const bool antinu, const double Emin, const double Emax, const
   loop.setFiducial(5980, 8422);
   loop.setPlaylist(PlotUtils::FluxReweighter::minervame6A);
 
-  const int nBins=14;
-  double bins[nBins+1]={ 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20., 25.0, 30., 40., 50. };
+  const int nBinsEnu=14;
+  double binsEnu[nBinsEnu+1]={ 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20., 25.0, 30., 40., 50. };
 
-  CCIncXSec* total_xSec_E = new CCIncXSec("Enu");
+  CCIncXSec* total_xSec_E = new CCIncXSec("total_Enu");
   total_xSec_E->setVariable(XSec::kENu);
   total_xSec_E->setDimension(1);
-  total_xSec_E->setBinEdges(nBins, bins);
+  total_xSec_E->setBinEdges(nBinsEnu, binsEnu);
   total_xSec_E->setIsFluxIntegrated(false); // total cross-section
-  total_xSec_E->setFluxIntLimits(Emin, Emax);
+  //total_xSec_E->setFluxIntLimits(Emin, Emax);
   total_xSec_E->setNormalizationType(XSec::kPerNucleon);
   total_xSec_E->setUniverses(0);//default value, put 0 if you do not want universes to be included.
 
+  CCIncXSec* dif_xSec_E = new CCIncXSec("dif_Enu");
+  dif_xSec_E ->setVariable(XSec::kENu);
+  dif_xSec_E ->setDimension(1);
+  dif_xSec_E ->setBinEdges(nBinsEnu, binsEnu);
+  dif_xSec_E ->setIsFluxIntegrated(true); // total cross-section
+  dif_xSec_E ->setFluxIntLimits(Emin, Emax);
+  dif_xSec_E ->setNormalizationType(XSec::kPerNucleon);
+  dif_xSec_E ->setUniverses(0);//default value, put 0 if you do not want universes to be included.
+
+  const int nBinsx=6;
+  double binsx[nBinsx+1]={ 0.001, 0.05, 0.1, 0.2, 0.4, 1, 2.2 };
+
+  CCIncXSec* dif_xSec_x = new CCIncXSec("dif_x");
+  dif_xSec_x ->setVariable(XSec::kxExp); 
+  dif_xSec_x ->setDimension(1);  
+  dif_xSec_x ->setBinEdges(nBinsx, binsx);
+  dif_xSec_x ->setIsFluxIntegrated(true); // total cross-section
+  dif_xSec_x ->setFluxIntLimits(Emin, Emax);
+  dif_xSec_x ->setNormalizationType(XSec::kPerNucleon);
+  dif_xSec_x ->setUniverses(0);//default value, put 0 if you do not want universes to be included.
+  
+
   loop.addXSec(total_xSec_E);
+  loop.addXSec(dif_xSec_E);
+  loop.addXSec(dif_xSec_x);
+
 
   // Once everything's set up, actually run the thing
   loop.runLoop();
@@ -122,6 +180,7 @@ int runXSecLooper(const bool antinu, const double Emin, const double Emax, const
     loop.getXSecs()[i]->getXSecHist()->Write();
     loop.getXSecs()[i]->getEvRateHist()->Write();
   }
+  loop.getFluxHist()->Write();
 
   return 0;
 }
@@ -135,8 +194,8 @@ int main(int argc, char** argv)
 
   bool antinu=true;
 
-  int Emin=2; //GeV
-  int Emax=50; //GeV 
+  int Emin=0; //GeV
+  int Emax=120; //GeV 
 
   return runXSecLooper(antinu, Emin, Emax, fileNames);
 }  
