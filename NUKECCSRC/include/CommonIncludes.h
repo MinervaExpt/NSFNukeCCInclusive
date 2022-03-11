@@ -71,8 +71,8 @@ namespace NUKECC_ANA
 
  
   //static const bool RunCodeWithSystematics = false;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
-  static const bool RunCodeWithSystematics = false;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
-  static const bool RunCodeWithSysFluxUniverses = false; // This variable will apply a non-cv flux to systematic universes (if available). This is done by an extra correction factor wgt given by fluxreweighter.
+  static const bool RunCodeWithSystematics = true;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
+  static const bool RunCodeWithSysFluxUniverses = true; // This variable will apply a non-cv flux to systematic universes (if available). This is done by an extra correction factor wgt given by fluxreweighter.
   //static const bool neutrinoMode = false; // Use: True = Neutrino Mode /  False = Antineutrino Mode	 
   //vertexing
   //const bool USE_ML_VERTEX = true;
@@ -144,6 +144,7 @@ namespace NUKECC_ANA
   const double M_neutron = 939.56;
   const double M_proton  = 938.27;
   const double M_nucleon  = ( 1.5*M_neutron + M_proton ) / 2.5; //weighted average because xsec is bigger on n
+  const double M_muonMeV = 105.6583755; //wiki
   const double M_muon    = .1057;
   const double M_muon2   = M_muon*M_muon;
 

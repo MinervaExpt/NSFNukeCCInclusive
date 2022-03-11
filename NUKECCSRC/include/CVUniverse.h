@@ -22,6 +22,7 @@
 #include "CommonIncludes.h"
 #include "PlotUtils/MinervaUniverse.h"
 #include "PlotUtils/ChainWrapper.h"
+#include "PlotUtils/TargetUtils.h"
 #include <iostream>
 //#include "CCQENuUtilsNSF.h"
 //using namespace globalV;
@@ -34,6 +35,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     #include "PlotUtils/MuonFunctions.h" // GetMinosEfficiencyWeight
     #include "PlotUtils/TruthFunctions.h" //Getq3True
     #include "PlotUtils/WeightFunctions.h"
+    #include "PlotUtils/TargetUtils.h"
     // Constructor
     CVUniverse(PlotUtils::ChainWrapper* chw, double nsigma=0);
     CVUniverse();
@@ -57,6 +59,8 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetWeighty() const;
     virtual double GetTruthWeight() const;
     virtual double GetTruthWeightFlux() const;
+    virtual bool IsInHexagonTrue(double apothem = 850.) const;
+    virtual double GetDaisyPetalTrue( ) const;;
     virtual Long64_t GetMaxEntries(); 
     virtual double GetMuonE() const { return GetVecElem("MasterAnaDev_leptonE",3); }
 

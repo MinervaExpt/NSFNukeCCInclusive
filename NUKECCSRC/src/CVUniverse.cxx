@@ -2,7 +2,7 @@
 #define CVUNIVERSE_cxx 1
 
 #include "../include/CVUniverse.h" 
-//#include "../include/NukeCC_Cuts.h" 
+#include "../include/Cuts.h" 
 #include "PlotUtils/FluxReweighter.h"
 #include "PlotUtils/HyperDimLinearizer.h"
 #include "PlotUtils/MinosMuonEfficiencyCorrection.h"
@@ -189,19 +189,20 @@ double CVUniverse::GetlepPzTrue()  const{
 
 double CVUniverse::calcTrueQ2(const double EnuTrue,const double EmuTrue,const double ThetamuTrue)	
 const {
-double lepMass = 0.1057;
-double Q2 = 4*EnuTrue*EmuTrue*pow( sin( ThetamuTrue/2), 2.) - pow(lepMass,2);
+double Q2 = 4*EnuTrue*EmuTrue*pow( sin( ThetamuTrue/2), 2.);// - pow(M_muonMeV,2); // EnuTruue in MeV
 //std::cout<<" True Enu = "<< EnuTrue <<"\t"<<" True Emu = "<< EmuTrue <<"\t"<<" True ThetaMu = "<< ThetamuTrue <<"\t"<<" True Q2 = "<<Q2<<std::endl;
 return Q2; 
 }
   
 double CVUniverse::calcWTrue(const double Q2True,const double EhadTrue)
 const {
-double nuclMass = M_nucleon;
- //if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
-                //nuclMass = M_neutron;
-            //else if( PROTON_PDG == GetInt("mc_targetNucleon") )
-                nuclMass = M_proton;
+double nuclMass = 1.0;
+if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
+    nuclMass = M_neutron;
+else if( PROTON_PDG == GetInt("mc_targetNucleon") )
+    nuclMass = M_proton;
+else
+    nuclMass = M_nucleon;
 
 double W2 = ( pow(nuclMass, 2) +  2. * ( EhadTrue ) * nuclMass - Q2True);
 //if(W2>0){std::cout<<Q2True<<"\t"<<sqrt(W2)<<std::endl;}
@@ -212,11 +213,8 @@ return W2;
 
 double CVUniverse::calcRecoQ2(const double Enu,const double Emu,const double Thetamu)	
 const {
-double lepMass = 0.1057;
-double Q2Reco = 4*Enu*Emu*pow( sin( Thetamu/2), 2.) - pow(lepMass,2);
-//double Q2Reco = GetDouble("NukeCC_Q2");
-return Q2Reco; 
-//return GetDouble("NukeCC_Q2"); 
+    double Q2Reco = 4*Enu*Emu*pow( sin( Thetamu/2), 2.);// - pow(M_muonMeV,2);
+    return Q2Reco; 
 }
   
 double CVUniverse::calcWReco(const double Q2,const double Ehad)
@@ -225,7 +223,7 @@ double nuclMass = M_nucleon;
  //if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
                 //nuclMass = M_neutron;
            // else if( PROTON_PDG == GetInt("mc_targetNucleon") )
-                nuclMass = M_proton;
+                //nuclMass = M_proton;
 
 double W2Reco = ( pow(nuclMass, 2) +  2. * ( Ehad ) * nuclMass - Q2);
 W2Reco = W2Reco > 0 ? sqrt(W2Reco) : 0.0;
@@ -236,11 +234,13 @@ return W2Reco;
 
 double CVUniverse::calcXTrue(const double Q2True,const double EnuTrue, const double EmuTrue)
 const {
-double nuclMass = M_nucleon;
- //if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
-                //nuclMass = M_neutron;
-            //else if( PROTON_PDG == GetInt("mc_targetNucleon") )
-                nuclMass = M_proton;
+double nuclMass = 1.0;
+if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
+    nuclMass = M_neutron;
+else if( PROTON_PDG == GetInt("mc_targetNucleon") )
+    nuclMass = M_proton;
+else
+    nuclMass = M_nucleon;
 double x = Q2True / (2. * ( EnuTrue -  EmuTrue) * nuclMass);
 return x;
 }
@@ -256,7 +256,7 @@ double nuclMass = M_nucleon;
  //if( NEUTRON_PDG  == GetInt("mc_targetNucleon") )
                 //nuclMass = M_neutron;
             //else if( PROTON_PDG == GetInt("mc_targetNucleon") )
-                nuclMass = M_proton;
+                //nuclMass = M_proton;
 double x = Q2 / (2. * ( Enu -  Emu) * nuclMass);
 return x;
 }  
@@ -454,7 +454,7 @@ double CVUniverse::GetTruthWeight()const{
 
    wgt_target_mass = GetTargetMassWeight();
      
-   return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass;
+   return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_2p2h*wgt_target_mass;
 }
 
 double CVUniverse::GetTruthWeightFlux()const{
@@ -472,6 +472,34 @@ double CVUniverse::GetTruthWeightFlux()const{
 
    return wgt_flux*wgt_genie;
 }
+
+bool CVUniverse::IsInHexagonTrue(double apothem /*= 850. */ ) const
+{
+   double x = GetVecElem("mc_vtx",0);
+   double y = GetVecElem("mc_vtx",1);
+   double lenOfSide = apothem*(2/sqrt(3)); 
+   double slope     = (lenOfSide/2.0)/apothem;
+   double xp        = fabs(x);
+   double yp        = fabs(y);
+   
+   if( (xp*xp + yp*yp) < apothem*apothem )             return true;
+   else if( xp <= apothem && yp*yp < lenOfSide/2.0 )   return true; 
+   else if( xp <= apothem && yp < lenOfSide-xp*slope ) return true;
+
+   return false;
+}
+
+double CVUniverse::GetDaisyPetalTrue( ) const
+{ 
+  double x = GetVecElem("mc_vtx",0);
+  double y = GetVecElem("mc_vtx",1);
+  double apothem = 850.;
+  if( !IsInHexagonTrue(apothem ) ) return -1;
+  double angle = atan2(y,x) / ( 2 * TMath::Pi() );
+  if ( angle < 0 ) angle += 1;
+  int out = floor(12*angle);
+  return out;
+} 
 
 // Plastic background
 

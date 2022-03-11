@@ -391,6 +391,58 @@ int NukeCC_Cuts::GetTargetPlane( int targetID ) const{
     return -999;
 }
 
+bool NukeCC_Cuts::IsInTrueMaterialFlux(CVUniverse* cv,const int i_targetID, const int i_targetZ, bool anyTrackerMod /*= false*/ )
+{
+    if(i_targetID < 10 )
+    {
+        // If targetID < 10, then you are looking for a passive target event.
+        // Require that the event has the same targetID and targetZ.
+        //if( truth_targetID == i_targetID )
+        if( cv->GetInt("truth_targetID") == i_targetID )
+        {
+            if( i_targetZ > 0 )
+                return cv->GetInt("mc_targetZ") == i_targetZ;
+            else
+                return true;
+        }
+    }
+    else if( i_targetID < 100 )
+    {
+        // If 10 < targetID < 100, then we are looking for an event in a plastic reference target.
+        // Say targetID = AT, then the event must be in the Ath active target group and the reference target is T.
+        int refTarg = i_targetID % 10;
+        
+        // The starting module of the 4-module reference target is 6*A + 21
+        int refModStart = 6*((i_targetID - refTarg )/10) + 21;
+        
+        int refTargID = refTarg*10000 + 6*1000 + refModStart;
+        return IsInTrueMaterial( cv,refTargID, i_targetZ, anyTrackerMod );
+    }
+    else
+    {
+        int refTarg = (i_targetID - i_targetID % 10000 ) / 10000;
+        if( i_targetZ > 0 && cv->GetVecElem("truth_ref_targZ",(refTarg-1)) != i_targetZ )
+            return false;
+        
+        int refModStart = i_targetID % 1000;
+        int refNMod = ( ( i_targetID - refModStart ) / 1000 % 10 );
+        int firstMod = refModStart;
+        int lastMod  = refModStart + refNMod - 1;
+        
+        if( anyTrackerMod )
+        {
+            firstMod = FIRST_TRACKER_MOD;
+            lastMod  = LAST_TRACKER_MOD;
+        }
+        
+        // OK if the vertex module is within the range specified
+        if( firstMod <= cv->GetDouble("truth_vtx_module") && cv->GetDouble("truth_vtx_module") <= lastMod )
+            return true;
+        
+    }
+    return false;
+}
+
 
 bool NukeCC_Cuts::IsInTrueMaterial(CVUniverse* cv,const int i_targetID, const int i_targetZ, bool anyTrackerMod /*= false*/ )
 {
@@ -402,7 +454,7 @@ bool NukeCC_Cuts::IsInTrueMaterial(CVUniverse* cv,const int i_targetID, const in
         if( cv->GetInt("truth_targetID") == i_targetID )
         {
             if( i_targetZ > 0 )
-                return cv->GetInt("mc_targetZ") == i_targetZ;
+                return cv->GetInt("truth_targetZ") == i_targetZ;
             else
                 return true;
         }
@@ -706,7 +758,7 @@ bool NukeCC_Cuts::PassTrueCC(CVUniverse* cv, HelicityType::t_HelicityType h /* =
 bool NukeCC_Cuts::PassTrueFiducial(CVUniverse* cv )
 {
     if( ! InHexagonTrue(cv, 850.) ) return false;
-    //if( ! PassTrueDistToDivisionCut(cv ) ) return false;
+    if( ! PassTrueDistToDivisionCut(cv ) ) return false;
     
     return true;
 }
@@ -740,13 +792,13 @@ bool NukeCC_Cuts::InHexagonTrue(CVUniverse* cv, double apothem /*= 850.*/ ){
     //vector<double> newVertex = GetMLVertex();
     double x = cv->GetVecElem("mc_vtx",0);
     double y = cv->GetVecElem("mc_vtx",1);
-    
-    if( x*x + y*y < apothem*apothem)
-        return true;
-    
+
     //Hexagon is symmetric about its x and y
     x = fabs(x);
     y = fabs(y);
+    
+    if( x*x + y*y < apothem*apothem)
+        return true;
     
     double lenOfSide = apothem * ( 2 / sqrt(3) );
     

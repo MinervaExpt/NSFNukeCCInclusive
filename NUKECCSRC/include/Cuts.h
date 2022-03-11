@@ -171,6 +171,7 @@ static NukeCC_Cuts &Get();
 
 
        bool IsInTrueMaterial(CVUniverse *cv, const int targID, const int targZ, bool anyTrackerMod = false );
+       bool IsInTrueMaterialFlux(CVUniverse *cv, const int targID, const int targZ, bool anyTrackerMod = false );
 
 
       //@}
