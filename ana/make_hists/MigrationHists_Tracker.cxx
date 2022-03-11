@@ -289,7 +289,7 @@ int main(int argc, char *argv[]){
 
 	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
 	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
+	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
 	 PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
    PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
@@ -317,11 +317,11 @@ int main(int argc, char *argv[]){
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "MigrationTracker_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "MigrationTracker_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
   } 
    	   
 	TFile fout(dir.Append(histFileName),"RECREATE");	
@@ -371,6 +371,8 @@ int main(int argc, char *argv[]){
 	 //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
 	     
 	 //}//End 2D plotting
+  std::cout << "DONE" << std::endl;
+
 
 }//End Main
 
