@@ -16,10 +16,10 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 
 ROOT.TH1.AddDirectory(False)
 
-targetID = 99
-targetZ = 99
+targetID = sys.argv[1] 
+targetZ = sys.argv[2]
 
-infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Tracker/Closure_Jan28/Hists_EventSelectionTracker_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_EventSelection_Bkg_True_ML_ME6A_nosys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -27,7 +27,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile("Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
+out1 = ROOT.TFile("Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu_TRUE.root"%(targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 

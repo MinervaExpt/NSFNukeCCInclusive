@@ -24,9 +24,9 @@ ROOT.TH1.AddDirectory(False)
 targetID = sys.argv[1] 
 targetZ = sys.argv[2]
 
-infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
-infileUntuned = ROOT.TFile.Open("/minerva/data2/users/anezkak/ME6A_Targets/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
-scale = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
+infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+infileUntuned = ROOT.TFile.Open("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
+scale = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -34,7 +34,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
+out1 = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 
