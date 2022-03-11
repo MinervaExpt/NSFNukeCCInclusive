@@ -68,3 +68,9 @@ ana/make_hists/MigrationHists_Tracker
 ana/make_hists/runEventLoop_tracker
 ana/make_hists/fluxConstraint/runEventLoop_trueCCwo2p2h_optimised
 ana/make_hists/fluxConstraint/runEventLoop_trueCCwo2p2h_optimised.o
+ana/make_hists/ExtractCrossSection
+ana/make_hists/ExtractCrossSection_NEW
+ana/make_hists/runCCIncForTracker
+ana/make_hists/runEventLoop_bkg_TRUE
+ana/make_hists/runEventLoop_tracker_true
+ana/make_hists/runXSecLooper_NukeCC
