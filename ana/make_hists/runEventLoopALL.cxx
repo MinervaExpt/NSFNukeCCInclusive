@@ -213,6 +213,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::vector<double> vtxzbin;
   std::vector<double> planeDNNbin; 
   std::vector<double> pTbin, pZbin;
+  std::vector<double> petalbin;
+  
   
   if (doDIS){
     Enubin = binsDef->GetDISBins("Enu"); 
@@ -241,6 +243,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     planeDNNbin = binsDef->GetEnergyBins("planeDNN");
     pTbin = binsDef->GetEnergyBins("muonPt"); 
     pZbin = binsDef->GetEnergyBins("muonPz"); 
+    petalbin = binsDef->GetEnergyBins("petal");
   }
   //Q2bin = binsDef->GetSidebandBins("Q2");
   //Wbin = binsDef->GetSidebandBins("W");
@@ -263,6 +266,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* vtxz = new Var("vtxz", "Vertex Z", vtxzbin, &CVUniverse::GetVertexZMy, &CVUniverse::GetVertexZTrueMy);
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
+  Var* petal = new Var("Petal", "Petal", petalbin, &CVUniverse::GetDaisyPetalTrue, &CVUniverse::GetDaisyPetalTrue);
+
 
   variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
