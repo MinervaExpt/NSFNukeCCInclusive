@@ -1,0 +1,11 @@
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111005.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111010.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111007.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111004.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111002.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111006.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111003.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111000.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111001.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111008.root
+/pnfs/minerva/persistent/users/minervapro/MasterAnaDev/minervame1Bpass1/MasterAnaDev_mc_AnaTuple_run00111009.root
