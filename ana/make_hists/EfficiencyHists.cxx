@@ -35,7 +35,7 @@ using namespace NUKECC_ANA;
 
 //======================================================================
 typedef VarLoop::Variable Var;
-typedef Var2DLoop::Variable2D Var2D;
+typedef Var2DLoop::Variable2D Var2D;   
 
 
 void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef ,std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int targetID=1, int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
   PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, plist_string, wants_truth);
    //PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
 
-    util.PrintMacroConfiguration("main");
+    util.PrintMacroConfiguration("main");   
 
   //=========================================
   // Systematics
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]){
   auto dataPOTOut = new TParameter<double>("DataPOT", DataPot);
   auto mcPOTOut = new TParameter<double>("MCPOT", MCPot);
   dataPOTOut->Write();
-  mcPOTOut->Write(); 
+  mcPOTOut->Write();   
 
 
  
@@ -178,6 +178,7 @@ int main(int argc, char *argv[]){
      //Plot2D(variables2DData[i]->data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
      
    //}//End 2D plotting
+  std::cout << "DONE" << std::endl;
 
 }//End Main
 
@@ -244,7 +245,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   //Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, enu, x, x09, xfine, xBrian, vtxz, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -254,7 +255,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };
+  variables2d = {pTmu_pZmu };
    
   //smakefor (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
@@ -314,7 +315,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	   universe->SetEntry(i);
      mc0++;
 
-    if(!cutter->PassReco(universe,helicity)) continue;
+    if(!cutter->PassReco(universe,helicity)) continue;  
     mc1++;
               
      if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;

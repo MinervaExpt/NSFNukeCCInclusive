@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
      return 0;
    }
 
-   TString dir(argv[1]);
+   TString dir(argv[1]);  
    //int targetID = atoi(argv[2]);
    //nt targetZ = atoi(argv[3]);
   int targetID = 99; int targetZ = 99; 
@@ -117,11 +117,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EfficiencyTracker_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "Efficiency_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EfficiencyTracker_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "Efficiency_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
   } 
    
      
@@ -178,6 +178,8 @@ int main(int argc, char *argv[]){
      //Plot2D(variables2DData[i]->data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
      
    //}//End 2D plotting
+  std::cout << "DONE" << std::endl;
+
 
 }//End Main
 
@@ -342,7 +344,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
         v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
       }
-
+    
 	   for (auto v : variables){
 	     if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
@@ -359,7 +361,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       mc_truth0++;
 
 	    if(!cutter->TrackerOnlyTrue(universe)) continue; // true tracker
-      mc_truth1++;
+      mc_truth1++;   
 
 	   for (auto v : variables2d){
 	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;	     
