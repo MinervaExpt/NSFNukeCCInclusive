@@ -1,7 +1,7 @@
 import ROOT
 import os,sys
 from PlotUtils import MnvH1D,MnvH2D,MnvPlotter
-_fnsf = ROOT.TFile("/minerva/data2/users/anezkak/flux4Daisy_files_2022/OptimisedEventLoopME5A6ABCDEFGHJ_flux_grid_sys/flux_tracker.root","READ")
+_fnsf = ROOT.TFile("/minerva/data2/users/anezkak/flux4Daisy_files_2022/AntiNuFlux_comparison/flux_tracker.root","READ")
 #_fnsf = ROOT.TFile("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/make_hists/fluxConstraint/flux_tracker.root","READ")
 
 #_fnsf = ROOT.TFile("/minerva/data/users/afilkins/DIS_ME_NSF/2020-7-20_effvalidation/Hists_Efficiency_t1_z26_Nu_v1_.root","READ")
@@ -57,5 +57,5 @@ canvas1.Modified()
 #mnv.DrawErrorSummary(mc_new, "TR", 1, 1, 0.0, 0, "GENIE_VecFFCCQEshape")
 mnv.AddHistoTitle("Tracker Flux", 0.04, 1)
 
-canvas1.Print("FracUnc_AntiNuExceptME6I_Flux_Enu_Tracker.png")
+canvas1.Print("FracUnc_AllAntiNu_Flux_Enu_Tracker.png")
 input("Press enter to end program")

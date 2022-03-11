@@ -170,7 +170,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   //HW2D m_selected_mc_reco,m_selected_data_reco;
 
-  HW2D m_selected_mc_truth_trackerC; 
+  HW2D m_selected_mc_truth_trackerC, m_selected_mc_truth_t25fe, m_selected_mc_truth_t3c, m_selected_mc_truth_t15fe;
   /*
   HW2Dm_selected_mc_truth_waterO, m_selected_mc_truth_t1fe, m_selected_mc_truth_t1pb;
   HW2D m_selected_mc_truth_t2fe, m_selected_mc_truth_t2pb, m_selected_mc_truth_t3fe, m_selected_mc_truth_t3pb, m_selected_mc_truth_t3c;
@@ -224,11 +224,11 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     MH2D* dummy_selected_mc_truth_t3pb = new MH2D(Form("selected_mc_truth_t3pb_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t3pb = HW2D(dummy_selected_mc_truth_t3pb, univs, clear_bands);
-
+    */
     MH2D* dummy_selected_mc_truth_t3c = new MH2D(Form("selected_mc_truth_t3c_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t3c = HW2D(dummy_selected_mc_truth_t3c, univs, clear_bands);
-
+    /*
     MH2D* dummy_selected_mc_truth_t4pb = new MH2D(Form("selected_mc_truth_t4pb_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t4pb = HW2D(dummy_selected_mc_truth_t4pb, univs, clear_bands);
@@ -240,24 +240,27 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     MH2D* dummy_selected_mc_truth_t5pb = new MH2D(Form("selected_mc_truth_t5pb_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t5pb = HW2D(dummy_selected_mc_truth_t5pb, univs, clear_bands);
-
+*/
     MH2D* dummy_selected_mc_truth_t25fe = new MH2D(Form("selected_mc_truth_t25fe_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t25fe = HW2D(dummy_selected_mc_truth_t25fe, univs, clear_bands);
-
+ /*
     MH2D* dummy_selected_mc_truth_t25pb = new MH2D(Form("selected_mc_truth_t25pb_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t25pb = HW2D(dummy_selected_mc_truth_t25pb, univs, clear_bands);
-
+*/
     MH2D* dummy_selected_mc_truth_t15fe = new MH2D(Form("selected_mc_truth_t15fe_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t15fe = HW2D(dummy_selected_mc_truth_t15fe, univs, clear_bands);
-
+ /*
     MH2D* dummy_selected_mc_truth_t15pb = new MH2D(Form("selected_mc_truth_t15pb_%s", name), name, GetNBinsX(),
                  GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_truth_t15pb = HW2D(dummy_selected_mc_truth_t15pb, univs, clear_bands);
     */
     delete dummy_selected_mc_truth_trackerC;
+    delete dummy_selected_mc_truth_t3c;
+    delete dummy_selected_mc_truth_t25fe;
+    delete dummy_selected_mc_truth_t15fe;
     /*
     delete dummy_selected_mc_truth_waterO;
     delete dummy_selected_mc_truth_t1fe;
@@ -270,7 +273,6 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     delete dummy_selected_mc_truth_t4pb;
     delete dummy_selected_mc_truth_t5fe;
     delete dummy_selected_mc_truth_t5pb;
-    delete dummy_selected_mc_truth_t25fe;
     delete dummy_selected_mc_truth_t25pb;
     delete dummy_selected_mc_truth_t15fe;
     delete dummy_selected_mc_truth_t15pb;
@@ -284,6 +286,9 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     f.cd();
        if(isMC) {
         m_selected_mc_truth_trackerC.hist->Write();
+        m_selected_mc_truth_t3c.hist->Write();
+        m_selected_mc_truth_t25fe.hist->Write();
+        m_selected_mc_truth_t15fe.hist->Write();
         /*
         m_selected_mc_truth_waterO.hist->Write();
         m_selected_mc_truth_t1fe.hist->Write();
@@ -298,7 +303,6 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
         m_selected_mc_truth_t5pb.hist->Write();
         m_selected_mc_truth_t25fe.hist->Write();
         m_selected_mc_truth_t25pb.hist->Write();
-        m_selected_mc_truth_t15fe.hist->Write();
         m_selected_mc_truth_t15pb.hist->Write();
         */
       }

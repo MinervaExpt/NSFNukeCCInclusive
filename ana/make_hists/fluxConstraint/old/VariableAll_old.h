@@ -168,16 +168,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   // DECLARE NEW HISTOGRAMS
   //=======================================================================================
   // HISTWRAPPER
-  //HW2D m_selected_mc_reco,m_selected_data_reco;
+  HW2D m_selected_mc_reco,m_selected_data_reco;
 
-  HW2D m_selected_mc_truth_trackerC; 
-  /*
-  HW2Dm_selected_mc_truth_waterO, m_selected_mc_truth_t1fe, m_selected_mc_truth_t1pb;
-  HW2D m_selected_mc_truth_t2fe, m_selected_mc_truth_t2pb, m_selected_mc_truth_t3fe, m_selected_mc_truth_t3pb, m_selected_mc_truth_t3c;
-  HW2D m_selected_mc_truth_t4pb, m_selected_mc_truth_t5fe, m_selected_mc_truth_t5pb;
-  HW2D m_selected_mc_truth_t25fe, m_selected_mc_truth_t25pb;
-  HW2D m_selected_mc_truth_t15fe, m_selected_mc_truth_t15pb;
-  */
   //// HISTFOLIO
   // PlotUtils::HistFolio<MH2D> m_selected_mc_sb;
 
@@ -191,90 +183,19 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
 
     // HISTWRAPPER
     // selected mc reco histwrapper
+    MH2D* dummy_selected_mc_reco =
+        new MH2D(Form("selected_mc_reco2d_%s", name), name, GetNBinsX(),
+                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_mc_reco = HW2D(dummy_selected_mc_reco, univs, clear_bands);
     
+    
+    MH2D* dummy_selected_data_reco =
+        new MH2D(Form("selected_data2d_reco_%s", name), name, GetNBinsX(),
+                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_data_reco = HW2D(dummy_selected_data_reco, univs, clear_bands);
 
-    MH2D* dummy_selected_mc_truth_trackerC = new MH2D(Form("selected_mc_truth_trackerC_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_trackerC = HW2D(dummy_selected_mc_truth_trackerC, univs, clear_bands);
-    /*
-    MH2D* dummy_selected_mc_truth_waterO = new MH2D(Form("selected_mc_truth_waterO_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_waterO = HW2D(dummy_selected_mc_truth_waterO, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t1fe = new MH2D(Form("selected_mc_truth_t1fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t1fe = HW2D(dummy_selected_mc_truth_t1fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t1pb = new MH2D(Form("selected_mc_truth_t1pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t1pb = HW2D(dummy_selected_mc_truth_t1pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t2fe = new MH2D(Form("selected_mc_truth_t2fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t2fe = HW2D(dummy_selected_mc_truth_t2fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t2pb = new MH2D(Form("selected_mc_truth_t2pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t2pb = HW2D(dummy_selected_mc_truth_t2pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t3fe = new MH2D(Form("selected_mc_truth_t3fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t3fe = HW2D(dummy_selected_mc_truth_t3fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t3pb = new MH2D(Form("selected_mc_truth_t3pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t3pb = HW2D(dummy_selected_mc_truth_t3pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t3c = new MH2D(Form("selected_mc_truth_t3c_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t3c = HW2D(dummy_selected_mc_truth_t3c, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t4pb = new MH2D(Form("selected_mc_truth_t4pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t4pb = HW2D(dummy_selected_mc_truth_t4pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t5fe = new MH2D(Form("selected_mc_truth_t5fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t5fe = HW2D(dummy_selected_mc_truth_t5fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t5pb = new MH2D(Form("selected_mc_truth_t5pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t5pb = HW2D(dummy_selected_mc_truth_t5pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t25fe = new MH2D(Form("selected_mc_truth_t25fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t25fe = HW2D(dummy_selected_mc_truth_t25fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t25pb = new MH2D(Form("selected_mc_truth_t25pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t25pb = HW2D(dummy_selected_mc_truth_t25pb, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t15fe = new MH2D(Form("selected_mc_truth_t15fe_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t15fe = HW2D(dummy_selected_mc_truth_t15fe, univs, clear_bands);
-
-    MH2D* dummy_selected_mc_truth_t15pb = new MH2D(Form("selected_mc_truth_t15pb_%s", name), name, GetNBinsX(),
-                 GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_truth_t15pb = HW2D(dummy_selected_mc_truth_t15pb, univs, clear_bands);
-    */
-    delete dummy_selected_mc_truth_trackerC;
-    /*
-    delete dummy_selected_mc_truth_waterO;
-    delete dummy_selected_mc_truth_t1fe;
-    delete dummy_selected_mc_truth_t1pb;
-    delete dummy_selected_mc_truth_t2fe;
-    delete dummy_selected_mc_truth_t2pb;
-    delete dummy_selected_mc_truth_t3fe;
-    delete dummy_selected_mc_truth_t3pb;
-    delete dummy_selected_mc_truth_t3c;
-    delete dummy_selected_mc_truth_t4pb;
-    delete dummy_selected_mc_truth_t5fe;
-    delete dummy_selected_mc_truth_t5pb;
-    delete dummy_selected_mc_truth_t25fe;
-    delete dummy_selected_mc_truth_t25pb;
-    delete dummy_selected_mc_truth_t15fe;
-    delete dummy_selected_mc_truth_t15pb;
-    */
+    delete dummy_selected_mc_reco;
+    delete dummy_selected_data_reco;
   }
 
   //=======================================================================================
@@ -282,26 +203,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   //=======================================================================================
   void WriteAllHistogramsToFile(TFile& f,bool isMC) const {
     f.cd();
-       if(isMC) {
-        m_selected_mc_truth_trackerC.hist->Write();
-        /*
-        m_selected_mc_truth_waterO.hist->Write();
-        m_selected_mc_truth_t1fe.hist->Write();
-        m_selected_mc_truth_t1pb.hist->Write();
-        m_selected_mc_truth_t2fe.hist->Write();
-        m_selected_mc_truth_t2pb.hist->Write();
-        m_selected_mc_truth_t3fe.hist->Write();
-        m_selected_mc_truth_t3pb.hist->Write();
-        m_selected_mc_truth_t3c.hist->Write();
-        m_selected_mc_truth_t4pb.hist->Write();
-        m_selected_mc_truth_t5fe.hist->Write();
-        m_selected_mc_truth_t5pb.hist->Write();
-        m_selected_mc_truth_t25fe.hist->Write();
-        m_selected_mc_truth_t25pb.hist->Write();
-        m_selected_mc_truth_t15fe.hist->Write();
-        m_selected_mc_truth_t15pb.hist->Write();
-        */
-      }
+       if(isMC) m_selected_mc_reco.hist->Write();
     // selected mc reco
   }
 };

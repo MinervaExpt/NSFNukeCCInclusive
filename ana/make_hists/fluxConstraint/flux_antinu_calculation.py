@@ -379,7 +379,7 @@ water (assumes no x/y cuts), water_apothem (assumes 850mm apothem cut), water_ra
 
     # Anezka
     infile= ROOT.TFile(str(input_filename)) 
-    pot = infile.Get("MCPOT").GetVal()
+    pot = infile.Get("MCPOT").GetVal()#4.9634601075e+21
     main(output_directory, input_filename, histname, pot, material) 
 
 

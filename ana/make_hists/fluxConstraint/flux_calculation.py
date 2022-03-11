@@ -231,7 +231,7 @@ def main(output_dir, input_filename, histname, pot, material):
             print "Done getting projection X"
         
         fluxhist = make_clean_copy(hist)
-        N_flux_universes = 500
+        N_flux_universes = 1
         flux_universe_name = "Flux"
         fluxhist.AddVertErrorBand(flux_universe_name, N_flux_universes)
         xsechist = make_clean_copy(hist)
@@ -373,7 +373,8 @@ water (assumes no x/y cuts), water_apothem (assumes 850mm apothem cut), water_ra
 
     # Anezka
     infile= ROOT.TFile(str(input_filename)) 
-    pot = 9.484986000000001e+20#infile.Get("MCPOT").GetVal()
+    pot = infile.Get("MCPOT").GetVal()
+    #pot = 1.80406844465e+21
     main(output_directory, input_filename, histname, pot, material)  
 
 

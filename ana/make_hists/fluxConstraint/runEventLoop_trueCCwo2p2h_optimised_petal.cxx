@@ -10,7 +10,7 @@
 
 #include "../../../NUKECCSRC/include/CommonIncludes.h"
 #include "../../../NUKECCSRC/include/CVUniverse.h"
-#include "VariableAll.h"  
+#include "VariableAll_Petal.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
@@ -93,9 +93,9 @@ int main(int argc, char *argv[]){
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
   PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
-  PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
+  PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
   PlotUtils::MinervaUniverse::SetNonResPiReweight(false);
-  PlotUtils::MinervaUniverse::SetNFluxUniverses(1);
+  PlotUtils::MinervaUniverse::SetNFluxUniverses(1);  
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( Form("EventSelection_%s_FluxConstraint_optim_sys",plist_string.c_str()), FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( Form("EventSelection_%s_FluxConstraint_optimPetal_sys",plist_string.c_str()), FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
@@ -138,7 +138,8 @@ int main(int argc, char *argv[]){
   // MC 
   std::cout << "Processing MC and filling histograms" << std::endl;
 
-  FillVariable(chainTruth, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
+  FillVariable(chainTruth, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);
+    
   for (auto v : variablesMC) {
     v->m_selected_mc_truth_trackerC.SyncCVHistos();
     v->m_selected_mc_truth_waterO.SyncCVHistos();
@@ -158,11 +159,41 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_truth_t15pb.SyncCVHistos();
   }
 
+
+  for (auto v : variables2DMC) {
+    v->m_selected_mc_truth_trackerC.SyncCVHistos();
+    v->m_selected_mc_truth_t3c.SyncCVHistos();
+    v->m_selected_mc_truth_t25fe.SyncCVHistos();
+    v->m_selected_mc_truth_t15fe.SyncCVHistos();
+    /*
+    v->m_selected_mc_truth_waterO.SyncCVHistos();
+    v->m_selected_mc_truth_t1fe.SyncCVHistos();
+    v->m_selected_mc_truth_t1pb.SyncCVHistos();
+    v->m_selected_mc_truth_t2fe.SyncCVHistos();
+    v->m_selected_mc_truth_t2pb.SyncCVHistos();
+    v->m_selected_mc_truth_t3fe.SyncCVHistos();
+    v->m_selected_mc_truth_t3pb.SyncCVHistos();
+    v->m_selected_mc_truth_t3c.SyncCVHistos();
+    v->m_selected_mc_truth_t4pb.SyncCVHistos();
+    v->m_selected_mc_truth_t5fe.SyncCVHistos();
+    v->m_selected_mc_truth_t5pb.SyncCVHistos();
+    v->m_selected_mc_truth_t25fe.SyncCVHistos();
+    v->m_selected_mc_truth_t25pb.SyncCVHistos();
+    v->m_selected_mc_truth_t15fe.SyncCVHistos();
+    v->m_selected_mc_truth_t15pb.SyncCVHistos();
+    */
+  }
+
   // WRITE HISTOGRAMS TO FILE
 
   // 1D variables
   for (auto v : variablesMC) {
     v->WriteAllHistogramsToFile(fout, true);
+  }
+
+  // 2D Variables
+  for (auto v : variables2DMC) {
+    v->WriteAllHistogramsToFile(fout,true);
   }
   
   //Writing POT to the HistFile
@@ -232,23 +263,32 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout<< "Error_Band_GROUPS.size() = " << error_bands_GROUP.size()<<std::endl;
   std::cout<<"Number of Universes set is = "<<    MinervaUniverse::GetNFluxUniverses()<<std::endl;
   
-  std::vector<double> Enubin;
+  std::vector<double> Enubin, petalbin;
   std::vector<double> vtxzbin, vtxybin, vtxxbin;
   Enubin = binsDef->GetEnergyBins("EnuFlux"); // 0.1 GeV binning from 0 to 100 GeV
-  //vtxxbin = binsDef->GetEnergyBins("vtxx"); 
-  //vtxybin = binsDef->GetEnergyBins("vtxy");
+  petalbin = binsDef->GetEnergyBins("petal");
+  vtxxbin = binsDef->GetEnergyBins("vtxx"); 
+  vtxybin = binsDef->GetEnergyBins("vtxy");
   //vtxzbin = binsDef->GetEnergyBins("vtxz");
 
   // 1D Variables
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
+  Var* petal = new Var("Petal", "Petal", petalbin, &CVUniverse::GetDaisyPetalTrue, &CVUniverse::GetDaisyPetalTrue);
+  Var* vtxx = new Var("vtxx", "Vertex X", vtxxbin, &CVUniverse::GetVertexXMy, &CVUniverse::GetVertexXTrueMy);
+  Var* vtxy = new Var("vtxy", "Vertex Y", vtxybin, &CVUniverse::GetVertexYMy, &CVUniverse::GetVertexYTrueMy);
   //Var* vtxz = new Var("vtxz", "Vertex Z", vtxzbin, &CVUniverse::GetVertexZMy, &CVUniverse::GetVertexZTrueMy);
   //Var* vtxx = new Var("vtxx", "Vertex X", vtxxbin, &CVUniverse::GetVertexXMy, &CVUniverse::GetVertexXTrueMy);
   //Var* vtxy = new Var("vtxy", "Vertex Y", vtxybin, &CVUniverse::GetVertexYMy, &CVUniverse::GetVertexYTrueMy);
 
-  variables = {enu};//, vtxz, vtxx, vtxy};
+  variables = {enu, petal};//, vtxz, vtxx, vtxy};
 
+  Var2D* enu_petal = new Var2D(*enu, *petal);
+  Var2D* petal_enu = new Var2D(*petal, *enu);
+  Var2D* vtxx_vtxy = new Var2D(*vtxx, *vtxy);
+  variables2d = {vtxx_vtxy, enu_petal, petal_enu};
 
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
+  for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
 
 
   int all =0 ;
@@ -315,6 +355,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               trackerC++;
               for (auto universe : band_GROUP){
                 for (auto v : variables) v->m_selected_mc_truth_trackerC.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
+                for (auto v : variables2d) v->m_selected_mc_truth_trackerC.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
               }
             }    
           }
@@ -326,6 +367,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               waterO++;
               for (auto universe : band_GROUP){
                 for (auto v : variables) v->m_selected_mc_truth_waterO.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
+                //for (auto v : variables2d) v->m_selected_mc_truth_waterO.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
               }
             }    
           } 
@@ -338,6 +380,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t1fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              for (auto v : variables2d) v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
             }
           } 
 
@@ -347,7 +390,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             for (auto universe : band_GROUP){
               for (auto v : variables) {
                 v->m_selected_mc_truth_t1pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
-                v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());              }
+                v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux()); 
+              }
+              //for (auto v : variables2d) v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+
             }
           } 
 
@@ -360,6 +406,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              for (auto v : variables2d){
+                v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+                v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              }        
             }
           } 
 
@@ -372,6 +422,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              //for (auto v : variables2d){
+              //  v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //  v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //} 
             }
           }  
 
@@ -384,6 +438,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              for (auto v : variables2d){
+                v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+                v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              } 
             }
           }
 
@@ -396,6 +454,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              //for (auto v : variables2d){
+              //  v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //  v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //}
             }
           }
 
@@ -404,7 +466,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             t3c++;
             for (auto universe : band_GROUP){
               for (auto v : variables) v->m_selected_mc_truth_t3c.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
-            }
+              for (auto v : variables2d) v->m_selected_mc_truth_t3c.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+
+            }            
           }
 
           // TARGET 4 Pb
@@ -416,6 +480,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              //for (auto v : variables2d){
+              //  v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //  v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //}
             }
           }
 
@@ -427,6 +495,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t5fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
+              }
+              for (auto v : variables2d){
+                v->m_selected_mc_truth_t15fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+                v->m_selected_mc_truth_t25fe.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
               }
             }
           }
@@ -440,6 +512,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
                 v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeightFlux());
               }
+              //for (auto v : variables2d){
+              //  v->m_selected_mc_truth_t15pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //  v->m_selected_mc_truth_t25pb.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeightFlux());
+              //}
             }
           }
 

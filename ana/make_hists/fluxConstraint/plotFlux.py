@@ -5,7 +5,7 @@ from ROOT import gStyle
 from ROOT import TLine
 from ROOT import TLegend
 
-path = "/minerva/data2/users/anezkak/flux4Daisy_files_2022/OptimisedEventLoopME1ABCDEFGLM_flux_grid_sys/"
+path = "/minerva/data2/users/anezkak/fluxFinal/Antineutrinos/"
 tracker_file = ROOT.TFile(str(path)+"flux_tracker.root")
 iron_file = ROOT.TFile(str(path)+"flux_iron.root")
 lead_file = ROOT.TFile(str(path)+"flux_lead.root")
@@ -15,9 +15,9 @@ canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
 
-infile = ROOT.TFile(str(path)+"CombinedPlaylists_Nu_sys.root ")
+infile = ROOT.TFile(str(path)+"CombinedPlaylists_AntiNu_sys_Enu_vs_Petal.root ")
 mcPOT = infile.Get("MCPOT").GetVal()
-mcPOTwater = 9.49e20
+mcPOTwater = 1.80406844465e+21
 
 tracker = tracker_file.Get("flux")
 iron = iron_file.Get("flux")
@@ -36,12 +36,12 @@ tracker.GetYaxis().SetTitleOffset(1.3)
 tracker.GetYaxis().SetTitleSize(0.05)
 tracker.GetYaxis().SetLabelSize(0.05)
 tracker.GetXaxis().CenterTitle(True)
-tracker.GetXaxis().SetTitle("Neutrino Energy (GeV)")
-#tracker.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
+#tracker.GetXaxis().SetTitle("Neutrino Energy (GeV)")
+tracker.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
 tracker.GetXaxis().SetTitleSize(0.05)
 tracker.GetXaxis().SetLabelSize(0.05)
-tracker.GetYaxis().SetTitle("#nu / m^{2} / P.O.T/ GeV")
-#tracker.GetYaxis().SetTitle("#bar{#nu} / m^{2} / P.O.T/ GeV")
+#tracker.GetYaxis().SetTitle("#nu / m^{2} / P.O.T/ GeV")
+tracker.GetYaxis().SetTitle("#bar{#nu} / m^{2} / P.O.T/ GeV")
 
 tracker.Draw("HIST")
 iron.Draw("HIST SAME")
@@ -51,9 +51,11 @@ water.Draw("HIST SAME")
 
 tracker.SetMaximum(tracker.GetMaximum()*1.15)
 
-#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT), 0.29, 0.87, 0.033, 12, 42)
-mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT) + " (Water "+str(mcPOTwater) + ")", 0.38, 0.87, 0.033, 12, 42)
-mnv.AddHistoTitle("Flux Nu (except ME1NOP)", 0.05, 1)
+mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT), 0.29, 0.87, 0.033, 12, 42)
+#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT) + " (Water "+ "{:.2e}".format(mcPOTwater) + ")", 0.38, 0.87, 0.033, 12, 42)
+#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT), 0.28, 0.87, 0.033, 12, 42)
+
+mnv.AddHistoTitle("Flux All Nu", 0.05, 1)
 gStyle.SetErrorX(0)
 
 legend = TLegend(0.65,0.65,0.85,0.89)
@@ -71,14 +73,14 @@ legend.SetTextFont(42)
 legend.Draw()
 
 canvas1.Modified()
-canvas1.Print("NuExceptME1NOP_Fluxes_sys.png")
+canvas1.Print("AllAntiNu_Fluxes_sys.png")
 
 
 # ----------------------------------------------------------------------------
 # Data/MC ratio
 
-#tracker.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
-tracker.GetXaxis().SetTitle("Neutrino Energy (GeV)")
+tracker.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
+#tracker.GetXaxis().SetTitle("Neutrino Energy (GeV)")
 tracker.GetYaxis().SetTitle("Ratio to Tracker")
 tracker.GetXaxis().CenterTitle()
 tracker.GetYaxis().CenterTitle()
@@ -90,16 +92,22 @@ lead.Divide(lead,denom)
 carbon.Divide(carbon,denom)
 water.Divide(water,denom)
 tracker.Divide(tracker,denom)
+'''
+iron.Smooth(10)
+lead.Smooth(10)
+carbon.Smooth(10)
+water.Smooth(10)
+'''
 tracker.Draw("HIST")
 iron.Draw("HIST SAME")
 lead.Draw("HIST SAME")
 carbon.Draw("HIST SAME")
 water.Draw("HIST SAME")
 
-tracker.SetMinimum(0)
-tracker.SetMaximum(2)
+tracker.SetMinimum(0.8)
+tracker.SetMaximum(1.2)
 
-mnv.AddHistoTitle("Flux Nu (except ME1NOP)", 0.05, 1)
+mnv.AddHistoTitle("Flux All AntiNu", 0.05, 1)
 gStyle.SetErrorX(0)
 
 legend = TLegend(0.65,0.65,0.85,0.89)
@@ -116,12 +124,13 @@ legend.AddEntry(water, " Water (O)", "l")
 legend.SetTextFont(42)
 legend.Draw()
 
-#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT), 0.29, 0.87, 0.033, 12, 42)
-mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT) + " (Water "+str(mcPOTwater) + ")", 0.38, 0.87, 0.033, 12, 42)
+mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT), 0.29, 0.87, 0.033, 12, 42)
+#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT) + " (Water "+"{:.2e}".format(mcPOTwater) + ")", 0.38, 0.87, 0.033, 12, 42)
+#mnv.AddPlotLabel("MC POT "+ "{:.2e}".format(mcPOT) , 0.28, 0.87, 0.033, 12, 42)
 
 
 canvas1.Modified()
-canvas1.Print("NuExceptME1NOP_Fluxes_sys_ratio.png")
+canvas1.Print("AllAntiNu_Fluxes_sys_ratio_close_up.png")
 
 
 raw_input("Done")

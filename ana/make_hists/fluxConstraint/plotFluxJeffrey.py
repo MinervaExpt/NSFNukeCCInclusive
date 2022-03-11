@@ -5,7 +5,9 @@ from ROOT import gStyle
 from ROOT import TLine
 from ROOT import TLegend
 
-path = "/minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux_daisy/targets_2345_temp/flux_with_errors/"
+#path = "/minerva/app/users/anezkak/MAT_GitHub/opt/lib/data/flux_daisy/targets_2345_temp/flux_with_errors/"
+path = "/minerva/app/users/kleykamp/cmtuser/Minerva_v22r1p1/Ana/PlotUtils/data/nuclear_target_fluxes/fhc/"
+
 tracker_file = ROOT.TFile(str(path)+"flux_tracker.root")
 iron_file = ROOT.TFile(str(path)+"flux_iron.root ")
 lead_file = ROOT.TFile(str(path)+"flux_lead.root ")
@@ -87,10 +89,10 @@ lead.Draw("HIST SAME")
 carbon.Draw("HIST SAME")
 water.Draw("HIST SAME")
 
-tracker.SetMinimum(0)
-tracker.SetMaximum(2)
+tracker.SetMinimum(0.8)
+tracker.SetMaximum(1.2)
 
-mnv.AddHistoTitle("Flux Neutrinos", 0.05, 1)
+mnv.AddHistoTitle("Flux All Nu", 0.05, 1)
 gStyle.SetErrorX(0)
 
 legend = TLegend(0.65,0.65,0.85,0.89)
@@ -108,7 +110,7 @@ legend.SetTextFont(42)
 legend.Draw()
 
 canvas1.Modified()
-canvas1.Print("Neutrino_Fluxes_ratio_Jeffrey.png")
+canvas1.Print("Neutrino_Fluxes_ratio_Jeffrey_new.png")
 
 
 raw_input("Done")

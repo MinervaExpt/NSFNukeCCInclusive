@@ -6,10 +6,10 @@ from ROOT import TParameter
 ROOT.TH1.AddDirectory(False)
 mcPOTAll = 0
 
-pwd = "/pnfs/minerva/persistent/users/anezkak/default_analysis_loc/fluxEventLoop_sys/"
+pwd = "/pnfs/minerva/persistent/users/anezkak/default_analysis_loc/AntiNu_flux/"
 
-infile = ROOT.TFile(str(pwd)+"Hists_EventSelection_minervame1A_FluxConstraint_optim_sys_t99_z99_Nu.root")
-out = ROOT.TFile("CombinedPlaylists_Nu_sys.root","RECREATE")
+infile = ROOT.TFile(str(pwd)+"Hists_EventSelection_minervame6A_FluxConstraint_optimPetal_sys_t99_z99_AntiNu.root ")
+out = ROOT.TFile("CombinedPlaylists_AntiNu_sys_Enu_vs_Petal.root","RECREATE")
 
 # declare histograms
 histogram = infile.Get("selected_mc_truth_trackerC_Enu")
@@ -94,10 +94,22 @@ histogram16.ClearAllErrorBands()
 histogram16.AddMissingErrorBandsAndFillWithCV(histogram)
 histogram16.Reset()
 
+histogram17 = infile.Get("selected_mc_truth_trackerC_Enu_Petal")
+histogram17.ClearAllErrorBands()
+histogram17.AddMissingErrorBandsAndFillWithCV(histogram)
+histogram17.Reset()
+
+histogram18 = infile.Get("selected_mc_truth_trackerC_Petal_Enu")
+histogram18.ClearAllErrorBands()
+histogram18.AddMissingErrorBandsAndFillWithCV(histogram)
+histogram18.Reset()
+
+
 
 for filename in os.listdir(str(pwd)):
     if filename.endswith(".root"): 
             #print (filename)
+            print(str(filename))
             infile = ROOT.TFile(str(pwd)+str(filename))
             histogram1.Add(infile.Get("selected_mc_truth_trackerC_Enu"))
             histogram2.Add(infile.Get("selected_mc_truth_waterO_Enu"))
@@ -115,7 +127,10 @@ for filename in os.listdir(str(pwd)):
             histogram14.Add(infile.Get("selected_mc_truth_t25fe_Enu"))
             histogram15.Add(infile.Get("selected_mc_truth_t15pb_Enu"))
             histogram16.Add(infile.Get("selected_mc_truth_t25pb_Enu"))
+            histogram17.Add(infile.Get("selected_mc_truth_trackerC_Enu_Petal"))
+            histogram18.Add(infile.Get("selected_mc_truth_trackerC_Petal_Enu"))
             mcPOTAll += infile.Get("MCPOT").GetVal()
+            print(infile.Get("MCPOT").GetVal())
             print(mcPOTAll)
             print("Added Histograms")
         #continue
@@ -137,6 +152,8 @@ histogram13.Write()
 histogram14.Write()
 histogram15.Write()
 histogram16.Write()
+histogram17.Write()
+histogram18.Write()
 mcPOTout = TParameter(float)("MCPOT", mcPOTAll)
 mcPOTout.Write()
 
