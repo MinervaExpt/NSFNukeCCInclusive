@@ -1,0 +1,3 @@
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/anezkak/MLME6A_Faiza/NukeCC_MC_AnaTuple_minervame6A_run001220000_v1_newAnneML.root 
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/anezkak/MLME6A_Faiza/NukeCC_MC_AnaTuple_minervame6A_run001220001_v1_newAnneML.root 
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/anezkak/MLME6A_Faiza/NukeCC_MC_AnaTuple_minervame6A_run001220002_v1_newAnneML.root 
