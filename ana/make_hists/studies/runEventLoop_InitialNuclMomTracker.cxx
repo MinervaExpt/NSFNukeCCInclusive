@@ -1,4 +1,4 @@
-// Select events happening on protons in a given target
+// Select events happening on hydrogen in the tracker
 // Read true value from GENIE (not calculate using true variables), true weight
 
 //==============================================================================
@@ -11,26 +11,26 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "../../NUKECCSRC/include/CommonIncludes.h"
-#include "../../NUKECCSRC/include/CVUniverse.h"
-#include "../include/VariableRun_InitialNuclMom.h"  
+#include "../../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../../NUKECCSRC/include/CVUniverse.h"
+#include "../../include/VariableRun_InitialNuclMom.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
+#include "../../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../include/systematics/Systematics.h"
+#include "../../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
 #ifndef __CINT__
-#include "../include/plotting_functions.h"
+#include "../../include/plotting_functions.h"
 #endif
 #include "PlotUtils/MacroUtil.h" 
 //using namespace globalV;
@@ -65,16 +65,18 @@ int main(int argc, char *argv[]){
     std::cout << "---------------------------------------------------------------------------------" << std::endl;
     std::cout << "MACROS HELP:\n\n" <<
     "\t-./runEventLoop Path_to_Output_file Target_number Material_atomic_number Playlist\n\n" <<
-    "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
-    "\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n" <<
-    "\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
+    "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<< std::endl;
+    //"\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n" <<
+    //"\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
     std::cout << "---------------------------------------------------------------------------------" << std::endl;
     return 0;
   }
 
   TString dir(argv[1]);
-  int targetID = atoi(argv[2]);
-  int targetZ = atoi(argv[3]);
+  //int targetID = atoi(argv[2]);
+  //int targetZ = atoi(argv[3]);
+
+  int targetID = 99; int targetZ = 99;  
 
   bool doDIS=false;
 
@@ -84,15 +86,15 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
   const std::string reco_tree_name("NukeCC");
   
   const std::string plist_string("minervame6A");
   const bool wants_truth = false;
   const bool is_grid = false;
 
-  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
+  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
   util.PrintMacroConfiguration("main");
 
@@ -131,11 +133,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys_InitialNuclMom_TrueValues_ProtonsvsNeutrons", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys_InitialNuclMom_TrueValues_HydrogenOnly", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys_InitialNuclMom_TrueValues_ProtonsvsNeutrons", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys_InitialNuclMom_TrueValues_HydrogenOnly", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -151,8 +153,6 @@ int main(int argc, char *argv[]){
   FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
-  for (auto v : variables2DMC) v->m_selected_mc_reco_protons.SyncCVHistos();
-  for (auto v : variables2DMC) v->m_selected_mc_reco_neutrons.SyncCVHistos();
    
   // DATA
   //std::cout << "Processing Data and filling histograms" << std::endl;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]){
  
   // 2D Plotting
   for(int i=0; i< variables2DMC.size();i++){
-    //Plot2D(variables2DMC[i]->m_selected_mc_reco.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY());
+    Plot2D(variables2DMC[i]->m_selected_mc_reco.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY());
     //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());   
   }//End 2D plotting
 	
@@ -272,7 +272,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
-  Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);//readXTrue); // read true value from GENIE
+  Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::readXTrue); // read true value from GENIE
   Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
@@ -284,11 +284,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  Var *initNuclMomX = new Var("iNuclpX", "iNuclpX",initNuclMomXbin, &CVUniverse::GetInNuclMomentumX, &CVUniverse::GetInNuclMomentumX);
-  Var *initNuclMomY = new Var("iNuclpY", "iNuclpY",initNuclMomYbin, &CVUniverse::GetInNuclMomentumY, &CVUniverse::GetInNuclMomentumY);
-  Var *initNuclMomZ = new Var("iNuclpZ", "iNuclpZ",initNuclMomZbin, &CVUniverse::GetInNuclMomentumZ, &CVUniverse::GetInNuclMomentumZ);
+  Var *initNuclMomX = new Var("initNuclMomX", "initNuclMomX",initNuclMomXbin, &CVUniverse::GetInNuclMomentumX, &CVUniverse::GetInNuclMomentumX);
+  Var *initNuclMomY = new Var("initNuclMomY", "initNuclMomY",initNuclMomYbin, &CVUniverse::GetInNuclMomentumY, &CVUniverse::GetInNuclMomentumY);
+  Var *initNuclMomZ = new Var("initNuclMomZ", "initNuclMomZ",initNuclMomZbin, &CVUniverse::GetInNuclMomentumZ, &CVUniverse::GetInNuclMomentumZ);
 
-  Var *initNuclMom = new Var("iNuclp", "iNuclp",initNuclMombin, &CVUniverse::GetInNuclMomentum, &CVUniverse::GetInNuclMomentum);
+  Var *initNuclMom = new Var("initNuclMom", "initNuclMom",initNuclMombin, &CVUniverse::GetInNuclMomentum, &CVUniverse::GetInNuclMomentum);
 
 
   variables = {initNuclMomX, initNuclMomY, initNuclMomZ, initNuclMom, x, enu};
@@ -304,11 +304,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
 
 
-  Var2D* iNuclpXY = new Var2D(*initNuclMomX, *initNuclMomY);
-  Var2D* iNuclpYZ = new Var2D(*initNuclMomY, *initNuclMomZ);
-  Var2D* iNuclpXZ = new Var2D(*initNuclMomX, *initNuclMomZ);
+  Var2D* initNuclMomX_Y = new Var2D(*initNuclMomX, *initNuclMomY);
+  Var2D* initNuclMomY_Z = new Var2D(*initNuclMomY, *initNuclMomZ);
+  Var2D* initNuclMomX_Z = new Var2D(*initNuclMomX, *initNuclMomZ);
 
-  variables2d = {iNuclpXY,iNuclpYZ,iNuclpXZ }; // initial nucleon momentum
+  variables2d = {initNuclMomX_Y, initNuclMomY_Z, initNuclMomX_Z}; 
   //emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
    
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
@@ -343,7 +343,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       targetIDs.push_back(5);
     }
     if(targetZ==6){
-      targetIDs.push_back(3); 
+      targetIDs.push_back(3);
     }
   }
 
@@ -353,11 +353,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco3=0;
   int reco4=0; 
   int reco5=0; 
-  int reco6=0;
-  int notsrc=0;
+  int reco6=0; 
   int src=0; // p > 250 MeV/c
-  int protons=0; // target nucleus
-  int neutrons=0;
+  int hydrogen=0; // target nucleus
   //int neutralcur = 0;
   //int wrongsign = 0;
   
@@ -393,49 +391,21 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
               if(!cutter->PassReco(universe,helicity)) continue;
               reco1++;
-              
-              if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
-              //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
+
+              if(!cutter->TrackerOnly(universe)) continue;
               reco2++;
-              
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
-              //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+
+              if(!cutter->InHexagon(universe, 850)) continue;
               reco3++;
               
-              if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
-              //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
-              reco4++;
-              
-              // only protons
-              //if( universe->GetInt("mc_targetNucleon") !=  PROTON_PDG ) continue;
-              //protons++;
-              
-              /* GLOBAL VS LOCAL CUT*/
-              //if(!cutter->PassMuEnergyCut(universe)) continue;
-              //reco5++;
-
-              //if(!cutter->PassThetaCut(universe)) continue;
-              //reco6++;
-
-              //pure signal cuts on MC to estimate bkg (counts)    
-              //if( 1 != universe->GetInt("mc_current") ) continue; 
-              //neutralcur++;
-              //if(-14 != universe->GetInt("mc_incoming") ) continue;
-              //wrongsign++;
+              // only hydrogen
+              if( universe->GetInt("mc_targetZ") !=  1 ) continue;
+              hydrogen++;
 
               for (auto v : variables2d){
 	              if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	              if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-
-              // only protons
-                if( universe->GetInt("mc_targetNucleon") ==  PROTON_PDG ){
-                  v->m_selected_mc_reco_protons.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
-                  //protons++;
-                }
-                if( universe->GetInt("mc_targetNucleon") ==  NEUTRON_PDG ){
-                  //neutrons++; 
-                  v->m_selected_mc_reco_neutrons.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
-                }
+	              v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight()); 
 	            }
 	
 	            for (auto v : variables){
@@ -446,46 +416,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	              if (v->GetName()=="Enu") reco6++;
 	     
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+                v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
 
-                // only protons (all)
-                if( universe->GetInt("mc_targetNucleon") ==  PROTON_PDG ){
-                  v->m_selected_mc_sb.GetComponentHist("Protons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
 
-                  if( universe->GetInNuclMomentum() < 250.0 ){ // NOT correlated
-                    v->m_selected_mc_sb.GetComponentHist("notSRC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                    if (v->GetName()=="Enu") notsrc++;
-                    v->m_selected_mc_sb.GetComponentHist("notSRC_protons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  }
-
-                  else{ // Correlated
+                if( universe->GetInNuclMomentum() > 250.0 ){
                   v->m_selected_mc_sb.GetComponentHist("SRC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                   if (v->GetName()=="Enu") src++;
-                  v->m_selected_mc_sb.GetComponentHist("SRC_protons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  if (v->GetName()=="Enu") protons++;
-                  }
-
                 }
-                //only neutrons (all)
-                else{
-                //if( universe->GetInt("mc_targetNucleon") ==  NEUTRON_PDG ){
-                  v->m_selected_mc_sb.GetComponentHist("Neutrons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-
-                  if( universe->GetInNuclMomentum() < 250.0 ){ // NOT correlated
-                    v->m_selected_mc_sb.GetComponentHist("notSRC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                    if (v->GetName()=="Enu") notsrc++;
-                    v->m_selected_mc_sb.GetComponentHist("notSRC_neutrons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  }
-
-                  else{ // Correlated
-                  v->m_selected_mc_sb.GetComponentHist("SRC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  if (v->GetName()=="Enu") src++;
-                  if (v->GetName()=="Enu") neutrons++; 
-                  v->m_selected_mc_sb.GetComponentHist("SRC_neutrons")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  }
-
-                }
-
 
               
                 /*
@@ -572,17 +509,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Summary " << std::endl;
   std::cout << "No cuts = " << reco0 << std::endl;
   std::cout << "Reco Cut = " << reco1 << std::endl;
-  std::cout << "Material Cut = " << reco2 << std::endl;
-  std::cout << "TargetID Cuts = " << reco3 << std::endl;
-  std::cout << "Plane prob. cut = " << reco4 << std::endl;
-  //std::cout << "Protons only = " << protons << std::endl;
-  //std::cout<<" Neutral Current cuts = " << neutralcur << std::endl;
-  //std::cout<<" Wrong Sign Cuts = " << wrongsign << std::endl;
-  //std::cout<<" In Hexagon Cuts = "<<reco4<<std::endl;
-  //std::cout<<" Muon Kinematics Cuts = "<<reco4<<std::endl;
+  std::cout << "Tracker Cut = " << reco2 << std::endl;
+  std::cout << "Hexagon Cuts = " << reco3 << std::endl;
+  std::cout << "Hydrogen only = " << hydrogen << std::endl;
   std::cout << "Muon Energy cut  = "<< reco5 << std::endl;
   std::cout << "Muon theta cut  = " << reco6 << std::endl;
-  std::cout << "Momentum < 250 Cut  = " << notsrc << std::endl;
   std::cout << "SRC (Momentum > 250 Cut)  = " << src << std::endl;
   std::cout << "**********************************" << std::endl;
   

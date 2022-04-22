@@ -1,6 +1,3 @@
-// Select events happening on hydrogen in the tracker
-// Read true value from GENIE (not calculate using true variables), true weight
-
 //==============================================================================
 // Loop entries, make cuts, fill histograms.
 // * Uses the New Systematics Framework and "Universe" objects.
@@ -11,26 +8,35 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "../../NUKECCSRC/include/CommonIncludes.h"
-#include "../../NUKECCSRC/include/CVUniverse.h"
-#include "../include/VariableRun_InitialNuclMom.h"  
+#include "../../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../../NUKECCSRC/include/CVUniverse.h"
+#include "../../include/VariableRun.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
+#include "../../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../include/systematics/Systematics.h"
+#include "../../include/systematics/Systematics.h"
+
+#include "PlotUtils/Model.h"
+#include "../../include/Event.h"
+
+#include "PlotUtils/FluxAndCVReweighter.h"
+#include "PlotUtils/GENIEReweighter.h"
+#include "PlotUtils/LowRecoil2p2hReweighter.h"
+#include "PlotUtils/RPAReweighter.h"
+#include "PlotUtils/MINOSEfficiencyReweighter.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
 #ifndef __CINT__
-#include "../include/plotting_functions.h"
+#include "../../include/plotting_functions.h"
 #endif
 #include "PlotUtils/MacroUtil.h" 
 //using namespace globalV;
@@ -53,7 +59,7 @@ typedef Var2DLoop::Variable2D Var2D;
 //=============================================================================
 
 void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType
-helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef,
+helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef, PlotUtils::Model<CVUniverse, Event>& model,
 std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int targetID=1,
 int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
@@ -65,18 +71,16 @@ int main(int argc, char *argv[]){
     std::cout << "---------------------------------------------------------------------------------" << std::endl;
     std::cout << "MACROS HELP:\n\n" <<
     "\t-./runEventLoop Path_to_Output_file Target_number Material_atomic_number Playlist\n\n" <<
-    "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<< std::endl;
-    //"\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n" <<
-    //"\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
+    "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
+    "\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n" <<
+    "\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
     std::cout << "---------------------------------------------------------------------------------" << std::endl;
     return 0;
   }
 
   TString dir(argv[1]);
-  //int targetID = atoi(argv[2]);
-  //int targetZ = atoi(argv[3]);
-
-  int targetID = 99; int targetZ = 99;  
+  int targetID = atoi(argv[2]);
+  int targetZ = atoi(argv[3]);
 
   bool doDIS=false;
 
@@ -86,15 +90,15 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
   const std::string reco_tree_name("NukeCC");
   
   const std::string plist_string("minervame6A");
   const bool wants_truth = false;
   const bool is_grid = false;
 
-  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
+  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
   util.PrintMacroConfiguration("main");
 
@@ -119,6 +123,15 @@ int main(int argc, char *argv[]){
   PlotUtils::ChainWrapper* chainData = util.m_data;
   PlotUtils::ChainWrapper* chainMC = util.m_mc;
   HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
+
+  std::vector<std::unique_ptr<PlotUtils::Reweighter<CVUniverse, Event>>> MnvTunev1;
+  MnvTunev1.emplace_back(new PlotUtils::FluxAndCVReweighter<CVUniverse, Event>());
+  MnvTunev1.emplace_back(new PlotUtils::GENIEReweighter<CVUniverse, Event>(true, false));
+  MnvTunev1.emplace_back(new PlotUtils::LowRecoil2p2hReweighter<CVUniverse, Event>());
+  MnvTunev1.emplace_back(new PlotUtils::MINOSEfficiencyReweighter<CVUniverse, Event>());
+  MnvTunev1.emplace_back(new PlotUtils::RPAReweighter<CVUniverse, Event>());
+
+  PlotUtils::Model<CVUniverse, Event> model(std::move(MnvTunev1));
   
   double DataPot=  util.m_data_pot; 
   double MCPot=  util.m_mc_pot;  
@@ -133,11 +146,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys_InitialNuclMom_TrueValues_HydrogenOnly", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys_Model", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys_InitialNuclMom_TrueValues_HydrogenOnly", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys_Model", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -150,17 +163,17 @@ int main(int argc, char *argv[]){
   // MC 
   std::cout << "Processing MC and filling histograms" << std::endl;
 
-  FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
+  FillVariable(chainMC, helicity, utils, cutter,binsDef,model,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
-  //std::cout << "Processing Data and filling histograms" << std::endl;
+  std::cout << "Processing Data and filling histograms" << std::endl;
 
-  //FillVariable(chainData, helicity, utils, cutter,binsDef,variablesData,variables2DData,false,targetID, targetZ, plist_string,doDIS);
-  //for (auto v : variablesData) v->m_selected_data_reco.SyncCVHistos();
-  //for (auto v : variablesData) v->m_selected_data_reco_sb.SyncCVHistos();
-  //for (auto v : variables2DData) v->m_selected_data_reco.SyncCVHistos();
+  FillVariable(chainData, helicity, utils, cutter,binsDef, model,variablesData,variables2DData,false,targetID, targetZ, plist_string,doDIS);
+  for (auto v : variablesData) v->m_selected_data_reco.SyncCVHistos();
+  for (auto v : variablesData) v->m_selected_data_reco_sb.SyncCVHistos();
+  for (auto v : variables2DData) v->m_selected_data_reco.SyncCVHistos();
 
   // WRITE HISTOGRAMS TO FILE
 
@@ -190,10 +203,10 @@ int main(int argc, char *argv[]){
   }
  
   // 2D Plotting
-  for(int i=0; i< variables2DMC.size();i++){
-    Plot2D(variables2DMC[i]->m_selected_mc_reco.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY());
+  //for(int i=0; i< variables2DMC.size();i++){
+    //Plot2D(variables2DMC[i]->m_selected_mc_reco.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY());
     //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());   
-  }//End 2D plotting
+  //}//End 2D plotting
 	
   //Writing POT to the HistFile
   fout.cd();
@@ -215,18 +228,16 @@ int main(int argc, char *argv[]){
 
 // Fill Variables
    
-void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef ,std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC,int targetID, int targetZ, const string playlist, bool doDIS){
-  
+void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter,NukeCC_Binning  *binsDef, PlotUtils::Model<CVUniverse, Event>& model, std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC,int targetID, int targetZ, const string playlist, bool doDIS){
+
   std::map<std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chain);
-  
+
   std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin,xbinBrian;
   std::vector<double> x09bin, xfinebin;
   std::vector<double> ANNPlaneProbBin;
   std::vector<double> vtxzbin;
   std::vector<double> planeDNNbin; 
   std::vector<double> pTbin, pZbin;
-  std::vector<double> initNuclMomXbin, initNuclMomYbin, initNuclMomZbin;
-  std::vector<double> initNuclMombin;
   
   if (doDIS){
     Enubin = binsDef->GetDISBins("Enu"); 
@@ -255,12 +266,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     planeDNNbin = binsDef->GetEnergyBins("planeDNN");
     pTbin = binsDef->GetEnergyBins("muonPt"); 
     pZbin = binsDef->GetEnergyBins("muonPz"); 
-
-    initNuclMomXbin = { -900.0, -850.0, -800.0, -750.0, -700.0, -650.0, -600.0, -550.0, -500.0, -450.0, -400.0, -350.0, -300.0, -250.0, -200.0, -150.0, -100.0, -50.0, 0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0};
-    initNuclMomYbin = {  -900.0, -850.0, -800.0, -750.0, -700.0, -650.0, -600.0, -550.0, -500.0, -450.0, -400.0, -350.0, -300.0, -250.0, -200.0, -150.0, -100.0, -50.0, 0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0};
-    initNuclMomZbin = {  -900.0, -850.0, -800.0, -750.0, -700.0, -650.0, -600.0, -550.0, -500.0, -450.0, -400.0, -350.0, -300.0, -250.0, -200.0, -150.0, -100.0, -50.0, 0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0};
-    initNuclMombin = { 0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0};
-
   }
   //Q2bin = binsDef->GetSidebandBins("Q2");
   //Wbin = binsDef->GetSidebandBins("W");
@@ -272,7 +277,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
-  Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::readXTrue); // read true value from GENIE
+  Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
@@ -284,16 +289,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  Var *initNuclMomX = new Var("initNuclMomX", "initNuclMomX",initNuclMomXbin, &CVUniverse::GetInNuclMomentumX, &CVUniverse::GetInNuclMomentumX);
-  Var *initNuclMomY = new Var("initNuclMomY", "initNuclMomY",initNuclMomYbin, &CVUniverse::GetInNuclMomentumY, &CVUniverse::GetInNuclMomentumY);
-  Var *initNuclMomZ = new Var("initNuclMomZ", "initNuclMomZ",initNuclMomZbin, &CVUniverse::GetInNuclMomentumZ, &CVUniverse::GetInNuclMomentumZ);
-
-  Var *initNuclMom = new Var("initNuclMom", "initNuclMom",initNuclMombin, &CVUniverse::GetInNuclMomentum, &CVUniverse::GetInNuclMomentum);
-
-
-  variables = {initNuclMomX, initNuclMomY, initNuclMomZ, initNuclMom, x, enu};
-  
-  //emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -302,14 +298,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
-
-
-  Var2D* initNuclMomX_Y = new Var2D(*initNuclMomX, *initNuclMomY);
-  Var2D* initNuclMomY_Z = new Var2D(*initNuclMomY, *initNuclMomZ);
-  Var2D* initNuclMomX_Z = new Var2D(*initNuclMomX, *initNuclMomZ);
-
-  variables2d = {initNuclMomX_Y, initNuclMomY_Z, initNuclMomX_Z}; 
-  //emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
+  
+  variables2d = {emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
    
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
@@ -354,8 +344,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco4=0; 
   int reco5=0; 
   int reco6=0; 
-  int src=0; // p > 250 MeV/c
-  int hydrogen=0; // target nucleus
   //int neutralcur = 0;
   //int wrongsign = 0;
   
@@ -386,26 +374,46 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	            //=========================================
 	            // CUTS in each universe
 	            //========================================
+              Event myevent;
 	            universe->SetEntry(i);
               reco0++;
 
+              const double weight = model.GetWeight(*universe, myevent); //Only calculate the per-universe weight for events that will actually use it.
+
+
               if(!cutter->PassReco(universe,helicity)) continue;
               reco1++;
-
-              if(!cutter->TrackerOnly(universe)) continue;
+              
+              if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
+              //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
-
-              if(!cutter->InHexagon(universe, 850)) continue;
+              
+              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
               reco3++;
               
-              // only hydrogen
-              if( universe->GetInt("mc_targetZ") !=  1 ) continue;
-              hydrogen++;
+              if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
+              //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
+              reco4++;
+              
+              
+              /* GLOBAL VS LOCAL CUT*/
+              //if(!cutter->PassMuEnergyCut(universe)) continue;
+              //reco5++;
+
+              //if(!cutter->PassThetaCut(universe)) continue;
+              //reco6++;
+
+              //pure signal cuts on MC to estimate bkg (counts)    
+              //if( 1 != universe->GetInt("mc_current") ) continue; 
+              //neutralcur++;
+              //if(-14 != universe->GetInt("mc_incoming") ) continue;
+              //wrongsign++;
 
               for (auto v : variables2d){
 	              if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	              if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-	              v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight()); 
+	              v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), weight); 
 	            }
 	
 	            for (auto v : variables){
@@ -415,15 +423,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	              if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
 	              if (v->GetName()=="Enu") reco6++;
 	     
-                v->m_selected_mc_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-
-
-                if( universe->GetInNuclMomentum() > 250.0 ){
-                  v->m_selected_mc_sb.GetComponentHist("SRC")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
-                  if (v->GetName()=="Enu") src++;
-                }
-
+                v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), weight);
+                //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
               
                 /*
                 // Signal
@@ -509,12 +510,15 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Summary " << std::endl;
   std::cout << "No cuts = " << reco0 << std::endl;
   std::cout << "Reco Cut = " << reco1 << std::endl;
-  std::cout << "Tracker Cut = " << reco2 << std::endl;
-  std::cout << "Hexagon Cuts = " << reco3 << std::endl;
-  std::cout << "Hydrogen only = " << hydrogen << std::endl;
+  std::cout << "Material Cut = " << reco2 << std::endl;
+  std::cout << "TargetID Cuts = " << reco3 << std::endl;
+  std::cout << "Plane prob. cut = " << reco4 << std::endl;
+  //std::cout<<" Neutral Current cuts = " << neutralcur << std::endl;
+  //std::cout<<" Wrong Sign Cuts = " << wrongsign << std::endl;
+  //std::cout<<" In Hexagon Cuts = "<<reco4<<std::endl;
+  //std::cout<<" Muon Kinematics Cuts = "<<reco4<<std::endl;
   std::cout << "Muon Energy cut  = "<< reco5 << std::endl;
   std::cout << "Muon theta cut  = " << reco6 << std::endl;
-  std::cout << "SRC (Momentum > 250 Cut)  = " << src << std::endl;
   std::cout << "**********************************" << std::endl;
   
   //return variables;

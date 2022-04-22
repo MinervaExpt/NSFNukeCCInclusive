@@ -8,26 +8,26 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "../../NUKECCSRC/include/CommonIncludes.h"
-#include "../../NUKECCSRC/include/CVUniverse.h"
-#include "../include/VariableRun_IntType.h"  
+#include "../../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../../NUKECCSRC/include/CVUniverse.h"
+#include "../../include/VariableRun_IntType.h"  
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../NUKECCSRC/include/NukeCC_Binning.h"
+#include "../../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../NUKECCSRC/include/NukeCCUtilsNSF.h"
-#include "../../NUKECCSRC/include/NukeCC_Cuts.h"
+#include "../../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../include/systematics/Systematics.h"
+#include "../../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
 #ifndef __CINT__
-#include "../include/plotting_functions.h"
+#include "../../include/plotting_functions.h"
 #endif
 #include "PlotUtils/MacroUtil.h" 
 //using namespace globalV;
@@ -55,6 +55,7 @@ std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int tar
 int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
 int main(int argc, char *argv[]){
+  //ROOT::Cintex::Cintex::Enable();
   TH1::AddDirectory(false);
 
   if(argc==1){
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]){
   TString dir(argv[1]);
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
-   
+
   bool doDIS=false;
 
   // MasterAnaDev tuples?
@@ -80,15 +81,15 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
   const std::string reco_tree_name("NukeCC");
   
   const std::string plist_string("minervame6A");
   const bool wants_truth = false;
   const bool is_grid = false;
 
-  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth, is_grid);
+  PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
   util.PrintMacroConfiguration("main");
 
@@ -125,7 +126,16 @@ int main(int argc, char *argv[]){
   std::vector<Var*> variablesMC,variablesData; 
   std::vector<Var2D*> variables2DMC,variables2DData; 
 
-  TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
+  TString histFileName;
+  if(RunCodeWithSystematics){
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_US_sys", FileType::kAny, targetID, targetZ, helicity ); 
+  }
+
+  else{
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_US_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+  } 
+
+  //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
 
   //Works good for the grid submission
   //TString histFileName = utils->GetHistFileName( "EventSelection", FileType::kAny, targetID, targetZ );
@@ -197,7 +207,7 @@ int main(int argc, char *argv[]){
 //=============================================================================
 // OTHER FUNCTIONS
 //=============================================================================
-//=============================================================================
+//============================================================================
 
 // Fill Variables
    
@@ -205,7 +215,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   
   std::map<std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chain);
   
-  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin,xbinBrian;
+  std::vector<double> x09bin, xfinebin;
   std::vector<double> ANNPlaneProbBin;
   std::vector<double> vtxzbin;
   std::vector<double> planeDNNbin; 
@@ -228,6 +239,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     Q2bin = binsDef->GetEnergyBins("Q2");
     Wbin = binsDef->GetEnergyBins("W");
     xbin = binsDef->GetEnergyBins("x");
+    x09bin = binsDef->GetEnergyBins("x09");
+    xfinebin = binsDef->GetEnergyBins("xfine");
+    xbinBrian    = binsDef->GetEnergyBins("xBrian");
     ybin = binsDef->GetEnergyBins("y");
     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
     ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
@@ -247,6 +261,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
   Var* emu = new Var("Emu", "Emu (GeV)", Emubin, &CVUniverse::GetMuonEGeV, &CVUniverse::GetMuonETrueGeV);
   Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* x09 = new Var("x09", "x09", x09bin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
+  Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
 
   Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
@@ -255,7 +272,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, ehad, enu, thetaMu, x, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -310,11 +327,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco4=0; 
   int reco5=0; 
   int reco6=0; 
-  int plastic =0;
+  int plastic=0;
   //int neutralcur = 0;
   //int wrongsign = 0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
+
+  int n = 0;
     
   //=========================================
   // Targets combining Loop
@@ -351,8 +370,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              //if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
               //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+              // select events US of a given target
+              if( universe->Var("planeDNN" ) <= universe->GetTargetMinBin(targetID)+n ) continue; // for target 3, pass bigger than 21
+              if( universe-> Var("planeDNN") >= universe->GetTargetUSPlane(targetID )) continue; // for target 3, pass smaller than 28
               reco3++;
               
               if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
@@ -387,13 +409,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	              if (v->GetName()=="Enu") reco6++;
 	     
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-
+                
+                // trully plastic
                 if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
                   v->m_selected_mc_plastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="Enu") plastic++;
 
-                  if (1 == universe->GetInt("mc_intType") ) {
+                   if (1 == universe->GetInt("mc_intType") ) {
                     v->m_selected_mc_sb.GetComponentHist("QE")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   }
 
@@ -413,6 +435,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     v->m_selected_mc_sb.GetComponentHist("Other")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   }
                 }
+
+                
+                //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
               
                 /*
                 // Signal
@@ -446,8 +471,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        //if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
         //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+        if( dataverse->Var("planeDNN" ) <= dataverse->GetTargetMinBin(targetID)+n ) continue; // for target 3, pass bigger than 21
+        if( dataverse-> Var("planeDNN") >= dataverse->GetTargetUSPlane(targetID )) continue; // for target 3, pass smaller than 28
         reco3++;
 	 
         if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
@@ -507,8 +534,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   //std::cout<<" Muon Kinematics Cuts = "<<reco4<<std::endl;
   std::cout << "Muon Energy cut  = "<< reco5 << std::endl;
   std::cout << "Muon theta cut  = " << reco6 << std::endl;
-  std::cout << "**********************************" << std::endl;
-  std::cout << "Plastic in plastic # events  = " << plastic << std::endl;
+  std::cout << "Plastic in plastic  = " << plastic << std::endl;
   std::cout << "**********************************" << std::endl;
   
   //return variables;
