@@ -77,23 +77,23 @@ int main(int argc, char *argv[]){
   bool doDIS=false;
 
   // MasterAnaDev tuples?
-  //const std::string mc_file_list("../include/playlists/OfficialMAD_minervaME6B_MCNukeOnly_merged.txt");
-  //const std::string data_file_list("../include/playlists/OfficialMAD_minervaME6B_Data_merged.txt");
-  //const std::string reco_tree_name("MasterAnaDev");
+  const std::string mc_file_list("../include/playlists/shortMC.txt");
+  const std::string data_file_list("../include/playlists/shortData.txt");
+  const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  //const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  //const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  //const std::string reco_tree_name("NukeCC");
   
-  const std::string plist_string("minervame6A");
+  const std::string plist_string("minervame6A");    
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
 
   PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
-  util.PrintMacroConfiguration("main");
+  util.PrintMacroConfiguration("main");    
 
   // SYSTEMATICS
 
@@ -107,6 +107,13 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100); 
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+  // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
+  //Tracker or nuke (what clusters are accepted for reconstruction)
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  //Neutron CV reweight is on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  //Elastics are on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
 
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
@@ -130,11 +137,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelectionTracker_TBV_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelectionTracker_TBV_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -269,7 +276,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
   //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {enu,  x,  Q2, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {enu,  x,vtxz, planeDNN, Q2, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -332,7 +339,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             if(!cutter->TrackerOnly(universe)) continue;
             reco2++;
             
-            if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
+            //if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
             //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
             reco3++;
 

@@ -17,6 +17,7 @@
 #include "PlotUtils/AngleSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/ResponseSystematics.h"
+#include "PlotUtils/GeantHadronSystematics.h"
 #include "PlotUtils/MuonResolutionSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
 #include "PlotUtils/TargetMassSystematics.h"
@@ -98,6 +99,27 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
     // Target Mass Systematics
     SystMap targetMass_systematics = PlotUtils::GetTargetMassSystematicsMap<CVUniverse>(chain);
     error_bands.insert(targetMass_systematics.begin(), targetMass_systematics.end());
+
+    //========================================================================
+    // Particle Response Systematics (Detector)
+    //========================================================================
+
+    const bool use_neutron = false;
+    const bool use_new = true;
+    const bool use_proton = true;
+    // Particle response
+    // -> 2nd argument: NEUTRON
+    // -> 3rd argument: use_new_part_response
+    // -> 4th argument: PROTON
+    SystMap response_systematics = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain, use_neutron, use_new, use_proton);
+    error_bands.insert(response_systematics.begin(), response_systematics.end());
+
+
+    //========================================================================
+    // GEANT hadrons with MnvHadronReweight
+    //========================================================================
+    SystMap geant_hadron_systematics = PlotUtils::GetGeantHadronSystematicsMap<CVUniverse>(chain);
+    error_bands.insert(geant_hadron_systematics.begin(), geant_hadron_systematics.end());
 
   }
 

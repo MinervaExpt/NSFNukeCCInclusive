@@ -118,7 +118,38 @@ double CVUniverse::GetFiducial()  const { return GetInt((GetAnaToolName() + "_in
 double CVUniverse::GetTdead()  const { return GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj"); }
 double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_targetID").c_str());}
 
-double CVUniverse::GetRecoilEnergy()  const { return GetDouble((GetAnaToolName() + "_recoil_E").c_str()); }
+//double CVUniverse::GetRecoilEnergy()  const { return GetDouble((GetAnaToolName() + "_recoil_E").c_str()); }
+
+// ======================================================================================================================================
+//  ENERGY FUNCTIONS
+// ======================================================================================================================================
+
+// Recoil energy [GeV]
+// ===================
+/* Calorimetric recoil energy directly from anatuples (i.e. not corrected by multiplicative factors nor splines).
+* This method of defining recoil energy is a bit ambiguous, but basically can be explained this in a way that
+* we can satisfy the functions that are in [MAT-MINERvA/calculators/RecoilEnergyFunctions.h]:
+* 
+* 'GetCalRecoilEnergy()' returns the calorimetric recoil of the event, in my case it's all calorimetry energy since
+* I don't use any non-calorimetric recoil reconstruction. For this, I use the "Recoil_Ecalo" branch of my anatool.
+* 
+* 'GetNonCalRecoilEnergy()' returns the non calorimetric recoil. In my case it will return zero
+* since I don't perform any hadron energy reconstruction via non-calorimetric methods (like proton/pion tracks).
+* 
+* GetRecoilEnergy() comes from RecoilEnergyFunctions.h in MAT-MINERvA/calculators by adding the above up
+*/
+
+
+double CVUniverse::GetCalRecoilEnergy() const {
+    return GetDouble((GetAnaToolName() + "_recoil_E").c_str());  // [MeV]
+    // usual inclusive recoil energy should just be calorimetric energy
+    // instead of Gonzalo's return GetDouble("Recoil_Ecalo") / 1000.0;  // [GeV]
+}
+
+double CVUniverse::GetNonCalRecoilEnergy() const {
+    return 0.0;
+}
+
 //double CVUniverse::GetThetamu()       const {return GetDouble("muon_theta");}
 double CVUniverse::GetEnu()           const {return GetEmu()+ GetRecoilEnergy();} 
 double CVUniverse::GetQ2Reco()        const { return calcRecoQ2(GetEnu(),  GetEmu(), GetThetamu()); }
@@ -141,7 +172,9 @@ double CVUniverse::GetplaneDNNReco()  const{
 double CVUniverse::GetTruthNuPDG() const{return GetInt("mc_incoming");}
 double CVUniverse::GetCurrent()    const{return GetInt("mc_current");} 
 double CVUniverse::GetEhadTrue()    const{return GetEnuTrue() - GetElepTrue();}
-double CVUniverse::GetThetamuTrue( )const{return GetDouble("truth_muon_theta");}
+//double CVUniverse::GetThetamuTrue( )const{return GetDouble("truth_muon_theta");}
+double CVUniverse::GetThetamuTrue( )const{return GetThetalepTrue();}
+
 
 double CVUniverse::GetQ2IncTrue()      const{return calcTrueQ2(GetEnuTrue(),  GetElepTrue(), GetThetamuTrue()); }
 double CVUniverse::GetWTrue()       const{return calcWTrue(GetQ2IncTrue(), GetEhadTrue());}
@@ -389,7 +422,8 @@ double CVUniverse::GetWeight() const {
    double wgt_flux=1., wgt_2p2h=1.;
    double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
    double wgt_genie=1., wgt_mueff=1.;
-   double wgt_target_mass = 1;
+   double wgt_target_mass = 1.;
+   double wgt_geant = 1.;
    //double wgt_anisodd=1.;
  
    // genie
@@ -405,6 +439,7 @@ double CVUniverse::GetWeight() const {
 
    wgt_mueff = GetMinosEfficiencyWeight(); 
    wgt_target_mass = GetTargetMassWeight();
+   wgt_geant = GetGeantHadronWeight();
    // non-res pi
    //wgt_nrp = GetNonResPiWeight();
    //if (do_warping)
@@ -426,7 +461,7 @@ double CVUniverse::GetWeight() const {
    //if (do_warping)
     // wgt_anisodd = GetVecElem("truth_genie_wgt_Theta_Delta2Npi",4);
  
-   return wgt_flux*wgt_genie*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass ;
+   return wgt_flux*wgt_genie*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass*wgt_geant ;
    // return 1.0;
 
 }

@@ -23,6 +23,7 @@
 #include "PlotUtils/MinervaUniverse.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/TargetUtils.h"
+#include "PlotUtils/GeantHadronSystematics.h"
 #include <iostream>
 //#include "CCQENuUtilsNSF.h"
 //using namespace globalV;
@@ -34,6 +35,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
   public:
     #include "PlotUtils/MuonFunctions.h" // GetMinosEfficiencyWeight
     #include "PlotUtils/TruthFunctions.h" //Getq3True
+    #include "PlotUtils/RecoilEnergyFunctions.h" // GetRecoilEnergy
     #include "PlotUtils/WeightFunctions.h"
     #include "PlotUtils/TargetUtils.h"
     // Constructor
@@ -62,13 +64,21 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual bool IsInHexagonTrue(double apothem = 850.) const;
     virtual double GetDaisyPetalTrue( ) const;;
     virtual Long64_t GetMaxEntries(); 
-    virtual double GetMuonE() const { return GetVecElem("MasterAnaDev_leptonE",3); }
+    virtual double GetMuonE() const { return GetVecElem((GetAnaToolName() + "_leptonE").c_str(),3); }
+    //virtual double GetMuonE() const { return GetVecElem("muon_corrected_p",3); }
 
     //      virtual void  Show(Long64_t entry = -1);
 
 
     ////// Dipak's study equivalent: ML vertex plane prob cut /////
     double virtual GetANNPlaneProb() const;
+
+    // ========================================================================
+    //  ENERGY FUNCTIONS
+    // ========================================================================
+    
+    virtual double GetCalRecoilEnergy() const;
+    virtual double GetNonCalRecoilEnergy() const;
 
     /////////////////////////////////////////////////////////////////////////////////
     // MC initial momentum of the struck nucleons 
@@ -102,7 +112,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetTargetID()  const;
     virtual double GetHelicity()  const;
     virtual double GetTrueHelicity()  const;
-    virtual double GetRecoilEnergy() const;
+    //virtual double GetRecoilEnergy() const;
     virtual double GetEhadGeV() const;
     virtual double GetMuonEGeV() const;
     virtual double GetMuonETrueGeV() const;
