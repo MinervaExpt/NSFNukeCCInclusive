@@ -21,12 +21,28 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 
 ROOT.TH1.AddDirectory(False)
 
-targetID = sys.argv[1] 
-targetZ = sys.argv[2]
+pwd = sys.argv[1] 
+targetID = sys.argv[2] 
+targetZ = sys.argv[3]
 
-infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
-infileUntuned = ROOT.TFile.Open("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
-scale = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
+mat = "Fe"
+trueZ = "Iron"
+
+if targetZ == "26":
+  trueZ = "Iron"
+  mat = "Fe"
+
+if targetZ == "82":
+  trueZ = "Lead"
+  mat = "Pb"
+
+if targetZ == "06":
+  trueZ = "Carbon"
+  mat = "C"
+
+infile = ROOT.TFile(str(pwd)+"/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+infileUntuned = ROOT.TFile.Open(str(pwd)+"/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
+scale = ROOT.TFile(str(pwd)+"/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -34,7 +50,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Targets/00ClosureTest_NewFiles/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
+out1 = ROOT.TFile(str(pwd)+"/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 
@@ -50,9 +66,9 @@ for var in vars:
   # plastic scaling factors
   scaleUS = scale.Get("scaleFactor_US_%s"%var)
   scaleDS = scale.Get("scaleFactor_DS_%s"%var)
-
-  hists_US_regUS = infileUntuned.Get("US_regUS_Iron_%s"%var)
-  hists_DS_regDS = infileUntuned.Get("DS_regDS_Iron_%s"%var)
+  print("US_regUS_%s_%s"%(trueZ, var))
+  hists_US_regUS = infileUntuned.Get("US_regUS_%s_%s"%(trueZ, var))
+  hists_DS_regDS = infileUntuned.Get("DS_regDS_%s_%s"%(trueZ, var))
 
   integralUS = hists_US_regUS.Integral()
   statErrUS = 1/ m.sqrt(integralUS)
