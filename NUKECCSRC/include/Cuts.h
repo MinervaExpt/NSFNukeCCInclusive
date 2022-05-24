@@ -38,6 +38,11 @@ static NukeCC_Cuts &Get();
     bool isMC;
 
     //===== BEGIN ANALYSIS CUTS =====//
+    // Passive Target Region Cut
+    bool PassiveTargetRegion(CVUniverse* cv);
+    bool PassiveTargetRegionTBV(CVUniverse* cv);
+    bool PassiveTargetRegionTrue(CVUniverse* cv);
+
     // Tracker region cut
 
     bool TrackerOnly(CVUniverse* cv);

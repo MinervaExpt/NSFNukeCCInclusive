@@ -5,6 +5,7 @@
 #define MNV_NUKECC_BINNING_CXX 1
 
 #include "../include/Binning.h"
+#include "../include/MasterAnaDevvars.h"
 #include "PlotUtils/TargetUtils.h"
 #include "../include/CVUniverse.h"
 #include "../include/GlobalIncludes.h" 
@@ -450,8 +451,14 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
         binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
     }
 
-    return binsLowEdge;
+    else if (var == "mc_run"){
     
+        AddBins(binsLowEdge, 1., 111325, 111375); 
+        // take binning from here, depending on the playlist
+        //https://cdcvs.fnal.gov/redmine/projects/minerva-sw/wiki/Inextinguishable_Production 
+    }
+
+    return binsLowEdge;
 }
 
 
