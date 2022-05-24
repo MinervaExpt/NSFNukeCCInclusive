@@ -300,7 +300,7 @@ int main(int argc, char * argv[]){
   prefixes.push_back("data");
 
   // output file
-  TFile *fUnfold = new TFile( Form("%s/CrossSection_t%d_z%d_%s_NEW.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
+  TFile *fUnfold = new TFile( Form("%s/CrossSection_t%d_z%d_%s_NEW2.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
   
   // read in the POT information
   TParameter<double> *mcPOT = (TParameter<double>*)fMigration->Get("MCPOT");
@@ -338,7 +338,7 @@ int main(int argc, char * argv[]){
     // Var and prefix specific ingredients
     for(const auto& prefix: prefixes){
 
-      auto bkgSubtracted =  dynamic_cast<MnvH1D*>(fEventLoop->Get( Form("h_bkg_subtracted_%s_%s", prefix.c_str(), var.c_str())));
+      auto bkgSubtracted =  dynamic_cast<MnvH1D*>(fEventLoop->Get( Form("h_background_subtracted_%s_%s", prefix.c_str(), var.c_str())));
 
       cout<<"I am here"<<endl;
       //d'Aogstini unfolding
@@ -389,8 +389,8 @@ int main(int argc, char * argv[]){
       }
       */
       PlotUtils::TargetUtils targetInfo;
-      double nNucleons = targetInfo.GetPassiveTargetNNucleons( targetID, targetZ, isMC );
-      //double nNucleons = GetTotalScatteringCenters(targetZ, isMC);
+      //double nNucleons = targetInfo.GetPassiveTargetNNucleons( targetID, targetZ, isMC );
+      double nNucleons = GetTotalScatteringCenters(targetZ, isMC);
 
       std::cout << prefix + " number of nucleons" << std::endl;
       std::cout << nNucleons << std::endl;
