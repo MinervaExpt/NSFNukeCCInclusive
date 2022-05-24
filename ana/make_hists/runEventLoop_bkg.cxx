@@ -90,9 +90,9 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  const std::string mc_file_list("../include/playlists/minervame6A_mc_TBV.txt");
+  const std::string data_file_list("../include/playlists/minervame6A_data_TBV.txt");
+  const std::string reco_tree_name("MasterAnaDev");
   
   const std::string plist_string("minervame6A");
   const bool wants_truth = false;
@@ -115,6 +115,14 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+  // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
+  //Tracker or nuke (what clusters are accepted for reconstruction)
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  //Neutron CV reweight is on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  //Elastics are on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
+
 
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
@@ -389,11 +397,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              if(targetID<10 && universe->GetInt("MasterAnaDev_targetID") != targetID) continue;
               //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
               reco3++;
               
-              if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
+              //if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
               
@@ -438,13 +446,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                       if (v->GetName()=="Enu") plastic++;
                       
                       // DS
-                      if(universe->GetVecElem("NukeCC_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
+                      if(universe->GetVecElem("MasterAnaDev_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
                         v->m_selected_mc_DSplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                         v->m_selected_mc_sb.GetComponentHist("DS_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                         if (v->GetName()=="Enu") DS++;
                       }
                       // US
-                      else if(universe->GetVecElem("NukeCC_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
+                      else if(universe->GetVecElem("MasterAnaDev_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
                       v->m_selected_mc_USplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       v->m_selected_mc_sb.GetComponentHist("US_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                       if (v->GetName()=="Enu") US++;
@@ -495,11 +503,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        if(targetID<10 && dataverse->GetInt("MasterAnaDev_targetID") != targetID) continue;
         //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
         reco3++;
 	 
-        if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
+        //if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
         //if( dataverse->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	    
         reco4++;
               

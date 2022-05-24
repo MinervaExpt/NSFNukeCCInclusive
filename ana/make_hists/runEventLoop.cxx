@@ -81,11 +81,11 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  const std::string mc_file_list("../include/playlists/minervame6B_mc_DualVertex.txt");
+  const std::string data_file_list("../include/playlists/minervame6B_data_DualVertex.txt");
+  const std::string reco_tree_name("MasterAnaDev");
   
-  const std::string plist_string("minervame6A");
+  const std::string plist_string("minervame6B");
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]){
 
   // SYSTEMATICS
 
-  //std::map<std::string, std::vector<CVUniverse*> > error_bands =
+  //std::map<std::string, std::vector<CVUniverse*> > error_bands = 
   //GetErrorBands(util.m_mc);
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
@@ -106,6 +106,14 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+  // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
+  //Tracker or nuke (what clusters are accepted for reconstruction)
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  //Neutron CV reweight is on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  //Elastics are on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
+  
 
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
@@ -129,11 +137,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6B_sys", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelection_ML_ME6B_nosys", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -272,7 +280,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {enu, x, vtxz, planeDNN, ehad, emu, thetaMu};
+    //emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -324,7 +333,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco1=0;
   int reco2=0;
   int reco3=0;
-  int reco4=0; 
+  int reco4=0;   
   int reco5=0; 
   int reco6=0; 
   //int neutralcur = 0;
@@ -367,7 +376,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              if(targetID<10 && universe->GetInt("MasterAnaDev_ANN_targetID") != targetID) continue;
               //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
               reco3++;
               
@@ -437,7 +446,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        if(targetID<10 && dataverse->GetInt("MasterAnaDev_ANN_targetID") != targetID) continue;
         //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
         reco3++;
 	 

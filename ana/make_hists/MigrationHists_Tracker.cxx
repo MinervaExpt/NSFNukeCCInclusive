@@ -41,6 +41,157 @@ typedef Var2DLoop::Variable2D Var2D;
 void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef ,std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC, int targetID=1, int targetZ=26, const string playlist="minervame1A", bool doDIS=true);
 
 //============================================================================================================================
+// Main
+//============================================================================================================================
+
+int main(int argc, char *argv[]){
+	 //ROOT::Cintex::Cintex::Enable();
+	 TH1::AddDirectory(false);
+
+	 if(argc==1){
+	     std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl;
+	     std::cout<<"MACROS HELP:\n\n"<<
+	       "\t-./runEventLoop Path_to_Output_file Target_number Material_atomic_number Playlist\n\n"<<
+	       "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
+	       "\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n"<<
+	       "\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
+	     std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl;
+	     return 0;
+	 }
+
+	 TString dir(argv[1]);
+	 //int targetID = atoi(argv[2]);
+	 //int targetZ  = atoi(argv[3]);
+  int targetID = 99; int targetZ = 99; 
+
+		bool doDIS = false; 
+	 // TString dir(argv[1]);
+	 // int targetID = 1;
+	 // int targetZ = 26;
+	 // const string playlist= argv[4];
+
+    const std::string mc_file_list("../include/playlists/shortMC.txt");  
+    const std::string data_file_list("../include/playlists/shortData.txt");
+    const std::string reco_tree_name("MasterAnaDev");
+
+    //const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+    //const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+    //const std::string reco_tree_name("NukeCC");
+  
+    const std::string plist_string("minervame6A");
+    const bool wants_truth = false;
+    //const bool is_grid = false;
+    // is grid removed after update of MAT 07/12/2021
+
+	 PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
+
+	 util.PrintMacroConfiguration("main");
+
+	 //=========================================
+	 // Systematics
+	 //=========================================
+	 //std::map<std::string, std::vector<CVUniverse*> > error_bands =
+	 //  GetErrorBands(util.m_mc);
+
+	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
+	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
+	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
+	 PlotUtils::MinervaUniverse::SetNonResPiReweight(false);
+   PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
+   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
+  //Tracker or nuke (what clusters are accepted for reconstruction)
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  //Neutron CV reweight is on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  //Elastics are on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
+
+   
+	    
+	 NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
+	 NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
+	 NukeCC_Binning  *binsDef = new NukeCC_Binning();
+	  
+	 PlotUtils::ChainWrapper* chainData = util.m_data;
+	 PlotUtils::ChainWrapper* chainMC = util.m_mc;
+	 HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
+	 double DataPot=  util.m_data_pot; 
+	 double MCPot=  util.m_mc_pot; 
+	 //double total_pot_data,total_pot_mc;
+	 //utils->getPOT(total_pot_data,total_pot_mc);  
+	 double  MCscale=DataPot/MCPot;
+	 //double  MCscale=1.0;
+	 
+	 std::cout<<" MCScale= "<<MCscale<<std::endl; 
+	 std::vector<Var*> variablesMC,variablesData; 
+	 std::vector<Var2D*> variables2DMC,variables2DData; 
+
+         //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
+	TString histFileName;
+  if(RunCodeWithSystematics){
+    histFileName = utils->GetHistFileName( "Migration_TBV_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+  }
+
+  else{
+    histFileName = utils->GetHistFileName( "Migration_TBV_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+  } 
+   	   
+	TFile fout(dir.Append(histFileName),"RECREATE");	
+	   
+	 // For 1D variables 
+	 FillVariable(chainMC, helicity, utils, cutter, binsDef, variablesMC, variables2DMC, true, targetID, targetZ, plist_string, doDIS);
+	     
+         	 
+	 for (auto v : variablesMC) v-> mresp1D.SyncCVHistos();
+   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos(); 
+   for (auto v : variablesMC) v->m_selected_Migration.SyncCVHistos(); 
+
+	 for (auto v : variables2DMC) v-> mresp.SyncCVHistos();
+	 
+	 
+	 for (auto v : variablesMC) {
+	   v->WriteAllHistogramsToFileMig(fout, true);
+	 }
+
+
+	 // Plotting If you want for 1D
+	 /* 
+	 for(int i=0; i< variablesMC.size();i++){
+		 PlotCVAndError(variablesData[i]->m_selected_data_reco.hist,variablesMC[i]->m_selected_mc_reco.hist,variablesMC[i]->GetName(),MCscale);
+		       
+		 PlotErrorSummary(variablesMC[i]->m_selected_mc_reco.hist, variablesMC[i]->GetName());
+		 PlotStacked(variablesData[i]->m_selected_data_reco_sb.hist,variablesMC[i]->m_selected_mc_sb.GetHistArray(),MCscale, variablesMC[i]->m_selected_mc_sb.GetName(), variablesMC[i]->m_selected_mc_sb.GetName());
+	 }//End 1D plotting 
+	 */
+
+	 //For 2D variable
+
+	 for (auto v : variables2DMC) {
+	   v->WriteAllHistogramsToFileMig(fout,true);
+	 }
+
+  fout.cd();
+  auto dataPOTOut = new TParameter<double>("DataPOT", DataPot);
+  auto mcPOTOut = new TParameter<double>("MCPOT", MCPot);
+  dataPOTOut->Write();
+  mcPOTOut->Write(); 
+	 
+	 //Plotting in 2D
+	   
+	 //for(int i=0; i< variables2DMC.size();i++){
+	   //Plot2D(variables2DMC[i]->mresp.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY()); //Plotting line that I somehow cannot delete without producing memory errors, but no one else can reproduce. --ANF 2020.4.6
+	 //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
+	     
+	 //}//End 2D plotting
+  std::cout << "DONE" << std::endl;
+
+
+}//End Main
+
+
+//============================================================================================================================
 // FillVariable 
 //============================================================================================================================
     
@@ -102,7 +253,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, x09, xfine, xBrian, enu};//{enu,ehad}; 
+   variables = {x, x09, xfine, xBrian, enu, ehad, emu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -174,7 +325,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       // NO xy separation,  NO APOTHEM CUT
       reco5++;
 
-	   if(!cutter->TrackerOnlyTrue(universe)) continue; // true tracker
+	   if(!cutter->TrackerOnlyTrue(universe)) continue; // true tracker  
      reco6++;
 
 		 for (auto v : variables2d){
@@ -237,142 +388,3 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     std::cout << "Muon kinematics cut  = " << reco7 << std::endl;
     std::cout << "True muon kinematics cut (energy)  = " << reco8 << std::endl;
 }
-
-//============================================================================================================================
-// Main
-//============================================================================================================================
-
-int main(int argc, char *argv[]){
-	 //ROOT::Cintex::Cintex::Enable();
-	 TH1::AddDirectory(false);
-
-	 if(argc==1){
-	     std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl;
-	     std::cout<<"MACROS HELP:\n\n"<<
-	       "\t-./runEventLoop Path_to_Output_file Target_number Material_atomic_number Playlist\n\n"<<
-	       "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
-	       "\t-Target_number\t \t = \t Number of target you want to run over eg. 1 \n"<<
-	       "\t-Material_atomic_number\t =\t Atomic number of material, eg. 26 to run iron, 82 to run lead  \n" << std::endl;
-	     std::cout<<"-----------------------------------------------------------------------------------------------"<<std::endl;
-	     return 0;
-	 }
-
-	 TString dir(argv[1]);
-	 //int targetID = atoi(argv[2]);
-	 //int targetZ  = atoi(argv[3]);
-  int targetID = 99; int targetZ = 99; 
-
-		bool doDIS = false; 
-	 // TString dir(argv[1]);
-	 // int targetID = 1;
-	 // int targetZ = 26;
-	 // const string playlist= argv[4];
-
-    const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-    const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-    const std::string reco_tree_name("NukeCC");
-  
-    const std::string plist_string("minervame6A");
-    const bool wants_truth = false;
-    //const bool is_grid = false;
-    // is grid removed after update of MAT 07/12/2021
-
-	 PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
-
-	 util.PrintMacroConfiguration("main");
-
-	 //=========================================
-	 // Systematics
-	 //=========================================
-	 //std::map<std::string, std::vector<CVUniverse*> > error_bands =
-	 //  GetErrorBands(util.m_mc);
-
-	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
-	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
-	 PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
-   PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
-   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
-   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
-   
-	    
-	 NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
-	 NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
-	 NukeCC_Binning  *binsDef = new NukeCC_Binning();
-	  
-	 PlotUtils::ChainWrapper* chainData = util.m_data;
-	 PlotUtils::ChainWrapper* chainMC = util.m_mc;
-	 HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
-	 double DataPot=  util.m_data_pot; 
-	 double MCPot=  util.m_mc_pot; 
-	 //double total_pot_data,total_pot_mc;
-	 //utils->getPOT(total_pot_data,total_pot_mc);  
-	 double  MCscale=DataPot/MCPot;
-	 //double  MCscale=1.0;
-	 
-	 std::cout<<" MCScale= "<<MCscale<<std::endl; 
-	 std::vector<Var*> variablesMC,variablesData; 
-	 std::vector<Var2D*> variables2DMC,variables2DData; 
-
-         //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
-	TString histFileName;
-  if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
-  }
-
-  else{
-    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
-  } 
-   	   
-	TFile fout(dir.Append(histFileName),"RECREATE");	
-	   
-	 // For 1D variables 
-	 FillVariable(chainMC, helicity, utils, cutter, binsDef, variablesMC, variables2DMC, true, targetID, targetZ, plist_string, doDIS);
-	     
-         	 
-	 for (auto v : variablesMC) v-> mresp1D.SyncCVHistos();
-   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos(); 
-   for (auto v : variablesMC) v->m_selected_Migration.SyncCVHistos(); 
-
-	 for (auto v : variables2DMC) v-> mresp.SyncCVHistos();
-	 
-	 
-	 for (auto v : variablesMC) {
-	   v->WriteAllHistogramsToFileMig(fout, true);
-	 }
-
-
-	 // Plotting If you want for 1D
-	 /* 
-	 for(int i=0; i< variablesMC.size();i++){
-		 PlotCVAndError(variablesData[i]->m_selected_data_reco.hist,variablesMC[i]->m_selected_mc_reco.hist,variablesMC[i]->GetName(),MCscale);
-		       
-		 PlotErrorSummary(variablesMC[i]->m_selected_mc_reco.hist, variablesMC[i]->GetName());
-		 PlotStacked(variablesData[i]->m_selected_data_reco_sb.hist,variablesMC[i]->m_selected_mc_sb.GetHistArray(),MCscale, variablesMC[i]->m_selected_mc_sb.GetName(), variablesMC[i]->m_selected_mc_sb.GetName());
-	 }//End 1D plotting 
-	 */
-
-	 //For 2D variable
-
-	 for (auto v : variables2DMC) {
-	   v->WriteAllHistogramsToFileMig(fout,true);
-	 }
-
-  fout.cd();
-  auto dataPOTOut = new TParameter<double>("DataPOT", DataPot);
-  auto mcPOTOut = new TParameter<double>("MCPOT", MCPot);
-  dataPOTOut->Write();
-  mcPOTOut->Write(); 
-	 
-	 //Plotting in 2D
-	   
-	 //for(int i=0; i< variables2DMC.size();i++){
-	   //Plot2D(variables2DMC[i]->mresp.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY()); //Plotting line that I somehow cannot delete without producing memory errors, but no one else can reproduce. --ANF 2020.4.6
-	 //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
-	     
-	 //}//End 2D plotting
-  std::cout << "DONE" << std::endl;
-
-
-}//End Main
-
