@@ -55,8 +55,8 @@ for var in vars:
     print("Numerator ML: " + str(numML))
     print("Numerator TBV: " + str(numTBV))
     print("Denominator: " + str(denom))
-    print("Efficinecy ML: " + str(numML/denom))
-    print("Efficinecy TBV: " + str(numTBV/denom))
+    print("Efficiency ML: " + str(numML/denom))
+    print("Efficiency TBV: " + str(numTBV/denom))
 
     num_hist_ML.SetMarkerColor(ROOT.kRed)
     num_hist_ML.SetMarkerStyle(ROOT.kFullCircle)
