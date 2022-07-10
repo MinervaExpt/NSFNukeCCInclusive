@@ -5,7 +5,7 @@
 #define MNV_NUKECC_BINNING_CXX 1
 
 #include "../include/Binning.h"
-#include "../include/MasterAnaDevvars.h"
+//#include "../include/MasterAnaDevvars.h"
 #include "PlotUtils/TargetUtils.h"
 #include "../include/CVUniverse.h"
 #include "../include/GlobalIncludes.h" 
@@ -448,6 +448,11 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
 
     else if(var=="petal"){ //finer binning to see the differences
         double tmpBins[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
+    }
+
+    else if(var=="planeDiff"){ //finer binning to see the differences
+        double tmpBins[] = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
         binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
     }
 

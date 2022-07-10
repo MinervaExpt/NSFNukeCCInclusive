@@ -194,6 +194,23 @@ void NukeCC_Cuts::Show(CVUniverse *cv,Long64_t entry)
 // Analysis Helpers/Cuts
 //=======================================================
 //
+// Passive Target Region Cut (including targets and plastic sidebands)
+bool NukeCC_Cuts::PassiveTargetRegion(CVUniverse* cv){
+    if (cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) >= PlotUtils::TargetProp::NukeRegion::Face && cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) <= PlotUtils::TargetProp::NukeRegion::Back)
+        return true;
+    else
+        return false;
+}
+
+bool NukeCC_Cuts::PassiveTargetRegionTrue(CVUniverse* cv){
+    if (cv->GetVecElem("mc_vtx",2) >= PlotUtils::TargetProp::NukeRegion::Face && cv->GetVecElem("mc_vtx",2) <= PlotUtils::TargetProp::NukeRegion::Back)
+
+        return true;
+    else
+        return false;
+}
+
+
 // Tracker CUT
 
 bool NukeCC_Cuts::TrackerOnly(CVUniverse* cv){

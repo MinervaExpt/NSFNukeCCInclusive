@@ -129,6 +129,9 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetxReco()     const;
     virtual double GetyReco()     const;
     virtual double GetplaneDNNReco() const;
+    virtual double GetDiffPlaneReco() const;
+    virtual double GetDiffPlaneRecoTrue() const;
+
 
     virtual double GetQ2RecoGeV()     const ;
     virtual double GetWRecoGeV()     const;

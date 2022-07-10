@@ -168,6 +168,36 @@ double CVUniverse::GetplaneDNNReco()  const{
 //           return  ANN_VTX_module*2.+ANN_VTX_plane+10.;}
            return test;}
 
+// Function to calculate the difference between the original reconstructed plane and the plane that one gets using the segment with the second highest probability
+double CVUniverse::GetDiffPlaneReco() const{
+    // reconstructed plane
+    double reco_plane_0 = GetplaneDNNReco();
+
+    // get reconstructed plane using the second segment in the vector (with the second highest probability)
+    int ANN_vtx_module, ANN_vtx_plane;
+    int Segment = GetVecElem("ANN_segments",1);
+    int targetID = GetTargetFromSegment( Segment, ANN_vtx_module, ANN_vtx_plane );
+    double ANN_VTX_module = (double)ANN_vtx_module; 
+    double ANN_VTX_plane = (double)ANN_vtx_plane;
+    double reco_plane_1 = ANN_VTX_module*2.+ANN_VTX_plane+10.; 
+
+    double dif = reco_plane_0 - reco_plane_1;
+
+    return dif;
+}
+
+double CVUniverse::GetDiffPlaneRecoTrue() const{
+    // reconstructed plane (most probable)
+    double reco_plane_0 = GetplaneDNNReco();
+    // get true plane
+    double true_plane = GetplaneDNNTrue();
+    
+
+    double dif = reco_plane_0 - true_plane;
+
+    return dif;
+}
+
 // for true variables
 double CVUniverse::GetTruthNuPDG() const{return GetInt("mc_incoming");}
 double CVUniverse::GetCurrent()    const{return GetInt("mc_current");} 
@@ -439,7 +469,7 @@ double CVUniverse::GetWeight() const {
 
    wgt_mueff = GetMinosEfficiencyWeight(); 
    wgt_target_mass = GetTargetMassWeight();
-   wgt_geant = GetGeantHadronWeight();
+   //wgt_geant = GetGeantHadronWeight();
    // non-res pi
    //wgt_nrp = GetNonResPiWeight();
    //if (do_warping)
