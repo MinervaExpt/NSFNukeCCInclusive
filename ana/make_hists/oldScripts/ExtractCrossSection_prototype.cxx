@@ -178,34 +178,6 @@ void WriteCovAndCorrMatrices(const auto&var, PlotUtils::MnvH1D* unfolded_histo, 
 
 }
 
-std::vector<int> whichTargetIDs(int targetZ)
-{
-  std::vector<int> targetIDs;
-
- if( targetZ == 99){
-    targetIDs.push_back(99);
-  }
-  
-  else{
-    if(targetZ==26){
-      targetIDs.push_back(2);
-      targetIDs.push_back(3);
-      //targetIDs.push_back(5);
-    }
-    if(targetZ==82){
-      targetIDs.push_back(2);
-      targetIDs.push_back(3);
-      targetIDs.push_back(4);
-      targetIDs.push_back(5);
-    }
-    if(targetZ==6){
-      targetIDs.push_back(3);
-    }
-  }
-  return targetIDs;
-
-}
-
 double GetTotalScatteringCenters(int targetZ, bool isMC)
 {
   // TARGET INFO
@@ -276,18 +248,41 @@ int main(int argc, char * argv[]){
     std::cout<<"MACROS HELP:\n\n"<<
       "\t-./runEventLoop Path_to_Output_file \n\n"<<
       "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
-      "\t-Material_atomic_number\t =\t Atomic number of material, e.g. 6, 26, 82, or tracker 99  \n" <<
-      "\t-Target_number\t \t = \t Number of target, e.g. 1-5, or tracker 99 \n"<< std::endl;
+      "\t-Target_number\t \t = \t Number of target, e.g. 1-5, or tracker 99 \n"<<
+      "\t-Material_atomic_number\t =\t Atomic number of material, e.g. 6, 26, 82, or tracker 99  \n" << std::endl;
       //"\t-Playlist\t \t =\t eg. minervame1A"<< std::endl;
     std::cout<<"-----------------------------------------------------------------------------------------\
 ------"<<std::endl;
     return 0;
   }
 
+  string outdir = argv[1];
+  int targetID = atoi(argv[2]);
+  int targetZ = atoi(argv[3]);
+
   const std::string plist_string("minervame6A");
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
+
+  TString eventLoop, migr, efficiency;
+
+  // Read in background subtracted event rate, Migration and Efficiency
+  if(RunCodeWithSystematics){
+        eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+        migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+        efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+    }
+  else{
+      eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+      migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+      efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+  }
+
+  TFile *fEventLoop = new TFile( eventLoop,"read" );
+  TFile *fMigration = new TFile( migr,"read" );
+  TFile *fEfficiency = new TFile( efficiency,"read" );
+
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
   NukeCC_Binning  *binsDef = new NukeCC_Binning();
   HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
@@ -296,226 +291,22 @@ int main(int argc, char * argv[]){
   std::vector<string> vars;
   vars.push_back("Enu");
   vars.push_back("x");
+  
+  //string var = "Enu";
 
   // to iterate over mc and data
   std::vector<string> prefixes;
   prefixes.push_back("mc");
   prefixes.push_back("data");
 
-  std::vector<int> targetIDs;
-
-  string outdir = argv[1];
-  int targetZ = atoi(argv[2]);
-  int targetID; 
-
-  if (argc == 4){
-    targetID = atoi(argv[3]);
-    targetIDs.push_back(targetID);
-  }
-  // To combine different targets
-  else{
-    targetIDs = whichTargetIDs(targetZ);
-    if (targetIDs.size() == 1)
-    {
-      targetID = targetIDs[0];
-    }
-    else{
-      std::stringstream ss_result;
-      std::copy(targetIDs.begin(), targetIDs.end(), std::ostream_iterator<int>(ss_result, ""));
-      string s_result = ss_result.str();
-      targetID = std::stoi(s_result);
-    }
-
-  }
-
   // output file
-  TFile *fUnfold = new TFile( Form("%s/CrossSection_t%d_z%d_%s_NEW.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
-
-
-  TString eventLoop, migr, efficiency;
-  double mcpot, datapot;
-
+  TFile *fUnfold = new TFile( Form("%s/CrossSection_t%d_z%d_%s_NEW2.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
   
-  //=========================================
-  // Targets combining Loop
-  //=========================================
-  for(int t = 0; t < targetIDs.size(); t++){
-    
-    // Read in background subtracted event rate, Migration and Efficiency
-    if(RunCodeWithSystematics){
-          eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-          migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-          efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-      }
-    else{
-        eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-        migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-        efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-    }
-
-    TFile *fEventLoop = new TFile( eventLoop,"read" );
-    TFile *fMigration = new TFile( migr,"read" );
-    TFile *fEfficiency = new TFile( efficiency,"read" );
-    
-    // read in the POT information
-    if (t == 0){
-      TParameter<double> *mcPOT = (TParameter<double>*)fMigration->Get("MCPOT");
-      TParameter<double> *dataPOT = (TParameter<double>*)fMigration->Get("DataPOT");
-      mcpot = mcPOT->GetVal();
-      datapot = dataPOT->GetVal();
-    }
-
-    fUnfold->cd();
-
-    for(const auto&var: vars){
-
-      // Var specific ingredients
-      auto migration  = dynamic_cast<MnvH2D*> (fMigration->Get( Form("selected_Migration_%s", var.c_str())));
-      auto effNum = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_mc_%s", var.c_str())));
-      auto effDenom = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_%s", var.c_str())));
-      auto simEventRate = effDenom->Clone();
-      simEventRate->Clone()->Write(Form("simEventRate_%d_%s", targetIDs[t],var.c_str() ));
-
-      // EFFICIENCY
-      effNum->Divide(effNum, effDenom, 1.0, 1.0, "B"); //Only the 2 parameter version of MnvH1D::Divide() //handles systematics correctly.
-      //Plot(*effNum, "efficiency", prefix);
-      effNum->Clone()->Write(Form("efficiency_%d_%s", targetIDs[t], var.c_str() )); 
-
-      //  Data or MC
-      for(const auto& prefix: prefixes){
-        bool isMC = false;
-        if (prefix=="mc"){
-          isMC = true;
-        }
-
-        std::cout << "Reading in: " << prefix<<".\n" << std::flush;
-
-
-        auto bkgSubtracted = dynamic_cast<MnvH1D*>(fEventLoop->Get( Form("h_bkg_subtracted_%s_%s", prefix.c_str(), var.c_str())));
-
-        cout<<"I am here"<<endl;
-        //d'Aogstini unfolding
-        int nIterations=5;  
-
-        // UNFOLDING
-        auto unfolded = UnfoldHist(bkgSubtracted, migration, nIterations);
-        if(!unfolded) throw std::runtime_error(std::string("Failed to unfold ") + bkgSubtracted->GetName() + " using " + migration->GetName());
-        //Plot(*unfolded_mc, "unfolded", prefix);
-        unfolded->Clone()->Write(Form("unfolded_%d_%s_%s", targetIDs[t], prefix.c_str(),var.c_str() ));
-
-        std::cout << "Survived writing the unfolded histogram.\n" << std::flush;
-
- // CROSS-SECTION EXTRACTION
-
-        // Unfolded efficiency corrected
-        unfolded->Divide(unfolded, effNum);
-        //Plot(*unfolded_data, "efficiencyCorrected", prefix);
-        unfolded->Clone()->Write(Form("unfolded_effCorrected_%d_%s_%s", targetIDs[t], prefix.c_str(),var.c_str() )); 
-        std::cout << "Efficiency corrected.\n" << std::flush;
-
-        if (t == targetIDs.size() -1){
-          std::cout << "All files with given targetZ unfolded and efficiency corrected.\n" << std::flush;
-        }
-      }
-    }
-  }
-
-  for(const auto&var: vars){
-
-    for(const auto& prefix: prefixes){
-      bool isMC = false;
-      if (prefix=="mc"){
-        isMC = true;
-
-      }
-      std::cout << "Reading in: " << prefix<<".\n" << std::flush;
-
-      auto unfolded_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("unfolded_effCorrected_%d_%s_%s", targetIDs[0], prefix.c_str(),var.c_str() )));
-      auto simEventRate_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_%d_%s", targetIDs[0],var.c_str() )));
-      std::cout << "Read in the first file of efficiency corrected and unfolded histo.\n" << std::flush;
-
-      for(int t = 1; t < targetIDs.size(); t++){
-        auto unfolded = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("unfolded_effCorrected_%d_%s_%s", targetIDs[t], prefix.c_str(),var.c_str() )));
-        auto simEventRate = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_%d_%s", targetIDs[t],var.c_str() )));
-
-        unfolded_combined->Add(unfolded);
-        simEventRate_combined->Add(simEventRate);
-      }
-
-      unfolded_combined->Clone()->Write(Form("total_unfolded_effCorrected_%s_%s", prefix.c_str(),var.c_str() )); 
-      simEventRate_combined->Clone()->Write(Form("total_simEventRate_combined_%s_%s", prefix.c_str(),var.c_str() )); 
-
-      // FLUX INFO
-      auto& frw = PlotUtils::flux_reweighter(plist_string,-14, true, 100);
-      auto flux = frw.GetFluxReweighted(-14);
-      auto fluxIntegral = frw.GetIntegratedFluxReweighted(-14, unfolded_combined, 0, 120, false);
-      auto& frw2 = PlotUtils::flux_reweighter(plist_string,-14, true, 100);
-      auto fluxRebinned = frw2.GetRebinnedFluxReweighted(-14, unfolded_combined);
-      if (prefix == "mc"){
-        flux->Clone()->Write(Form("flux_%s", var.c_str()));
-        fluxRebinned->Clone()->Write(Form("fluxRebinned_%s", var.c_str()));
-      }
-
-      std::cout << "FluxReweighter information generated.\n" << std::flush;
-
-      PlotUtils::TargetUtils targetInfo;
-      //double nNucleons = targetInfo.GetPassiveTargetNNucleons( targetID, targetZ, isMC );
-      double nNucleons = GetTotalScatteringCenters(targetZ, isMC);
-
-      std::cout << prefix + " number of nucleons" << std::endl;
-      std::cout << nNucleons << std::endl;
-
-      double pot = datapot;
-      if (prefix=="mc"){
-        // simulated event rate from efficiency denominator -> cross-section (to check with GENIE xSec)
-        // MC cross-section calculated from the efficiency numerator
-        // Unfolding inflates the statistical uncertainty and will give a reader the wrong impression of the size of the MC sample.
-        pot = mcpot;
-        if (var=="Enu"){ // calculated simulated total cross-section for Enu
-          auto simEventRate_cross_total = simEventRate_combined->Clone();
-          simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
-          simEventRate_cross_total->Clone()->Write(Form("simEventRate_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
-          /* TO DO
-          auto crossSection_total = effNum->Clone();
-          crossSection_total= normalizeTotal(crossSection_total, fluxRebinned, nNucleons, pot);
-          crossSection_total->Clone()->Write(Form("crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
-          std::cout << "MC total cross-section  DONE.\n" << std::flush;
-          */
-        }
-        auto simEventRate_cross_dif = simEventRate_combined->Clone();
-        simEventRate_cross_dif = normalize(simEventRate_cross_dif, fluxIntegral, nNucleons, pot);
-        simEventRate_cross_dif->Clone()->Write(Form("simEventRate_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
-
-        /* TO DO
-        auto crossSection = effNum->Clone();
-        crossSection = normalize(crossSection, fluxIntegral, nNucleons, pot);
-        crossSection->Clone()->Write(Form("crossSection_%s_%s", prefix.c_str(), var.c_str() ));
-        */
-        std::cout << "MC differential cross-section  DONE.\n" << std::flush;
-      }
-
-      std::cout << prefix + " POT" << std::endl;
-      std::cout << pot << std::endl;
-
-      if (prefix=="data"){
-        // Total CrossSection
-        if (var=="Enu"){
-          auto efficiencyCorrected = unfolded_combined->Clone();
-          auto crossSection_total = normalizeTotal(efficiencyCorrected, fluxRebinned, nNucleons, pot);
-          //Plot(*crossSection_mc, "crossSection_mc", prefix);
-          crossSection_total->Clone()->Write(Form("crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
-          std::cout << "Total cross-section DONE.\n" << std::flush;
-        }
-        // Differential CrossSection
-        auto crossSection = normalize(unfolded_combined, fluxIntegral, nNucleons, pot);
-        //Plot(*crossSection_mc, "crossSection_mc", prefix);
-        crossSection->Clone()->Write(Form("crossSection_%s_%s", prefix.c_str(), var.c_str() ));
-
-        WriteCovAndCorrMatrices(var, unfolded_combined, fUnfold, prefix);
-        std::cout << "Wrote covariance and correlation cross-section matrices.\n" << std::flush;
-      }
-    }
-  }
+  // read in the POT information
+  TParameter<double> *mcPOT = (TParameter<double>*)fMigration->Get("MCPOT");
+  TParameter<double> *dataPOT = (TParameter<double>*)fMigration->Get("DataPOT");
+  double mcpot = mcPOT->GetVal();
+  double datapot = dataPOT->GetVal();
 
   fUnfold->cd();
   // write the POT information into the output file
@@ -526,6 +317,137 @@ int main(int argc, char * argv[]){
 
   double dataMCScale = datapot/mcpot;
   cout<<"Data POT = "<<datapot<<" MC POT = "<<mcpot<<"   Data/MC POT = "<<dataMCScale<<endl;
+
+  for(const auto&var: vars){
+
+    // Var specific ingredients
+    auto migration  = dynamic_cast<MnvH2D*> (fMigration->Get( Form("selected_Migration_%s", var.c_str())));
+    auto effNum = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_mc_%s", var.c_str())));
+    auto effDenom = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_%s", var.c_str())));
+    auto simEventRate = effDenom->Clone();
+
+    effNum->Clone()->Write(Form("efficiency_numerator_%s", var.c_str() ));
+    // EFFICIENCY
+    auto efficiency = effNum->Clone();
+    efficiency->Divide(efficiency, effDenom, 1.0, 1.0, "B"); //Only the 2 parameter version of MnvH1D::Divide() //handles systematics correctly.
+    //Plot(*effNum, "efficiency", prefix);
+    efficiency->Clone()->Write(Form("efficiency_%s", var.c_str() )); 
+
+    simEventRate->Clone()->Write(Form("simEventRate_%s", var.c_str() ));
+
+    // Var and prefix specific ingredients
+    for(const auto& prefix: prefixes){
+
+      auto bkgSubtracted =  dynamic_cast<MnvH1D*>(fEventLoop->Get( Form("h_background_subtracted_%s_%s", prefix.c_str(), var.c_str())));
+
+      cout<<"I am here"<<endl;
+      //d'Aogstini unfolding
+      int nIterations=2;  
+
+      // UNFOLDING
+      auto unfolded = UnfoldHist(bkgSubtracted, migration, nIterations);
+      if(!unfolded) throw std::runtime_error(std::string("Failed to unfold ") + bkgSubtracted->GetName() + " using " + migration->GetName());
+      //Plot(*unfolded_mc, "unfolded", prefix);
+      unfolded->Clone()->Write(Form("unfolded_%s_%s", prefix.c_str(),var.c_str() ));
+      // histogram unfolded data stores the diagonals, "unfoldinCov" contains the covariant values
+      // in unfoldingCov, the diagonals are zero, but there should be off-diagonal content
+
+      //unfolded_data->GetStatErrorMatrix(false) + unfolded_data->GetSysCorrelationMatrix("unfoldingCov", false);
+      //unfolded_data->Clone()->Write(Form("unfolded_data_covMatrix_%s", var.c_str() ));
+
+      std::cout << "Survived writing the unfolded histogram.\n" << std::flush;
+      bool isMC = false;
+      if (prefix=="mc"){
+        isMC = true;
+      }
+
+      WriteCovAndCorrMatrices(var, unfolded, fUnfold, prefix);
+      std::cout << "Wrote covariance and correlation matrices.\n" << std::flush;
+
+      // CROSS-SECTION EXTRACTION
+
+      // Unfolded efficiency corrected
+      unfolded->Divide(unfolded, efficiency);
+      //Plot(*unfolded_data, "efficiencyCorrected", prefix);
+      unfolded->Clone()->Write(Form("unfolded_effCorrected_%s_%s", prefix.c_str(),var.c_str() )); 
+      std::cout << "Efficiency corrected.\n" << std::flush;
+
+      // FLUX INFO
+      auto& frw = PlotUtils::flux_reweighter(plist_string,-14, true, 100);
+      auto flux = frw.GetFluxReweighted(-14);
+      auto fluxIntegral = frw.GetIntegratedFluxReweighted(-14, unfolded, 0, 120, false);
+      auto& frw2 = PlotUtils::flux_reweighter(plist_string,-14, true, 100);
+      auto fluxRebinned = frw2.GetRebinnedFluxReweighted(-14, unfolded);
+      if (prefix == "mc"){
+        flux->Clone()->Write(Form("flux_%s", var.c_str()));
+        fluxRebinned->Clone()->Write(Form("fluxRebinned_%s", var.c_str()));
+      }
+      /*
+      bool isMC = false;
+      if (prefix=="mc"){
+        isMC = true;
+      }
+      */
+      PlotUtils::TargetUtils targetInfo;
+      //double nNucleons = targetInfo.GetPassiveTargetNNucleons( targetID, targetZ, isMC );
+      double nNucleons = GetTotalScatteringCenters(targetZ, isMC);
+
+      std::cout << prefix + " number of nucleons" << std::endl;
+      std::cout << nNucleons << std::endl;
+
+      double pot = datapot;
+
+      std::cout << prefix + " POT" << std::endl;
+      std::cout << pot << std::endl;
+      
+      if (prefix=="mc"){
+      // simulated event rate from efficiency denominator -> cross-section (to check with GENIE xSec)
+      // MC cross-section calculated from the efficiency numerator
+      // Unfolding inflates the statistical uncertainty and will give a reader the wrong impression of the size of the MC sample.
+        pot = mcpot;
+        if (var=="Enu"){ // calculated simulated total cross-section for Enu
+          auto simEventRate_cross_total = simEventRate->Clone();
+          simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
+          simEventRate_cross_total->Clone()->Write(Form("simEventRate_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+
+          //auto crossSection_total_mc = effNum->Clone();
+          //crossSection_total_mc= normalizeTotal(crossSection_total_mc, fluxRebinned, nNucleons, pot);
+          //crossSection_total_mc->Clone()->Write(Form("crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+          //std::cout << "MC total cross-section  DONE.\n" << std::flush;
+
+        }
+        auto simEventRate_cross = simEventRate->Clone();
+        simEventRate_cross = normalize(simEventRate_cross, fluxIntegral, nNucleons, pot);
+        simEventRate_cross->Clone()->Write(Form("simEventRate_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        //auto crossSection_mc = effNum->Clone();
+        //crossSection_mc = normalize(crossSection_mc, fluxIntegral, nNucleons, pot);
+        //crossSection_mc->Clone()->Write(Form("crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+        
+        std::cout << "MC differential cross-section  DONE.\n" << std::flush;
+      }
+
+      // Total CrossSection
+      if (prefix == "data"){
+        if (var=="Enu"){
+          auto efficiencyCorrected = unfolded->Clone();
+          auto crossSection_total = normalizeTotal(efficiencyCorrected, fluxRebinned, nNucleons, pot);
+          //Plot(*crossSection_mc, "crossSection_mc", prefix);
+          crossSection_total->Clone()->Write(Form("crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+          
+          std::cout << "Data total cross-section  DONE.\n" << std::flush;
+        }
+        // Differential CrossSection
+        auto crossSection = normalize(unfolded, fluxIntegral, nNucleons, pot);
+        //Plot(*crossSection_mc, "crossSection_mc", prefix);
+        crossSection->Clone()->Write(Form("crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+        
+        std::cout << "Data differential cross-section  DONE.\n" << std::flush;
+        //WriteCovAndCorrMatrices(var, crossSection, fUnfold, prefix);
+        //std::cout << "Wrote covariance and correlation matrices.\n" << std::flush;
+      } 
+    }
+  }
 
   std::cout << "DONE" << std::endl;
 
