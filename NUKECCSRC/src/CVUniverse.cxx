@@ -80,7 +80,7 @@ double CVUniverse::GetInNuclMomentum() const {
 // Reco
 
 double CVUniverse::GetVertexXMy() const {
-    double vertex_y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),0)/10; // y position in cm...
+    double vertex_y = GetVecElem("ANN_vtx",0)/10; // y position in cm...
     return vertex_y;
 }
 
@@ -90,7 +90,7 @@ double CVUniverse::GetVertexXTrueMy() const {
 
 
 double CVUniverse::GetVertexYMy() const {
-    double vertex_y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),1)/10; // y position
+    double vertex_y = GetVecElem("ANN_vtx",1)/10; // y position
     return vertex_y;
 }
 
@@ -100,7 +100,7 @@ double CVUniverse::GetVertexYTrueMy() const {
 
 
 double CVUniverse::GetVertexZMy() const {
-    double vertex = GetVecElem((GetAnaToolName() + "_vtx").c_str(), 2)/10; // in this current ntuple, Z position in mm not cm, hence divide
+    double vertex = GetVecElem("ANN_vtx", 2)/10; // in this current ntuple, Z position in mm not cm, hence divide
     return vertex;
 }
 
@@ -114,12 +114,11 @@ double CVUniverse::GetVertexZTrueMy() const {
 double CVUniverse::GetMuonCurve()  const { return 1/GetDouble((GetAnaToolName() + "_minos_trk_eqp_qp").c_str()); }
 double CVUniverse::GetHelicity()  const { return GetInt((GetAnaToolName() + "_nuHelicity").c_str()); }
 double CVUniverse::GetTrueHelicity()  const { return GetInt("mc_incomig"); }
-double CVUniverse::GetFiducial()  const { return GetInt((GetAnaToolName() + "_in_fiducial_area").c_str()); }
+double CVUniverse::GetFiducial()  const { return GetInt((GetAnaToolName() + "_ANN_in_fiducial_area").c_str()); }
 double CVUniverse::GetTdead()  const { return GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj"); }
-double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_targetID").c_str());}
+double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_ANN_targetID").c_str());}
 
-//double CVUniverse::GetRecoilEnergy()  const { return GetDouble((GetAnaToolName() + "_recoil_E").c_str()); }
-
+//double CVUniverse::GetRecoilEnergy()  const { return GetDouble((GetAnaToolName() + "_ANN_recoil_E").c_str()); }
 // ======================================================================================================================================
 //  ENERGY FUNCTIONS
 // ======================================================================================================================================
@@ -141,7 +140,7 @@ double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_tar
 
 
 double CVUniverse::GetCalRecoilEnergy() const {
-    return GetDouble((GetAnaToolName() + "_recoil_E").c_str());  // [MeV]
+    return GetDouble((GetAnaToolName() + "_ANN_recoil_E").c_str());  // [MeV]
     // usual inclusive recoil energy should just be calorimetric energy
     // instead of Gonzalo's return GetDouble("Recoil_Ecalo") / 1000.0;  // [GeV]
 }
@@ -149,6 +148,7 @@ double CVUniverse::GetCalRecoilEnergy() const {
 double CVUniverse::GetNonCalRecoilEnergy() const {
     return 0.0;
 }
+
 
 //double CVUniverse::GetThetamu()       const {return GetDouble("muon_theta");}
 double CVUniverse::GetEnu()           const {return GetEmu()+ GetRecoilEnergy();} 
@@ -202,9 +202,7 @@ double CVUniverse::GetDiffPlaneRecoTrue() const{
 double CVUniverse::GetTruthNuPDG() const{return GetInt("mc_incoming");}
 double CVUniverse::GetCurrent()    const{return GetInt("mc_current");} 
 double CVUniverse::GetEhadTrue()    const{return GetEnuTrue() - GetElepTrue();}
-//double CVUniverse::GetThetamuTrue( )const{return GetDouble("truth_muon_theta");}
 double CVUniverse::GetThetamuTrue( )const{return GetThetalepTrue();}
-
 
 double CVUniverse::GetQ2IncTrue()      const{return calcTrueQ2(GetEnuTrue(),  GetElepTrue(), GetThetamuTrue()); }
 double CVUniverse::GetWTrue()       const{return calcWTrue(GetQ2IncTrue(), GetEhadTrue());}
@@ -215,7 +213,8 @@ double CVUniverse::GetyTrue()       const{return calcYTrue(GetEnuTrue(), GetEhad
 //double CVUniverse::Getq0True()      const{return calcq0(GetEnuTrue(), GetElepTrue());}
 double CVUniverse::GetThetamuDeg()  const{return GetThetamu()*rad_to_deg;}
 double CVUniverse::GetThetamuTrueDeg()  const{return GetThetamuTrue()*rad_to_deg;}
-double CVUniverse::GetMuonP()       const{return GetPmu();}
+double CVUniverse::GetMuonP()       const{return GetPmu()/1000;} // in GeV
+double CVUniverse::GetlepPTrue()       const{return GetPlepTrue()/1000;} // in GeV
 double CVUniverse::GetplaneDNNTrue()         const{return  static_cast<double>(GetInt("truth_vtx_module")*2+GetInt("truth_vtx_plane")+10);}
 
 // in GeV
@@ -234,19 +233,19 @@ double CVUniverse::GetWRecoGeV()         const{return (calcWReco(GetQ2Reco(), Ge
 double CVUniverse::GetQ2TrueGeV()      const{return (calcTrueQ2(GetEnuTrue(),  GetElepTrue(), GetThetamuTrue()))*mev_to_gev*mev_to_gev; }
 double CVUniverse::GetWTrueGeV()       const{return (calcWTrue(GetQ2IncTrue(), GetEhadTrue()))*mev_to_gev;}
 
-double CVUniverse::GetMuonPt()const{
+double CVUniverse::GetMuonPt()const{ // in GeV
    return GetPmu()/1000. * sin(GetThetamu());
 }
 
-double CVUniverse::GetMuonPz()const{
+double CVUniverse::GetMuonPz()const{ // in GeV
   return  GetPmu()/1000. * cos(GetThetamu());
 }
 
-double CVUniverse::GetlepPtTrue()const{
+double CVUniverse::GetlepPtTrue()const{ // in GeV
    return GetPlepTrue()/1000*sin(GetThetalepTrue());
 }
 
-double CVUniverse::GetlepPzTrue()  const{
+double CVUniverse::GetlepPzTrue()  const{ // in GeV
     return GetPlepTrue()/1000*cos(GetThetalepTrue()); 
 } // Gev/c 
 
@@ -469,7 +468,7 @@ double CVUniverse::GetWeight() const {
 
    wgt_mueff = GetMinosEfficiencyWeight(); 
    wgt_target_mass = GetTargetMassWeight();
-   //wgt_geant = GetGeantHadronWeight();
+   wgt_geant = GetGeantHadronWeight();
    // non-res pi
    //wgt_nrp = GetNonResPiWeight();
    //if (do_warping)
@@ -538,6 +537,22 @@ double CVUniverse::GetTruthWeightFlux()const{
    return wgt_flux*wgt_genie;
 }
 
+bool CVUniverse::IsInHexagon(double apothem /*= 850. */ ) const
+{
+   double x = GetVecElem((GetAnaToolName()+"_vtx").c_str(),0);
+   double y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),1);
+   double lenOfSide = apothem*(2/sqrt(3)); 
+   double slope     = (lenOfSide/2.0)/apothem;
+   double xp        = fabs(x);
+   double yp        = fabs(y);
+   
+   if( (xp*xp + yp*yp) < apothem*apothem )             return true;
+   else if( xp <= apothem && yp*yp < lenOfSide/2.0 )   return true; 
+   else if( xp <= apothem && yp < lenOfSide-xp*slope ) return true;
+
+   return false;
+}
+
 bool CVUniverse::IsInHexagonTrue(double apothem /*= 850. */ ) const
 {
    double x = GetVecElem("mc_vtx",0);
@@ -553,6 +568,19 @@ bool CVUniverse::IsInHexagonTrue(double apothem /*= 850. */ ) const
 
    return false;
 }
+
+double CVUniverse::GetDaisyPetal() const
+{
+  double x = GetVecElem((GetAnaToolName()+"_vtx").c_str(),0);
+  double y = GetVecElem((GetAnaToolName()+"_vtx").c_str(),1);
+  double apothem = 850.;
+  if( !IsInHexagon( apothem ) ) return -1;
+  double angle = atan2(y,x) / ( 2 * TMath::Pi() );
+  if ( angle < 0 ) angle += 1;
+  int out = floor(12*angle);
+  return out;
+} 
+
 
 double CVUniverse::GetDaisyPetalTrue( ) const
 { 
@@ -660,7 +688,7 @@ double CVUniverse::Var( const std::string& name, bool useTrue )
     if( name == "moduleDNN" )
     {
         if( useTrue ) return GetInt("truth_vtx_module");
-        else          return GetInt((GetAnaToolName() + "_vtx_module").c_str());
+        else          return GetInt("ANN_vtx_module");
     }
     if( name == "planeDNN" )
     {
