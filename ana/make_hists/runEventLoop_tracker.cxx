@@ -75,10 +75,14 @@ int main(int argc, char *argv[]){
   int targetID = 99; int targetZ = 99;  
 
   bool doDIS=false;
+  const string playlist= argv[2];
+
 
   // MasterAnaDev tuples?
-  const std::string mc_file_list("../include/playlists/shortMC.txt");
-  const std::string data_file_list("../include/playlists/shortData.txt");
+  const std::string plist_string(playlist);    
+
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
@@ -86,7 +90,6 @@ int main(int argc, char *argv[]){
   //const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
   //const std::string reco_tree_name("NukeCC");
   
-  const std::string plist_string("minervame6A");    
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
@@ -137,11 +140,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_TBV_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_TBV_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -218,7 +221,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::vector<double> ANNPlaneProbBin;
   std::vector<double> vtxxbin, vtxybin, vtxzbin;
   std::vector<double> planeDNNbin; 
-  std::vector<double> pTbin, pZbin;
+  std::vector<double> pTbin, pZbin;   
   
   if (doDIS){
     Enubin = binsDef->GetDISBins("Enu"); 
@@ -254,7 +257,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   //Wbin = binsDef->GetSidebandBins("W");
 
   // 1D Variables
-  Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+  Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -276,17 +279,17 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
   //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {enu,  x,vtxz, planeDNN, Q2, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {enu, x,vtxz, planeDNN, Q2, pTmu, pZmu, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
-  Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
+  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
   Var2D* W_Q2 = new Var2D(*W, *Q2);
   Var2D* enu_ehad = new Var2D(*enu, *ehad);
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {pTmu_pZmu };//emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
+  variables2d = {pZmu_pTmu };//emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
    
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
@@ -317,7 +320,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
   std::cout<<"# of entries = "<<chain->GetEntries()<<std::endl;
   for(int i=0; i<chain->GetEntries(); ++i){
-    if(i%5000==0) std::cout << (i/1000) << "k " << std::endl;
+    if(i%10000==0) std::cout << (i/1000) << "k " << std::endl;
       //=========================================
       // For every systematic, loop over the universes, and fill the
       // appropriate histogram in the MnvH1D
@@ -333,13 +336,14 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             universe->SetEntry(i);
             reco0++;
 
+            if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
             if(!cutter->PassReco(universe,helicity)) continue;
             reco1++;
             
             if(!cutter->TrackerOnly(universe)) continue;
             reco2++;
             
-            //if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
+            if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
             //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
             reco3++;
 
@@ -410,7 +414,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
       dataverse->SetEntry(i);
       reco0++;
-  
+      
+      if( dataverse->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
       if(!cutter->PassReco(dataverse,helicity)) continue;
       reco1++;
       

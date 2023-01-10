@@ -22,7 +22,7 @@
 #include "../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../include/systematics/Systematics_old.h"
+#include "../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it. 
@@ -75,6 +75,8 @@ int main(int argc, char *argv[]){
   int targetID = 99; int targetZ = 99;  
 
   bool doDIS=false;
+  const string playlist= argv[2];
+
 
   // MasterAnaDev tuples?
   //const std::string mc_file_list("../include/playlists/shortMC.txt");
@@ -82,11 +84,11 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  const std::string plist_string(playlist);    
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+  const std::string reco_tree_name("MasterAnaDev");
   
-  const std::string plist_string("minervame6A");    
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
@@ -109,16 +111,16 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
   //Tracker or nuke (what clusters are accepted for reconstruction)
-  //PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
   //Neutron CV reweight is on by default (recommended you keep this on)
-  //PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
   //Elastics are on by default (recommended you keep this on)
-  //PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
 
 
   NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
   NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
-  NukeCC_Binning  *binsDef = new NukeCC_Binning();
+  NukeCC_Binning  *binsDef = new NukeCC_Binning();    
   
   PlotUtils::ChainWrapper* chainData = util.m_data;
   PlotUtils::ChainWrapper* chainMC = util.m_mc;
@@ -137,12 +139,12 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_Daisy_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_daisy_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionTracker_Daisy_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
-  } 
+    histFileName += Form("/EventSelection_daisy_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
+  }  
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
 
@@ -242,42 +244,36 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::vector<double> vtxxbin, vtxybin, vtxzbin;
   std::vector<double> planeDNNbin; 
   std::vector<double> pTbin, pZbin;
-  
-  if (doDIS){
-    Enubin = binsDef->GetDISBins("Enu"); 
-    Emubin = binsDef->GetDISBins("Emu"); 
-    Ehadbin = binsDef->GetDISBins("Ehad");
-    Q2bin = binsDef->GetDISBins("Q2");
-    Wbin = binsDef->GetDISBins("W");
-    xbin = binsDef->GetDISBins("x");
-    ybin = binsDef->GetDISBins("y");
-    ThetaMuBin = binsDef->GetDISBins("ThetaMu");
-  }
-  else{
-    Enubin = binsDef->GetEnergyBins("Enu"); 
-    Emubin = binsDef->GetEnergyBins("Emu"); 
-    Ehadbin = binsDef->GetEnergyBins("Ehad");
-    Q2bin = binsDef->GetEnergyBins("Q2");
-    Wbin = binsDef->GetEnergyBins("W");
-    xbin = binsDef->GetEnergyBins("x");
-    x09bin = binsDef->GetEnergyBins("x09");
-    xfinebin = binsDef->GetEnergyBins("xfine");
-    xbinBrian    = binsDef->GetEnergyBins("xBrian");
-    ybin = binsDef->GetEnergyBins("y");
-    ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
-    ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
-    vtxxbin = binsDef->GetEnergyBins("vtxx"); 
-    vtxybin = binsDef->GetEnergyBins("vtxy");
-    vtxzbin = binsDef->GetEnergyBins("vtxz");
-    planeDNNbin = binsDef->GetEnergyBins("planeDNN");
-    pTbin = binsDef->GetEnergyBins("muonPt"); 
-    pZbin = binsDef->GetEnergyBins("muonPz"); 
-  }
+  std::vector<double> petalbin;
+  std::vector<double> pMubin;
+
+  Enubin = binsDef->GetEnergyBins("Enu"); 
+  Emubin = binsDef->GetEnergyBins("Emu"); 
+  Ehadbin = binsDef->GetEnergyBins("Ehad");
+  Q2bin = binsDef->GetEnergyBins("Q2");
+  Wbin = binsDef->GetEnergyBins("W");
+  xbin = binsDef->GetEnergyBins("x");
+  x09bin = binsDef->GetEnergyBins("x09");
+  xfinebin = binsDef->GetEnergyBins("xfine");
+  xbinBrian    = binsDef->GetEnergyBins("xBrian");
+  ybin = binsDef->GetEnergyBins("y");
+  ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
+  ANNPlaneProbBin = binsDef->GetEnergyBins("ANNPlaneProb");
+  vtxxbin = binsDef->GetEnergyBins("vtxx"); 
+  vtxybin = binsDef->GetEnergyBins("vtxy");
+  vtxzbin = binsDef->GetEnergyBins("vtxz");
+  planeDNNbin = binsDef->GetEnergyBins("planeDNN");
+  pTbin = binsDef->GetEnergyBins("muonPt"); 
+  pZbin = binsDef->GetEnergyBins("muonPz"); 
+  petalbin = binsDef->GetEnergyBins("petal");
+  pMubin = binsDef->GetEnergyBins("muonP");  
+
+
   //Q2bin = binsDef->GetSidebandBins("Q2");
   //Wbin = binsDef->GetSidebandBins("W");
 
   // 1D Variables
-  Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+  Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -298,11 +294,22 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
+  Var* petal = new Var("Petal", "Petal", petalbin, &CVUniverse::GetDaisyPetal, &CVUniverse::GetDaisyPetalTrue);
+
+  Var* pMu = new Var("pMu", "pMu", pMubin, &CVUniverse::GetMuonP, &CVUniverse::GetlepPTrue);
+
+
+
   //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {enu,  x,vtxz, planeDNN, Q2, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {enu,  x, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
-  Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
+  // 2D Variables 
+  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
+  Var2D* petal_pMu = new Var2D(*petal, *pMu);
+  Var2D* petal_pTmu = new Var2D(*petal, *pTmu);
+  Var2D* petal_pZmu = new Var2D(*petal, *pZmu); 
+  Var2D* petal_emu = new Var2D(*petal, *emu);      
   Var2D* W_Q2 = new Var2D(*W, *Q2);
   Var2D* enu_ehad = new Var2D(*enu, *ehad);
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
@@ -311,7 +318,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* vtxx_vtxy = new Var2D(*vtxx, *vtxy);
 
   
-  variables2d = {vtxx_vtxy};//emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
+  variables2d = {pZmu_pTmu};//emu_ehad,enu_ehad, x_y, W_Q2, pTmu_pZmu };//{enu_ehad, Q2_W};
    
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
@@ -359,7 +366,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             //=========================================
             universe->SetEntry(i);
             reco0++;
-
+            
+            if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
             if(!cutter->PassReco(universe,helicity)) continue;
             reco1++;
             
@@ -453,6 +461,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       dataverse->SetEntry(i);
       reco0++;
   
+      if( dataverse->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
       if(!cutter->PassReco(dataverse,helicity)) continue;
       reco1++;
       

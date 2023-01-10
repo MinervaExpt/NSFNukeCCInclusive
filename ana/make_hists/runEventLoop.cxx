@@ -22,7 +22,7 @@
 #include "../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../include/systematics/Systematics_old.h"
+#include "../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we 
 // shield it.
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]){
   TString dir(argv[1]);
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
+  const string playlist= argv[4];
    
   bool doDIS=false;
 
@@ -91,11 +92,11 @@ int main(int argc, char *argv[]){
 
   // NukeCC Tuples ?
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  const std::string plist_string(playlist);
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+  const std::string reco_tree_name("MasterAnaDev");
   
-  const std::string plist_string("minervame6A");
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
@@ -114,15 +115,15 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
   PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
-  PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+  PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(true);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
   //Tracker or nuke (what clusters are accepted for reconstruction)
-  //PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
   //Neutron CV reweight is on by default (recommended you keep this on)
-  //PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
   //Elastics are on by default (recommended you keep this on)
-  //PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
 
 
 
@@ -147,11 +148,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelection_Bkg_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelection_Bkg_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
 
   //Works good for the grid submission
@@ -276,7 +277,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   //Wbin = binsDef->GetSidebandBins("W");
 
   // 1D Variables
-  Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+  Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -294,18 +295,18 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
-  Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
+  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
   Var2D* W_Q2 = new Var2D(*W, *Q2);
   Var2D* enu_ehad = new Var2D(*enu, *ehad);
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {pTmu_pZmu };//{enu_ehad, Q2_W};
-   
+  variables2d = {pZmu_pTmu };
+  
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
 
@@ -391,6 +392,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	            universe->SetEntry(i);
               reco0++;
 
+              if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
               if(!cutter->PassReco(universe,helicity)) continue;
               reco1++;
               
@@ -398,7 +400,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              if(targetID<10 && universe->GetInt("MasterAnaDev_ANN_targetID") != targetID) continue;
               //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
               reco3++;
               
@@ -447,13 +449,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                       if (v->GetName()=="Enu") plastic++;
                       
                       // DS
-                      if(universe->GetVecElem("NukeCC_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
+                      if(universe->GetVecElem("ANN_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
                         v->m_selected_mc_DSplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                         v->m_selected_mc_sb.GetComponentHist("DS_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                         if (v->GetName()=="Enu") DS++;
                       }
                       // US
-                      else if(universe->GetVecElem("NukeCC_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
+                      else if(universe->GetVecElem("ANN_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
                       v->m_selected_mc_USplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       v->m_selected_mc_sb.GetComponentHist("US_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                       if (v->GetName()=="Enu") US++;
@@ -497,6 +499,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         dataverse->SetEntry(i);
         reco0++;
 	 
+        if( dataverse->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
 	      if(!cutter->PassReco(dataverse,helicity)) continue;
 	      reco1++;
         
@@ -504,7 +507,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        if(targetID<10 && dataverse->GetInt("MasterAnaDev_ANN_targetID") != targetID) continue;
         //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
         reco3++;
 	 
