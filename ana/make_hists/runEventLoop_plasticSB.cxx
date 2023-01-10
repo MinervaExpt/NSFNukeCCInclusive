@@ -8,21 +8,21 @@
 // * Genie, flux, non-resonant pion, and some detector systematics calculated.
 //==============================================================================
 
-#include "../../../NUKECCSRC/include/CVUniverse.h"
-#include "../../include/Variable_plasticSB.h"
-#include "../../include/playlists/playlists.h"
+#include "../../NUKECCSRC/include/CommonIncludes.h"
+#include "../../NUKECCSRC/include/CVUniverse.h"
+#include "../include/Variable_plasticSB.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
-#include "../../../NUKECCSRC/include/Binning.h"
+#include "../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
 #include <stdlib.h>
-#include "../../../NUKECCSRC/include/UtilsNSF.h"
-#include "../../../NUKECCSRC/include/Cuts.h"
+#include "../../NUKECCSRC/include/UtilsNSF.h"
+#include "../../NUKECCSRC/include/Cuts.h"
 #include "TParameter.h"
 
-#include "../../include/systematics/Systematics.h"
+#include "../include/systematics/Systematics.h"
 
 // ROOT's interpreter, CINT, doesn't understand some legitimate c++ code so we shield it.
 #ifndef __CINT__
@@ -61,12 +61,12 @@ int main(int argc, char *argv[]){
   //const std::string mc_file_list( get_mc_files(playlist, targetID) );
   //const std::string data_file_list( get_data_files(playlist) );
   
-  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
- 
-  //const std::string plist_string("minervame1A");
   const std::string plist_string(playlist);
-  const std::string reco_tree_name("NukeCC");
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+  const std::string reco_tree_name("MasterAnaDev");
+ 
+  //const std::string plist_string(playlist);
   const bool wants_truth = false;
   const bool is_grid = false;
 
@@ -110,10 +110,11 @@ int main(int argc, char *argv[]){
   TString histFileName;
 
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "PlasticBkg_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/PlasticBkg_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
+
   else{
-    histFileName = utils->GetHistFileName( "PlasticBkg_nosys", FileType::kAny, targetID, targetZ, helicity );
+    histFileName += Form("/PlasticBkg_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
 
   TFile fout(dir.Append(histFileName),"RECREATE");	
@@ -187,7 +188,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
   std::map<std::string, std::vector<CVUniverse*> > error_bands =GetErrorBands(chain);
 
-  std::vector<double> Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
+  std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
   std::vector<double> planeDNNbin;
 
   if (doDIS){
@@ -199,6 +200,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     Q2bin = binsDef->GetDISBins("Q2");
     Wbin = binsDef->GetDISBins("W");
     planeDNNbin = binsDef->GetDISBins("planeDNN");
+    ThetaMuBin = binsDef->GetDISBins("ThetaMu");
   }
   else{
     Enubin = binsDef->GetEnergyBins("Enu"); 
@@ -207,11 +209,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     xbin = binsDef->GetEnergyBins("x");
     ybin = binsDef->GetEnergyBins("y");
     planeDNNbin = binsDef->GetEnergyBins("planeDNN");
+    ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
   }
 
   Q2bin = binsDef->GetSidebandBins("Q2");
   Wbin = binsDef->GetSidebandBins("W");
 
+  Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -221,7 +225,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
    
-  variables = {planeDNN, enu, ehad, emu, x, y, W, Q2}; 
+  //variables = {planeDNN, enu, ehad, emu, x, y, W, Q2}; 
+  variables = {planeDNN, enu, x, thetaMu}; 
       
   std::vector<int> targetIDs;
     
@@ -338,6 +343,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             //========================================
             universe->SetEntry(i);
             reco0++; //number of entries before any cuts
+            if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
             if(!cutter->PassReco(universe,helicity)) continue;
             reco1++; // no. of entries after reco cuts
             if(!cutter->IsInMaterial(universe,targetIDs[target],targetZ, /*anyTrakerMod*/false)) continue;
@@ -595,6 +601,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         dataverse->SetEntry(i);
         reco00++;
 
+        if( dataverse->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
         if(!cutter->PassReco(dataverse,helicity)) continue;
         reco1++;
 
