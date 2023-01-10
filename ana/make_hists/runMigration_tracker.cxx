@@ -14,7 +14,7 @@
 #include "../include/Variable.h"
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
-#include "PlotUtils/HistWrapper.h"   
+#include "PlotUtils/HistWrapper.h"
 #include "../../NUKECCSRC/include/Binning.h"
 #include "PlotUtils/Hist2DWrapper.h"
 #include <iostream>
@@ -60,20 +60,27 @@ int main(int argc, char *argv[]){
 	 }
 
 	 TString dir(argv[1]);
-	 int targetID = atoi(argv[2]);  
-	 int targetZ  = atoi(argv[3]);
+	 //int targetID = atoi(argv[2]);
+	 //int targetZ  = atoi(argv[3]);
+  int targetID = 99; int targetZ = 99; 
 
 		bool doDIS = false; 
 	 // TString dir(argv[1]);
 	 // int targetID = 1;
 	 // int targetZ = 26;
 	 // const string playlist= argv[4];
+   	const string playlist= argv[2];
 
-    const std::string mc_file_list("../include/playlists/minervame6A_mc_DualVertex_new.txt");
-    const std::string data_file_list("../include/playlists/minervame6A_data_DualVertex.txt");
-    const std::string reco_tree_name("MasterAnaDev");  
+    const std::string plist_string(playlist);    
+
+    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+    const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+    const std::string reco_tree_name("MasterAnaDev");
+
+    //const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+    //const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+    //const std::string reco_tree_name("NukeCC");
   
-    const std::string plist_string("minervame6A");
     const bool wants_truth = false;
     //const bool is_grid = false;
     // is grid removed after update of MAT 07/12/2021
@@ -90,8 +97,8 @@ int main(int argc, char *argv[]){
 
 	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
 	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
-	 PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
+	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
+	 PlotUtils::MinervaUniverse::SetNonResPiReweight(false);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
    PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
    PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
@@ -121,17 +128,17 @@ int main(int argc, char *argv[]){
 	 
 	 std::cout<<" MCScale= "<<MCscale<<std::endl; 
 	 std::vector<Var*> variablesMC,variablesData; 
-	 std::vector<Var2D*> variables2DMC,variables2DData;  
+	 std::vector<Var2D*> variables2DMC,variables2DData; 
 
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/Migration_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName = utils->GetHistFileName( "Migration_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
-  } 
+    histFileName += Form("/Migration_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
+  }  
    	   
 	TFile fout(dir.Append(histFileName),"RECREATE");	
 	   
@@ -140,14 +147,14 @@ int main(int argc, char *argv[]){
 	     
          	 
 	 for (auto v : variablesMC) v-> mresp1D.SyncCVHistos();
-   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();   
+   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos(); 
    for (auto v : variablesMC) v->m_selected_Migration.SyncCVHistos(); 
 
 	 for (auto v : variables2DMC) v-> mresp.SyncCVHistos();
 	 
 	 
 	 for (auto v : variablesMC) {
-	   v->WriteAllHistogramsToFileMig(fout, true);  
+	   v->WriteAllHistogramsToFileMig(fout, true);
 	 }
 
 
@@ -182,7 +189,9 @@ int main(int argc, char *argv[]){
 	 //}//End 2D plotting
   std::cout << "DONE" << std::endl;
 
+
 }//End Main
+
 
 //============================================================================================================================
 // FillVariable 
@@ -202,6 +211,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    
    std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
    std::vector<double> x09bin, xfinebin;
+   std::vector<double> pTbin, pZbin;
+
 
    if (doDIS){
      Enubin  = binsDef->GetDISBins("Enu"); 
@@ -225,13 +236,15 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      xfinebin = binsDef->GetEnergyBins("xfine");
      xbinBrian    = binsDef->GetEnergyBins("xBrian");
      ybin    = binsDef->GetEnergyBins("y");
+     pTbin = binsDef->GetEnergyBins("muonPt"); 
+     pZbin = binsDef->GetEnergyBins("muonPz"); 
    }
   
    //Q2bin = binsDef->GetSidebandBins("Q2");
    //Wbin  = binsDef->GetSidebandBins("W");
    //For 1D varriable
 
-   Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+   Var* thetaMu = new Var("ThetamuDeg", "hetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
    Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
    Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
    Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -242,11 +255,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
+   Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
+   Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
 
 
-   
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, x09, xfine, xBrian, enu, emu, ehad};//{enu,ehad}; 
+   variables = {x, x09, xfine, xBrian, enu, ehad, emu, thetaMu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -255,10 +269,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
    Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
    Var2D* x_y = new Var2D(*x, *y);  // y var
+   Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
+  
+    variables2d = {pZmu_pTmu };
 
-   variables2d = {emu_ehad};//{enu_ehad, Q2_W};
-   //variables2d = {emu_ehad};//{enu_ehad, Q2_W};
-   
    for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
 
@@ -305,14 +319,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 		 universe->SetEntry(i);
      reco0++;
      // reco cuts
+
+     if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
      if(!cutter->PassReco(universe,helicity)) continue;
      reco1++;
 
-	   if(!cutter->IsInMaterial(universe,targetID,targetZ, false)) continue;
+	   if(!cutter->TrackerOnly(universe)) continue;
      reco2++;
-
-	   if(targetID<10 && universe->GetInt("MasterAnaDev_targetID") != targetID) continue;
-	   reco3++;
 
      if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
      reco4++;
@@ -321,7 +334,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       // NO xy separation,  NO APOTHEM CUT
       reco5++;
 
-	   if(!cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) continue; // true target + material
+	   if(!cutter->TrackerOnlyTrue(universe)) continue; // true tracker  
      reco6++;
 
 		 for (auto v : variables2d){
@@ -356,7 +369,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
        v->FillResponse1D(v->GetRecoValue(*universe),v->GetTrueValue(*universe),universe->ShortName(),universe->GetWeight(),unv_count); 
 	   	}
 		 unv_count++;
-    } // End band's universe loop  
+    } // End band's universe loop
      }
   }//End entries loop
  
@@ -377,13 +390,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      std::cout<<"Migration Matrix "<<std::endl;
     std::cout << "No cuts = " << reco0 << std::endl;
     std::cout << "Reco Cut = " << reco1 << std::endl;
-    std::cout << "Material Cut = " << reco2 << std::endl;
-    std::cout << "TargetID Cuts = " << reco3 << std::endl;
+    std::cout << "Tracker Cut = " << reco2 << std::endl;
     std::cout << "Plane prob. cut = " << reco4 << std::endl;
     std::cout << "Truth cut (fiducial, CC, antinu) = " << reco5 << std::endl;
-    std::cout << "True Material cut  = "<< reco6 << std::endl;
+    std::cout << "True Tracker cut  = "<< reco6 << std::endl;
     std::cout << "Muon kinematics cut  = " << reco7 << std::endl;
-    std::cout << "True muon kinematics cut  = " << reco8 << std::endl;
+    std::cout << "True muon kinematics cut (energy)  = " << reco8 << std::endl;
 }
-
-
