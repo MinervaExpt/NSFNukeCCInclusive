@@ -386,9 +386,22 @@ int main(int argc, char * argv[]){
       auto migration  = dynamic_cast<MnvH2D*> (fMigration->Get( Form("selected_Migration_%s", var.c_str())));
       auto effNum = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_mc_%s", var.c_str())));
       auto effDenom = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_%s", var.c_str())));
+      auto effDenom_QE = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_QE", var.c_str())));
+      auto effDenom_RES = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_RES", var.c_str())));
+      auto effDenom_DIS = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_DIS", var.c_str())));
+      auto effDenom_2p2h = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_2p2h", var.c_str())));
       auto simEventRate = effDenom->Clone();
+      auto simEventRate_QE = effDenom_QE->Clone();
+      auto simEventRate_RES = effDenom_RES->Clone();
+      auto simEventRate_DIS = effDenom_DIS->Clone();
+      auto simEventRate_2p2h = effDenom_2p2h->Clone();
+      
       fUnfold->cd();
       simEventRate->Clone()->Write(Form("simEventRate_%d_%s", targetIDs[t],var.c_str() ));
+      simEventRate_QE->Clone()->Write(Form("simEventRate_QE_%d_%s", targetIDs[t],var.c_str() ));
+      simEventRate_RES->Clone()->Write(Form("simEventRate_RES_%d_%s", targetIDs[t],var.c_str() ));
+      simEventRate_DIS->Clone()->Write(Form("simEventRate_DIS_%d_%s", targetIDs[t],var.c_str() ));
+      simEventRate_2p2h->Clone()->Write(Form("simEventRate_2p2h_%d_%s", targetIDs[t],var.c_str() ));
 
       effNum->Clone()->Write(Form("efficiency_numerator_%d_%s", targetIDs[t], var.c_str() ));
       // EFFICIENCY
@@ -412,7 +425,7 @@ int main(int argc, char * argv[]){
         //d'Aogstini unfolding
         std::cout << "===================================== \n" << std::flush;
         std::cout << "============= UNFOLDING =============\n" << std::flush;
-        int nIterations=2;  
+        int nIterations=2;    
         std::cout << "Number of iterations: " << nIterations << "\n" << std::flush;
 
         // UNFOLDING
@@ -444,18 +457,33 @@ int main(int argc, char * argv[]){
     std::cout << "Reading in effNum, simEventRate from individual targets to combine.\n" << std::flush;
     auto effNum_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("efficiency_numerator_%d_%s", targetIDs[0],var.c_str() )));
     auto simEventRate_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_%d_%s", targetIDs[0],var.c_str() )));
-
+    auto simEventRate_QE_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_QE_%d_%s", targetIDs[0],var.c_str() )));
+    auto simEventRate_RES_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_RES_%d_%s", targetIDs[0],var.c_str() )));
+    auto simEventRate_DIS_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_DIS_%d_%s", targetIDs[0],var.c_str() )));
+    auto simEventRate_2p2h_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_2p2h_%d_%s", targetIDs[0],var.c_str() )));
       
     for(int t = 1; t < targetIDs.size(); t++){
       auto effNum = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("efficiency_numerator_%d_%s", targetIDs[t],var.c_str() )));
       auto simEventRate = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_%d_%s", targetIDs[t],var.c_str() )));
+      auto simEventRate_QE = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_QE_%d_%s", targetIDs[t],var.c_str() )));
+      auto simEventRate_RES = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_RES_%d_%s", targetIDs[t],var.c_str() )));
+      auto simEventRate_DIS = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_DIS_%d_%s", targetIDs[t],var.c_str() )));
+      auto simEventRate_2p2h = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_2p2h_%d_%s", targetIDs[t],var.c_str() )));
 
-      effNum_combined->Add(simEventRate);
+      effNum_combined->Add(effNum);
       simEventRate_combined->Add(simEventRate);
+      simEventRate_QE_combined->Add(simEventRate_QE);
+      simEventRate_RES_combined->Add(simEventRate_RES);
+      simEventRate_DIS_combined->Add(simEventRate_DIS);
+      simEventRate_2p2h_combined->Add(simEventRate_2p2h);
     }
 
     effNum_combined->Clone()->Write(Form("total_efficiency_numerator_%s",var.c_str() )); 
     simEventRate_combined->Clone()->Write(Form("total_simEventRate_%s",var.c_str() )); 
+    simEventRate_QE_combined->Clone()->Write(Form("total_simEventRate_QE_%s",var.c_str() ));
+    simEventRate_RES_combined->Clone()->Write(Form("total_simEventRate_RES_%s",var.c_str() )); 
+    simEventRate_DIS_combined->Clone()->Write(Form("total_simEventRate_DIS_%s",var.c_str() )); 
+    simEventRate_2p2h_combined->Clone()->Write(Form("total_simEventRate_2p2h_%s",var.c_str() ));  
 
     for(const auto& prefix: prefixes){
       bool isMC = false;
@@ -542,8 +570,32 @@ int main(int argc, char * argv[]){
           simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
           fUnfold->cd();
           simEventRate_cross_total->Clone()->Write(Form("simEventRate_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+
+          // QE
+          auto simEventRate_QE_cross_total = simEventRate_QE_combined->Clone();
+          simEventRate_QE_cross_total = normalizeTotal(simEventRate_QE_cross_total, fluxRebinned, nNucleons, pot);
+          fUnfold->cd();
+          simEventRate_QE_cross_total->Clone()->Write(Form("simEventRate_QE_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+
+          //RES
+          auto simEventRate_RES_cross_total = simEventRate_RES_combined->Clone();
+          simEventRate_RES_cross_total = normalizeTotal(simEventRate_RES_cross_total, fluxRebinned, nNucleons, pot);
+          fUnfold->cd();
+          simEventRate_RES_cross_total->Clone()->Write(Form("simEventRate_RES_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+          
+          //DIS
+          auto simEventRate_DIS_cross_total = simEventRate_DIS_combined->Clone();
+          simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
+          fUnfold->cd();
+          simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+
+          //2p2h
+          auto simEventRate_2p2h_cross_total = simEventRate_2p2h_combined->Clone();
+          simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
+          fUnfold->cd();
+          simEventRate_2p2h_cross_total->Clone()->Write(Form("simEventRate_2p2h_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
         
-          std::cout << "MC total cross-section  DONE.\n" << std::flush;
+          std::cout << "MC total cross-section DONE.\n" << std::flush;
 
         }
         auto simEventRate_cross_dif = simEventRate_combined->Clone();
@@ -551,7 +603,31 @@ int main(int argc, char * argv[]){
         fUnfold->cd();
         simEventRate_cross_dif->Clone()->Write(Form("simEventRate_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
 
-        std::cout << "MC differential cross-section  DONE.\n" << std::flush;
+        //QE
+        auto simEventRate_QE_cross_dif = simEventRate_QE_combined->Clone();
+        simEventRate_QE_cross_dif = normalize(simEventRate_QE_cross_dif, fluxIntegral, nNucleons, pot);
+        fUnfold->cd();
+        simEventRate_QE_cross_dif->Clone()->Write(Form("simEventRate_QE_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        //RES
+        auto simEventRate_RES_cross_dif = simEventRate_RES_combined->Clone();
+        simEventRate_RES_cross_dif = normalize(simEventRate_RES_cross_dif, fluxIntegral, nNucleons, pot);
+        fUnfold->cd();
+        simEventRate_RES_cross_dif->Clone()->Write(Form("simEventRate_RES_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        //DIS
+        auto simEventRate_DIS_cross_dif = simEventRate_DIS_combined->Clone();
+        simEventRate_DIS_cross_dif = normalize(simEventRate_DIS_cross_dif, fluxIntegral, nNucleons, pot);
+        fUnfold->cd();
+        simEventRate_DIS_cross_dif->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        //2p2h
+        auto simEventRate_2p2h_cross_dif = simEventRate_2p2h_combined->Clone();
+        simEventRate_2p2h_cross_dif = normalize(simEventRate_2p2h_cross_dif, fluxIntegral, nNucleons, pot);
+        fUnfold->cd();
+        simEventRate_2p2h_cross_dif->Clone()->Write(Form("simEventRate_2p2h_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        std::cout << "MC differential cross-section DONE.\n" << std::flush;
       }
 
       std::cout << prefix + " POT" << std::endl;
