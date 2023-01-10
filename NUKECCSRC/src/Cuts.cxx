@@ -6,7 +6,7 @@
 
 #include "../include/Cuts.h"
 #include "PlotUtils/MinervaUniverse.h"
-#include "../include/MasterAnaDevvars.h"
+//#include "../include/MasterAnaDevvars.h"
 #include "PlotUtils/TargetUtils.h"
 #include "../include/CVUniverse.h"
 
@@ -145,11 +145,11 @@ bool NukeCC_Cuts::PassZDistCut(CVUniverse* cv,double  lowZ /*= 1001. */, double 
 {
     double minZ = 4290.; // z center of mod -5 plane 1 is 4293.04mm, while plane 2 is 4313.68mm
     double maxZ = 6000.;
-    if ( cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) == 0 && ( minZ <= cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) && cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) <= maxZ ) ){
+    if ( cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) == 0 && ( minZ <= cv->GetVecElem("ANN_vtx",2) && cv->GetVecElem("ANN_vtx",2) <= maxZ ) ){
        return true;
     }
     //passive target ZDist cut is made with nPlanes cut in framework
-    if( 1 <= cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) && cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) <= 5 )
+    if( 1 <= cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) && cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) <= 5 )
     {
         // if we only want fitted vtx events with vertex really in target
         //if( IsMultiTrack() && 1.0E-4 < fabs(CVUniverse_target_zDist) )
@@ -158,7 +158,7 @@ bool NukeCC_Cuts::PassZDistCut(CVUniverse* cv,double  lowZ /*= 1001. */, double 
     }
    
     //all events in the tracker pass for faux targets
-    if( FIRST_TRACKER_MOD <= cv->GetInt((cv->GetAnaToolName() + "_vtx_module").c_str()) && cv->GetInt((cv->GetAnaToolName() + "_vtx_module").c_str()) <= LAST_TRACKER_MOD )
+    if( FIRST_TRACKER_MOD <= cv->GetInt("ANN_vtx_modules") && cv->GetInt("ANN_vtx_modules") <= LAST_TRACKER_MOD )
         return true;
     
     return false;
@@ -167,8 +167,8 @@ bool NukeCC_Cuts::PassZDistCut(CVUniverse* cv,double  lowZ /*= 1001. */, double 
 bool NukeCC_Cuts::PassDistToDivisionCut(CVUniverse* cv, double xySep /* = 25.*/ )
 {
     //only relevant for passive targets 1235
-    if( 0 < cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) && cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) < 10 && 4 != cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) )
-        return ( xySep < cv->GetDouble((cv->GetAnaToolName() + "_target_dist_to_division" ).c_str()));
+    if( 0 < cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) && cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) < 10 && 4 != cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) )
+        return ( xySep < cv->GetDouble((cv->GetAnaToolName() + "_ANN_target_dist_to_division" ).c_str()));
     
     return true;
 }
@@ -196,6 +196,13 @@ void NukeCC_Cuts::Show(CVUniverse *cv,Long64_t entry)
 //
 // Passive Target Region Cut (including targets and plastic sidebands)
 bool NukeCC_Cuts::PassiveTargetRegion(CVUniverse* cv){
+    if (cv->GetVecElem("ANN_vtx",2) >= PlotUtils::TargetProp::NukeRegion::Face && cv->GetVecElem("ANN_vtx",2) <= PlotUtils::TargetProp::NukeRegion::Back)
+        return true;
+    else
+        return false;
+}
+
+bool NukeCC_Cuts::PassiveTargetRegionTBV(CVUniverse* cv){
     if (cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) >= PlotUtils::TargetProp::NukeRegion::Face && cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) <= PlotUtils::TargetProp::NukeRegion::Back)
         return true;
     else
@@ -212,9 +219,8 @@ bool NukeCC_Cuts::PassiveTargetRegionTrue(CVUniverse* cv){
 
 
 // Tracker CUT
-
 bool NukeCC_Cuts::TrackerOnly(CVUniverse* cv){
-    if (cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) >= 5980 && cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) <= 8422)
+    if (cv->GetVecElem("ANN_vtx",2) >= 5980 && cv->GetVecElem("ANN_vtx",2) <= 8422)
         return true;
     else
         return false;
@@ -238,7 +244,7 @@ bool NukeCC_Cuts::TrackerOnlyTrue4Flux(CVUniverse* cv){
 
 // WATER Cut (Anezka)
 bool NukeCC_Cuts::Water(CVUniverse* cv){
-    if (cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) >= 5170 && cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2) <= 5440)
+    if (cv->GetVecElem( "ANN_vtx",2) >= 5170 && cv->GetVecElem("ANN_vtx",2) <= 5440)
         return true;
     else
         return false;
@@ -260,7 +266,7 @@ bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bo
     if( i_targetID < 0)
     {
         // if targetID < 0, then we want any event in the nuclear target region mods -5-26
-        double z = cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),2);
+        double z = cv->GetVecElem("ANN_vtx",2);
         double minZ = 4290.; // z center of mod -5 plane 1 is 4293.04mm, while plane 2 is 4313.68mm
         double maxZ = 6000.;
         if ( !( minZ <= z && z <= maxZ ) )
@@ -273,7 +279,7 @@ bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bo
         //if( i_targetZ > 0 && CVUniverse_ref_targZ[refTarg-1] != i_targetZ )
           //return false;
 
-        if( i_targetZ > 0 && ! IsInTargetSection(i_targetID, i_targetZ, cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),0),cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),1) ) )
+        if( i_targetZ > 0 && ! IsInTargetSection(i_targetID, i_targetZ, cv->GetVecElem("ANN_vtx",0),cv->GetVecElem("ANN_vtx",1) ) )
           return false;
 
         return true;
@@ -282,18 +288,18 @@ bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bo
     if(i_targetID < 10 )
     {
        //THIS IS A SPECIAL CASE FOR PLASTIC BACKGROUND
-      if(cv-> GetInt((cv->GetAnaToolName() + "_targetID").c_str()) == 0 && cv->GetDouble((cv->GetAnaToolName() + "_vtx_module").c_str()) < 27 )
+      if(cv-> GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) == 0 && cv->GetDouble("ANN_vtx_modules") < 27 )
       {
-	if( i_targetZ > 0 && IsInTargetSection( i_targetID, i_targetZ, cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),0),cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),1) ) )
+	if( i_targetZ > 0 && IsInTargetSection( i_targetID, i_targetZ, cv->GetVecElem("ANN_vtx",0),cv->GetVecElem("ANN_vtx",1) ) )
 	  return true;
       }
       //cout << "targetID < 10" << endl;
       // If targetID < 10, then you are looking for a passive target event.
       // Require that the event has the same targetID and targetZ.
-      if( cv->GetInt((cv->GetAnaToolName() + "_targetID").c_str()) == i_targetID )
+      if( cv->GetInt((cv->GetAnaToolName() + "_ANN_targetID").c_str()) == i_targetID )
       {
 	if( i_targetZ > 0 )
-	  return cv->GetInt((cv->GetAnaToolName() +"_targetZ").c_str()) == i_targetZ;
+	  return cv->GetInt((cv->GetAnaToolName() +"_ANN_targetZ").c_str()) == i_targetZ;
 	else
 	  return true;
       }//targetID< 10 looking as passive target. Event doesn't have right targetID
@@ -313,7 +319,7 @@ bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bo
     else
     {
         int refTarg = (i_targetID - i_targetID % 10000 ) / 10000;
-        if( i_targetZ > 0 && cv->GetVecElem((cv->GetAnaToolName() + "_ref_targZ").c_str(),(refTarg-1)) != i_targetZ )
+        if( i_targetZ > 0 && cv->GetVecElem((cv->GetAnaToolName() + "_ANN_ref_targZ").c_str(),(refTarg-1)) != i_targetZ )
             return false;
         
         int refModStart = i_targetID % 1000;
@@ -328,7 +334,7 @@ bool NukeCC_Cuts::IsInMaterial(CVUniverse* cv,int i_targetID,  int i_targetZ, bo
         }
         
         // OK if the vertex module is within the range specified
-        if( firstMod <= cv->GetDouble((cv->GetAnaToolName() + "_vtx_module").c_str()) && cv->GetDouble((cv->GetAnaToolName() + "_vtx_module").c_str()) <= lastMod )
+        if( firstMod <= cv->GetDouble("ANN_vtx_modules") && cv->GetDouble("ANN_vtx_modules") <= lastMod )
             return true;
     }
     return false;
@@ -704,8 +710,8 @@ if(q2 >= 1.0 && 1.5 <= W && W < 2.0)
 bool NukeCC_Cuts::InHexagon(CVUniverse* cv, double apothem /*= 850.*/ ){
     
     //vector<double> newVertex = GetMLVertex();
-    double x = cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),0);
-    double y = cv->GetVecElem((cv->GetAnaToolName() + "_vtx").c_str(),1);
+    double x = cv->GetVecElem("ANN_vtx",0);
+    double y = cv->GetVecElem("ANN_vtx",1);
     
     if( pow(x,2) + pow(y,2) < pow(apothem,2) )
         return true;
@@ -743,12 +749,12 @@ bool NukeCC_Cuts::PassHelicityCut(CVUniverse* cv,HelicityType::t_HelicityType h 
 bool NukeCC_Cuts::PassReco(CVUniverse* cv,HelicityType::t_HelicityType h)
 {
     if( ! PassHelicityCut( cv,h) )   return false; //! Is this event the right helicity?
-    if( ! cv->GetInt((cv->GetAnaToolName() + "_in_fiducial_area").c_str()) ) return false; //! Is the event in the fiducial area?
+    if( ! cv->GetInt((cv->GetAnaToolName() + "_ANN_in_fiducial_area").c_str()) ) return false; //! Is the event in the fiducial area?
     if( ! PassZDistCut( cv) )   return false; //! Is the event vertex close enough in Z to the NuclearTarget?
     // all events pass for tracker
     if( ! PassDistToDivisionCut(cv) ) return false; //! Is the event vertex far enough away from the separation of target sections?
     // all events pass for tracker
-    if( 120. < cv->GetEnu() * mev_to_gev ) return false; //! Anne's neutrino Energy cut
+    if( 120. < cv->GetEnu() * mev_to_gev ) return false; //! _ANNe's neutrino Energy cut
     if( 1 < cv->GetInt("phys_n_dead_discr_pair_upstream_prim_track_proj") ) return false; //! Gabe's tdead cut
     if( ! PassMuCurveCut(cv, h) ) return false; //! Is the curvature significant?
     if( ! PassMuCoilCut(cv) ) return false; //! Does the muon track end outside of the coil, or inside the area of MINOS which gives us good energy reco?    
