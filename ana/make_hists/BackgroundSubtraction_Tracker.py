@@ -19,7 +19,7 @@ ROOT.TH1.AddDirectory(False)
 targetID = 99
 targetZ = 99
 
-infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Tracker/Closure_Jan28/Hists_EventSelectionTracker_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+infile = ROOT.TFile("Hists_EventSelectionTracker_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
