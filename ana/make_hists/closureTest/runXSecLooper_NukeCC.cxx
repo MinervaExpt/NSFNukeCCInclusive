@@ -206,7 +206,7 @@ public:
 
 int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax, const std::vector<const char*> fileNames)
 {
-  const char* fileName = "GENIEXSecExtract_CCInclusive_T3Lead.root";
+  const char* fileName = "GENIEXSecExtract_CCInclusive_lead2.root";
   auto outFile = TFile::Open(fileName, "CREATE");
   if(!outFile)
   {
@@ -255,10 +255,10 @@ int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax
     
     vector<int> targetIDs;
     //targetIDs.push_back(1);
-    //targetIDs.push_back(2);
-    targetIDs.push_back(3);
-//    targetIDs.push_back(4);
-//    targetIDs.push_back(5);
+    targetIDs.push_back(2);
+    //targetIDs.push_back(3);
+    //targetIDs.push_back(4);
+    //targetIDs.push_back(5);
     //targetIDs.push_back(14);
     //targetIDs.push_back(24);
 /*   targetIDs.push_back(34);

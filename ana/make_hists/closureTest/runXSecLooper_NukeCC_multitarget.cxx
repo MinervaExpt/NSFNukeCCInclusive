@@ -16,7 +16,7 @@ using namespace PlotUtils;
 namespace {
     const double TRACKER_ZMIN = 6117;
     const double TRACKER_ZMAX = 8193;
-    const int targetZ = 26;
+    const int targetZ = 6;
 }
 bool debug=false;
 bool anyTracker=false;//true;
@@ -147,7 +147,7 @@ public:
         return true;
         
       double slope = (lenOfSide / 2.0) / apothem;
-      if( y < lenOfSide - x*slope )
+      if( y < lenOfSide - x*slope )  
         return true;
         
       return false;
