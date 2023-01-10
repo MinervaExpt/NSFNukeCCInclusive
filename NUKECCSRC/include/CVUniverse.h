@@ -61,11 +61,13 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetWeighty() const;
     virtual double GetTruthWeight() const;
     virtual double GetTruthWeightFlux() const;
+    virtual bool IsInHexagon(double apothem = 850.) const;
     virtual bool IsInHexagonTrue(double apothem = 850.) const;
+    virtual double GetDaisyPetal( ) const;;
     virtual double GetDaisyPetalTrue( ) const;;
     virtual Long64_t GetMaxEntries(); 
-    virtual double GetMuonE() const { return GetVecElem((GetAnaToolName() + "_leptonE").c_str(),3); }
-    //virtual double GetMuonE() const { return GetVecElem("muon_corrected_p",3); }
+    //virtual double GetMuonE() const { return GetVecElem((GetAnaToolName() + "_leptonE").c_str(),3); }
+    virtual double GetMuonE() const { return GetVecElem("muon_corrected_p",3); }
 
     //      virtual void  Show(Long64_t entry = -1);
 
@@ -132,7 +134,6 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetDiffPlaneReco() const;
     virtual double GetDiffPlaneRecoTrue() const;
 
-
     virtual double GetQ2RecoGeV()     const ;
     virtual double GetWRecoGeV()     const;
     virtual double GetEnu() const;  
@@ -184,6 +185,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     virtual double GetCCQERecoil( unsigned int shift = VTX_BLOB_SHIFT );
 	
     virtual double GetMuonP() const;
+    virtual double GetlepPTrue() const;
 		
     virtual std::vector<std::string> GetStdEnergyVars( ) const;
     virtual std::vector< std::pair<std::string,std::string> > GetStd2DVars( )const;
