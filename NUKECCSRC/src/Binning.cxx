@@ -227,7 +227,8 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     }
     else if( var == "Emu" || var == "Emum" ){
       //double tmpBins[]  = { 0. ,1. ,2. ,3. ,4. ,5. ,7. ,9. ,12. ,15. ,18. ,22. ,36. ,50. ,75. ,100. ,120. };
-     double tmpBins[]  = {2.0, 3.5, 4.75, 5.5, 7.5, 10., 13., 16., 20., 25., 35., 50 };
+      //double tmpBins[]  = {2.0, 3.5, 4.75, 5.5, 7.5, 10., 13., 16., 20., 25., 35., 50 }; //original
+      double tmpBins[]  = {2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 20.0}; // changed 20/07/2022
       binsLowEdge.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     }
     else if( var == "Enu" ){
@@ -440,6 +441,11 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
        binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
    }
 
+   else if(var == "muonP"){
+       double tmpBins[] = {0, 2, 4, 6, 8, 10, 12, 14, 15, 16, 18, 20, 30, 40, 60};
+       binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
+   }
+
     else if(var=="ANNPlaneProb"){ //finer binning to see the differences
         binsLowEdge.push_back( 0 ); // NEW
         AddBins(binsLowEdge, 20, 0.05); //NEw
@@ -453,6 +459,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
 
     else if(var=="planeDiff"){ //finer binning to see the differences
         double tmpBins[] = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+        //double tmpBins[] = {-5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5};
         binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
     }
 
