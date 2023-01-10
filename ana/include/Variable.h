@@ -51,7 +51,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   MnvH1D *h_truth1D = NULL;
  // HISTFOLIO
   // selected mc reco - signal background histfolio
-  PlotUtils::HistFolio<MH1D> m_selected_mc_sb;
+  PlotUtils::HistFolio<MH1D> m_selected_truth_reco_sb;
   // PlotUtils::MH1D* m_selected_data_sb;
   //=======================================================================================
   // INITIALIZE ALL HISTOGRAMS
@@ -86,15 +86,21 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   
     //HISTFOLIO
     //selected mc reco - signal background histfolio
-    m_selected_mc_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("selected_mc_sb_%s", name), name, GetNBins(), bins.data());
+    //m_selected_mc_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("selected_mc_sb_%s", name), name, GetNBins(), bins.data());
+
+    m_selected_truth_reco_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("h_truth_sb_%s", name), name, GetNBins(), bins.data());
     
  //PlotUtils::MnvH1D* data = new PlotUtils::MnvH1D(
  //   "dummy", "dummy", plotting::nbins, plotting::xmin, plotting::xmax);
  //  m_selected_data_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(
  //    Form("selected_data_sb_%s", name), name, GetNBins(), bins.data());
-   
-    m_selected_mc_sb.AddComponentHist("DIS");
-    m_selected_mc_sb.AddComponentHist("MC");
+
+    m_selected_truth_reco_sb.AddComponentHist("QE");
+    m_selected_truth_reco_sb.AddComponentHist("RES");
+    m_selected_truth_reco_sb.AddComponentHist("DIS");
+    m_selected_truth_reco_sb.AddComponentHist("Other");
+    m_selected_truth_reco_sb.AddComponentHist("2p2h");
+    
    // m_selected_data_sb.AddComponentHist("Data");
 
     MH2D* dummy_selected_Migration = new MH2D(Form("selected_Migration_%s", name), name, GetNBins(),GetBinVec().data(), GetNBins(), GetBinVec().data());
@@ -215,6 +221,7 @@ void getResponseObjects1D(T univs)
     if(isMC) { m_selected_mc_reco.hist->Write();
     }
     else { m_selected_truth_reco.hist->Write();
+           m_selected_truth_reco_sb.WriteToFile(f);
     }
 }
   //=======================================================================================
