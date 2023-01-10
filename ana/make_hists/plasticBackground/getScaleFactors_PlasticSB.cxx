@@ -87,13 +87,15 @@ int main(int argc, char * argv[]){
   int targetZ = atoi(argv[3]);
   const string playlist= argv[4];
 
+  const std::string plist_string(playlist);
+
   TString histFileName;
   if(RunCodeWithSystematics){
     //histFileName = Form("%s/Hists_PlasticBackgd_with_SYS_FullDet_q2WfromBranch_ME1A_targetsCombined_t%d_z%02d_Nu_%s.root", outdir.c_str(), targetID, targetZ, getenv("NUKECC_TAG") ); 
-    histFileName = Form("%s/Hists_PlasticBkg_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ ); 
+    histFileName = Form("/PlasticBkg_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
   else{
-    histFileName = Form("%s/Hists_PlasticBkg_nosys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+    histFileName = Form("/PlasticBkg_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
  
   cout<<histFileName<<endl;
@@ -120,6 +122,7 @@ int main(int argc, char * argv[]){
   vars.push_back("planeDNN");
   vars.push_back("Enu");
   vars.push_back("x");
+  vars.push_back("thetaMu");
 
 
   TFile *f1 = new TFile( histFileName,"read" );
