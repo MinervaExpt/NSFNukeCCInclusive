@@ -72,6 +72,8 @@ int main(int argc, char *argv[]){
   TString dir(argv[1]);
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
+  const string playlist= argv[4];
+
 
   bool doDIS=false;
 
@@ -81,11 +83,12 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  const std::string reco_tree_name("NukeCC");
+  const std::string plist_string(playlist);
+
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+  const std::string reco_tree_name("MasterAnaDev");
   
-  const std::string plist_string("minervame6A");
   const bool wants_truth = false;
   //const bool is_grid = false;
   // is grid removed after update of MAT 07/12/2021
@@ -137,11 +140,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelectionIntType_ML_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_IntType_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionIntType_ML_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName += Form("/EventSelection_IntType_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -262,7 +265,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   //Wbin = binsDef->GetSidebandBins("W");
 
   // 1D Variables
-  Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
+  Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
   Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
   Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
@@ -280,18 +283,18 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {enu, x, vtxz, planeDNN};
-    //emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
+  variables = {enu, x, vtxz, planeDNN, thetaMu};
+  //emu, enu, x, x09, xfine, xBrian, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
-  Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
+  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
   Var2D* W_Q2 = new Var2D(*W, *Q2);
   Var2D* enu_ehad = new Var2D(*enu, *ehad);
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {pTmu_pZmu };//{enu_ehad, Q2_W};
+  variables2d = {pZmu_pTmu };
    
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);
@@ -312,13 +315,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   
   else{
     if(targetZ==26){
-      targetIDs.push_back(1);
+      //targetIDs.push_back(1);
       targetIDs.push_back(2);
       targetIDs.push_back(3);
       targetIDs.push_back(5);
     }
     if(targetZ==82){
-      targetIDs.push_back(1);
+      //targetIDs.push_back(1);
       targetIDs.push_back(2);
       targetIDs.push_back(3);
       targetIDs.push_back(4);
@@ -352,7 +355,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   // Targets combining Loop
   //=========================================
 
-  //for(int t = 0; t < targetIDs.size(); t++){
+  for(int t = 0; t < targetIDs.size(); t++){
 
     //=========================================
     // Entry Loop
@@ -375,29 +378,22 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	            //========================================
 	            universe->SetEntry(i);
               reco0++;
-
+              
+              if( universe->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
               if(!cutter->PassReco(universe,helicity)) continue;
               reco1++;
               
-              if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
-              //if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
+              //if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
+              if(!cutter->IsInMaterial(universe,targetIDs[t],targetZ, /*anyTrakerMod*/false)) continue;
               reco2++;
               
-              if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
-              //if(targetIDs[t]<10 && universe->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+              //if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+              if(targetIDs[t]<10 && universe->GetInt("MasterAnaDev_ANN_targetID") != targetIDs[t]) continue;
               reco3++;
               
               if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
-              
-              
-              /* GLOBAL VS LOCAL CUT*/
-              //if(!cutter->PassMuEnergyCut(universe)) continue;
-              //reco5++;
-
-              //if(!cutter->PassThetaCut(universe)) continue;
-              //reco6++;
 
               //pure signal cuts on MC to estimate bkg (counts)    
               //if( 1 != universe->GetInt("mc_current") ) continue; 
@@ -450,28 +446,22 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
         dataverse->SetEntry(i);
         reco0++;
-	 
+        
+        if( dataverse->GetInt("muon_corrected_p") == -999 ) continue; // additional cut to get rid of an issue
 	      if(!cutter->PassReco(dataverse,helicity)) continue;
 	      reco1++;
         
-        if(!cutter->IsInMaterial(dataverse,targetID,targetZ, false)) continue;
-        //if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
+        //if(!cutter->IsInMaterial(dataverse,targetID,targetZ, false)) continue;
+        if(!cutter->IsInMaterial(dataverse,targetIDs[t],targetZ, false)) continue;
         reco2++;
         
-        if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
-        //if(targetIDs[t]<10 && dataverse->GetInt("NukeCC_targetID") != targetIDs[t]) continue;
+        //if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+        if(targetIDs[t]<10 && dataverse->GetInt("MasterAnaDev_ANN_targetID") != targetIDs[t]) continue;
         reco3++;
 	 
         if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
         //if( dataverse->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	    
         reco4++;
-              
-        /* GLOBAL VS LOCAL CUT*/
-        //if(!cutter->PassMuEnergyCut(dataverse)) continue;
-        //reco5++;
-          
-        //if(!cutter->PassThetaCut(dataverse)) continue; 
-        //reco6++;
 
  	      for (auto v : variables2d){
 	        if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(dataverse)) continue;
@@ -492,7 +482,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       }
 
     }//End entries loop
-  //}//Target loop closed
+  }//Target loop closed
 
 
   for(auto band : error_bands){
