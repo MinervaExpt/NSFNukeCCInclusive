@@ -77,14 +77,14 @@ int main(int argc, char *argv[]){
   bool doDIS=false;
 
   // MasterAnaDev tuples?
-  const std::string mc_file_list("../../include/playlists/shortMC.txt");
-  const std::string data_file_list("../../include/playlists/shortData.txt");
-  const std::string reco_tree_name("MasterAnaDev");
+  //const std::string mc_file_list("../../include/playlists/shortMC.txt");
+  //const std::string data_file_list("../../include/playlists/shortData.txt");
+  //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  //const std::string mc_file_list("../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
-  //const std::string data_file_list("../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
-  //const std::string reco_tree_name("NukeCC");
+  const std::string mc_file_list("../../include/playlists/NukeCC_MC_minervame6A_MuonKludged.txt");
+  const std::string data_file_list("../../include/playlists/NukeCC_Data_minervame6A_MuonKludged.txt");
+  const std::string reco_tree_name("NukeCC");
   
   const std::string plist_string("minervame6A");    
   const bool wants_truth = false;
@@ -137,11 +137,11 @@ int main(int argc, char *argv[]){
 
   TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName = utils->GetHistFileName( "EventSelectionPlaneDNN_ME6A_sys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelectionPlaneDNN_ME6A_sys_xdep07more", FileType::kAny, targetID, targetZ, helicity ); 
   }
 
   else{
-    histFileName = utils->GetHistFileName( "EventSelectionPlaneDNN_ME6A_nosys", FileType::kAny, targetID, targetZ, helicity ); 
+    histFileName = utils->GetHistFileName( "EventSelectionPlaneDNN_ME6A_nosys_xdep07more", FileType::kAny, targetID, targetZ, helicity ); 
   } 
 
   //TString histFileName = utils->GetHistFileName( "EventSelection_ML_ME6A", FileType::kAny, targetID, targetZ, helicity ); 
@@ -216,6 +216,9 @@ double PlaneDNNReco(auto univ, const int segment = 0){
            return test;
 };
 
+double PlaneDNNTrue(auto univ){         
+  return static_cast<double>(univ->GetInt("truth_vtx_module")*2+univ->GetInt("truth_vtx_plane")+10);
+}
 // Fill Variables
    
 void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType helicity, NukeCCUtilsNSF *utils , NukeCC_Cuts *cutter ,NukeCC_Binning  *binsDef ,std::vector<Var*>& variables,std::vector<Var2D*>& variables2d,bool isMC,int targetID, int targetZ, const string playlist, bool doDIS){
@@ -265,8 +268,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     planeDiffbin = binsDef->GetEnergyBins("planeDiff"); 
 
   }
-  //Q2bin = binsDef->GetSidebandBins("Q2");
-  //Wbin = binsDef->GetSidebandBins("W");
+
 
   // 1D Variables
   Var* thetaMu = new Var("GetThetamuDeg", "GetThetamuDeg (Degree)", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
@@ -291,8 +293,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *PlaneDiff= new Var("planeDiff", "planeDiff", planeDiffbin, &CVUniverse::GetDiffPlaneReco, &CVUniverse::GetDiffPlaneRecoTrue);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {planeDNN, PlaneDiff}; //{enu,ehad}; 
+  variables = {enu, planeDNN, PlaneDiff}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pTmu_pZmu = new Var2D(*pTmu, *pZmu);
@@ -314,18 +315,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int reco4=0; 
   int reco5=0; 
   int reco6=0; 
-  int Signal = 0;
-  int Bkg = 0;
-  int NotEmu = 0;
-  int NotTracker = 0 ;
-  int NC = 0;
-  int WrongSign = 0;
 
   int good = 0;
   int bad = 0;
+  int same = 0;
 
-  //int neutralcur = 0;
-  //int wrongsign = 0;
+  int xcut=0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
   
@@ -354,18 +349,28 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
             if(!cutter->PassReco(universe,helicity)) continue;
             reco1++;
+
+
+	          //if(!cutter->TrackerOnly(universe)) continue;
+            //if(!cutter->IsInMaterial(universe,targetID,targetZ, /*anyTrakerMod*/false)) continue;
+            //if(targetID<10 && universe->GetInt("NukeCC_targetID") != targetID) continue;
+            // Material cut
+            reco2++;
           
             
             if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
-            //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
             reco3++;
 
             int segment_0 = universe->GetVecElem("ANN_segments",0);
             int segment_1 = universe->GetVecElem("ANN_segments",1);
 
             double planeDNN_0 = PlaneDNNReco(universe, 0);
+            double planeDNN_true = PlaneDNNTrue(universe);
             double planeDNN_1 = PlaneDNNReco(universe, 1);
 
+            //if (planeDNN_0 == planeDNN_true){
+            //  same++;
+            //}
             
             if (planeDNN_1 == planeDNN_0){
               good++;
@@ -383,25 +388,20 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               bad++;
             }
 
-            for (auto v : variables2d){
-              //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
-              //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-              //v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-            }
+            //if(universe->GetxReco() < 0.3 || universe->GetxReco() > 0.7 ) continue;
+            if(universe->GetxReco() < 0.7  ) continue;
+            xcut++;
 
             for (auto v : variables){
+              if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
+              if( v->GetName()=="Enu") reco4++;
+            
+              if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
+              if (v->GetName()=="Enu") reco5++;
+
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
               v->m_selected_mc_truth.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
 
-              //if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
-              //if( v->GetName()=="Enu") reco4++;
-            
-              //if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
-              //if (v->GetName()=="Enu") reco5++;
-      
-              //v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-              //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-            
             }
           } // End band's universe loop
         }// End Band loop
@@ -416,24 +416,23 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       reco1++;
       
       //if(!cutter->TrackerOnly(dataverse)) continue;
-      //reco2++;
+      //if(!cutter->IsInMaterial(dataverse,targetID,targetZ, /*anyTrakerMod*/false)) continue;
+      //if(targetID<10 && dataverse->GetInt("NukeCC_targetID") != targetID) continue;
+      // Material cut
+      reco2++;
 
       if( dataverse->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
       reco3++;
-            
 
-      for (auto v : variables2d){
-        //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(dataverse)) continue;
-        //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(dataverse)) continue;	     
-    
-        //v->m_selected_data_reco.hist->Fill(v->GetRecoValueX(*dataverse), v->GetRecoValueY(*dataverse));
-      }
+      //if(dataverse->GetxReco() < 0.3 || dataverse->GetxReco() > 0.7) continue;
+      if(dataverse->GetxReco() < 0.7 ) continue;
+      xcut++;
     
       for (auto v : variables){
-        //if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(dataverse)) continue; 
-        //if (v->GetName()=="Enu") reco4++;
-        //if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(dataverse))continue;
-        //if (v->GetName()=="Enu") reco5++;
+        if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(dataverse)) continue; 
+        if (v->GetName()=="Enu") reco4++;
+        if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(dataverse))continue;
+        if (v->GetName()=="Enu") reco5++;
       
         v->m_selected_data_reco.hist->Fill(v->GetRecoValue(*dataverse, 0));	      }       
     }
@@ -454,27 +453,22 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   // Printing summary
   std::cout << "**********************************" << std::endl;
   std::cout << "Printing the ";
-    isMC? std::cout << "MC ": std::cout << "Data ";
+    isMC? std::cout << "MC x > 0.7 ": std::cout << "Data x > 0.7 ";
   std::cout << "Summary " << std::endl;
   std::cout << "No cuts = " << reco0 << std::endl;
   std::cout << "Reco Cut = " << reco1 << std::endl;
-  std::cout << "Tracker Cut = " << reco2 << std::endl;
+  std::cout << "Material Cut = " << reco2 << std::endl;
   std::cout << "Plane prob. cut = " << reco3 << std::endl;
+  std::cout << "Bjorken x cut = " << xcut << std::endl;
   std::cout << "Muon Energy cut  = "<< reco4 << std::endl;
   std::cout << "Muon theta cut  = " << reco5 << std::endl;
   std::cout << "**********************************" << std::endl;
 
   if(isMC){
-  std::cout << "Signal and Background " << std::endl;
-  std::cout << "Signal  = "<< Signal/univ_norm<< std::endl;
-  std::cout << "All background = "<< Bkg/univ_norm << std::endl;
-  std::cout << "Not Tracker  = "<< NotTracker/univ_norm << std::endl;
-  std::cout << "Neutral current (NC+CC) = "<< NC/univ_norm<< std::endl;
-  std::cout << "Wrong sign (CC) = "<< WrongSign/univ_norm << std::endl;
-  std::cout << "Not muon energy = "<< NotEmu/univ_norm<< std::endl;
-
-  std::cout << "Good = "<< good<< std::endl;
+  std::cout << "Good (+/- 2 planes) = "<< good<< std::endl;
   std::cout << "Bad = "<< bad<< std::endl;
+
+  //std::cout << "Reco == true = "<< same<< std::endl;
   }
   
   //return variables;

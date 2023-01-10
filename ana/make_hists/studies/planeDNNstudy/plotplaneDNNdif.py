@@ -5,9 +5,13 @@ from ROOT import gStyle
 from ROOT import TLegend
 
 
-infile= ROOT.TFile("/minerva/data2/users/anezkak/22-06-06-PlaneDNNstudy/Hists_EventSelectionPlaneDNN_ME6A_nosys_t99_z99_AntiNu.root")
+infile= ROOT.TFile("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/make_hists/planeDNNstudy/Hists_EventSelectionPlaneDNN_ME6A_nosys_t2_z26_AntiNu.root")
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
+name = "Target 2 Iron"
+tag = "target_2_iron"
+#name = "All material"
+#tag = "all_material"
 
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
@@ -34,9 +38,11 @@ for var in vars:
     for bin in range(0, true_hist.GetNbinsX()+1):
         print(true_hist.GetBinContent(bin)*100./true_hist.GetEntries())
 
+
     if var == "planeDiff":
         mc_hist.GetXaxis().SetTitle("Plane Difference")
-        mc_hist.GetYaxis().SetTitle("Events (norm.)")
+        mc_hist.GetYaxis().SetTitle("Events %")
+        mc_hist.SetMaximum(100 )
 
     if var == "x":
         mc_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
@@ -91,20 +97,26 @@ for var in vars:
     #mc_hist.GetXaxis().SetRangeUser(66,173)
 
     #mnv.ApplyStyle(1)
-    mc_hist.Scale(mc_hist.GetNormBinWidth(),"width")
-    true_hist.Scale(true_hist.GetNormBinWidth(),"width")
+    #mc_hist.Scale(mc_hist.GetNormBinWidth(),"width")
+    #true_hist.Scale(true_hist.GetNormBinWidth(),"width")
     
-    mc_hist.Scale(mcScale)
-    true_hist.Scale(mcScale)
+    #mc_hist.Scale(mcScale)
+    #true_hist.Scale(mcScale)
 
-    data_hist.Scale(data_hist.GetNormBinWidth(),"width")
+    #data_hist.Scale(data_hist.GetNormBinWidth(),"width")
+
+    mc_hist.Scale(100/mc_hist.GetEntries())
+    true_hist.Scale(100/true_hist.GetEntries())
+    data_hist.Scale(100/data_hist.GetEntries())
 
     data_hist.SetLineColor(ROOT.kRed)
     true_hist.SetLineColor(ROOT.kBlue)
     mc_hist.Draw("HIST")
     true_hist.Draw("HIST SAME")
     data_hist.Draw("HIST SAME")
-    mc_hist.SetMaximum(1.2*data_hist.GetMaximum())
+    mc_hist.SetMaximum(100)
+    
+    #mc_hist.SetMaximum(1.2*data_hist.GetMaximum())
 
     #mnv.AddChi2Label(data_hist, mc_hist, mcScale, "TL", 0.035, 0.0, True, False)
 
@@ -114,21 +126,22 @@ for var in vars:
     If you are using POT-normalization, then useOnlyShapeErrors should be FALSE
     '''
     
-    mnv.AddHistoTitle("Plane Reconstructed using ANN_segments, 0 - ANN_segments, 1", 0.023, 1)
-    mnv.AddPOTNormBox(dataPOT,mcPOT, 0.73, 0.88)
+    mnv.AddHistoTitle("%s"%name, 0.05, 1)
+    #mnv.AddHistoTitle("Plane Reconstructed using ANN_segments, 0 - ANN_segments, 1", 0.023, 1)
+    #mnv.AddPOTNormBox(dataPOT,mcPOT, 0.65, 0.65)
 
-    legend = TLegend(0.18,0.7,0.42,0.89)
+    legend = TLegend(0.50 ,0.7,0.67,0.89)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.032)
     legend.AddEntry(mc_hist, " Simulation Reco(0)-Reco(1)", "fl")
     legend.AddEntry(true_hist, " Simulation Reco(0)-True", "fl")
     legend.AddEntry(data_hist, " Data Reco(0)-Reco(1)", "fl")
-    #legend.SetTextFont(42)
+    legend.SetTextFont(42)
     legend.Draw()
 
     canvas1.Modified()
-    canvas1.Print("ME6A_EventSelection_%s_nosys_PlaneStudy.png"%(var))
+    canvas1.Print("ME6A_EventSelection_%s_nosys_PlaneStudy_%s.png"%(var, tag))
 
  
  
