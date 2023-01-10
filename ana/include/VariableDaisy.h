@@ -56,6 +56,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
  // HISTFOLIO
   // selected mc reco - signal background histfolio
   PlotUtils::HistFolio<MH1D> m_selected_mc_sb;
+  PlotUtils::HistFolio<MH1D> daisy_petal_denom_hists_sb[12];
   // PlotUtils::MH1D* m_selected_data_sb;
   //=======================================================================================
   // INITIALIZE ALL HISTOGRAMS
@@ -86,6 +87,14 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
       MH1D* dummy_selected_truth_reco_daisy = new MH1D(Form("h_truth_daisy_%d_%s", petal, name), name, GetNBins(), bins.data());
       daisy_petal_denom_hists[petal] = HW(dummy_selected_truth_reco_daisy, univs, clear_bands);
+
+      daisy_petal_denom_hists_sb[petal] = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("h_truth_daisy_sb_%d_%s", petal, name), name, GetNBins(), bins.data());
+
+      daisy_petal_denom_hists_sb[petal].AddComponentHist("QE");
+      daisy_petal_denom_hists_sb[petal].AddComponentHist("RES");
+      daisy_petal_denom_hists_sb[petal].AddComponentHist("DIS");
+      daisy_petal_denom_hists_sb[petal].AddComponentHist("Other");
+      daisy_petal_denom_hists_sb[petal].AddComponentHist("2p2h");
 
       delete dummy_selected_mc_reco_daisy;
       delete dummy_selected_truth_reco_daisy;
@@ -246,6 +255,7 @@ void getResponseObjects1D(T univs)
       m_selected_truth_reco.hist->Write();
       for(int petal=0; petal<12; petal++){
         daisy_petal_denom_hists[petal].hist->Write();
+        daisy_petal_denom_hists_sb[petal].WriteToFile(f);
       }
     }
 }
