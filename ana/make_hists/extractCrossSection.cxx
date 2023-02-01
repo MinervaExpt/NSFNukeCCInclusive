@@ -276,21 +276,22 @@ int main(int argc, char * argv[]){
       "\t-./runEventLoop Path_to_Output_file \n\n"<<
       "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
       "\t-Material_atomic_number\t =\t Atomic number of material, e.g. 6, 26, 82, or tracker 99  \n" <<
+      "\t-Playlist\t \t =\t eg. minervame1A \n" <<
       "\t-Target_number\t \t = \t Number of target, e.g. 1-5, or tracker 99  \n" <<
       "\t-Tracker_flux\t =\t Use FRW instead of target specific flux \n"<< std::endl;
-      //"\t-Playlist\t \t =\t eg. minervame1A"<< std::endl;
     std::cout<<"-----------------------------------------------------------------------------------------\
 ------"<<std::endl;
     return 0;
   }
 
-  const std::string plist_string("minervame6A");
+  const string playlist= argv[3];
+  const std::string plist_string(playlist);
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
-  NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
+  NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF("minervame6A");
   NukeCC_Binning  *binsDef = new NukeCC_Binning();
-  HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
+  HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist("minervame6A");
 
   // to iterate over variables
   std::vector<string> vars;
@@ -308,8 +309,8 @@ int main(int argc, char * argv[]){
   int targetZ = atoi(argv[2]);
   int targetID; 
 
-  if (argc == 4){
-    targetID = atoi(argv[3]);
+  if (argc == 5){
+    targetID = atoi(argv[4]);
     targetIDs.push_back(targetID);
   }
   // To combine different targets
@@ -329,8 +330,8 @@ int main(int argc, char * argv[]){
   }
 
   bool trackerFlux;
-  if (argc == 5){
-    trackerFlux = argv[4];
+  if (argc == 6){
+    trackerFlux = argv[5];
   }
   else{
     trackerFlux= false;
@@ -356,14 +357,14 @@ int main(int argc, char * argv[]){
     
     // Read in background subtracted event rate, Migration and Efficiency
     if(RunCodeWithSystematics){
-          eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-          migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-          efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
+          eventLoop = Form("%s/BackgroundSubtracted/BkgSubtracted_EventSelection_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
+          migr = Form("%s/Migration/Migration_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
+          efficiency = Form("%s/Efficiency/Efficiency_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
       }
     else{
-        eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-        migr = Form("%s/Hists_Migration_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
-        efficiency = Form("%s/Hists_Efficiency_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetIDs[t], targetZ);
+        eventLoop = Form("%s/BackgroundSubtracted/BkgSubtracted_EventSelection_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
+        migr = Form("%s/Migration/Migration_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
+        efficiency = Form("%s/Efficiency/Efficiency_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetIDs[t], targetZ);
     }
 
     TFile *fEventLoop = new TFile( eventLoop,"read" );
@@ -386,14 +387,16 @@ int main(int argc, char * argv[]){
       auto migration  = dynamic_cast<MnvH2D*> (fMigration->Get( Form("selected_Migration_%s", var.c_str())));
       auto effNum = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_mc_%s", var.c_str())));
       auto effDenom = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_%s", var.c_str())));
-      auto effDenom_QE = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_QE", var.c_str())));
-      auto effDenom_RES = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_RES", var.c_str())));
-      auto effDenom_DIS = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_DIS", var.c_str())));
-      auto effDenom_2p2h = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_sb_%s_2p2h", var.c_str())));
+      auto effDenom_QE = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_QE_%s", var.c_str())));
+      auto effDenom_RES = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_RES_%s", var.c_str())));
+      auto effDenom_DIS = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_DIS_%s", var.c_str())));
+      auto effDenom_Other = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_Other_%s", var.c_str())));
+      auto effDenom_2p2h = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_2p2h_%s", var.c_str())));
       auto simEventRate = effDenom->Clone();
       auto simEventRate_QE = effDenom_QE->Clone();
       auto simEventRate_RES = effDenom_RES->Clone();
       auto simEventRate_DIS = effDenom_DIS->Clone();
+      auto simEventRate_Other = effDenom_Other->Clone();
       auto simEventRate_2p2h = effDenom_2p2h->Clone();
       
       fUnfold->cd();
@@ -401,6 +404,7 @@ int main(int argc, char * argv[]){
       simEventRate_QE->Clone()->Write(Form("simEventRate_QE_%d_%s", targetIDs[t],var.c_str() ));
       simEventRate_RES->Clone()->Write(Form("simEventRate_RES_%d_%s", targetIDs[t],var.c_str() ));
       simEventRate_DIS->Clone()->Write(Form("simEventRate_DIS_%d_%s", targetIDs[t],var.c_str() ));
+      simEventRate_Other->Clone()->Write(Form("simEventRate_Other_%d_%s", targetIDs[t],var.c_str() ));
       simEventRate_2p2h->Clone()->Write(Form("simEventRate_2p2h_%d_%s", targetIDs[t],var.c_str() ));
 
       effNum->Clone()->Write(Form("efficiency_numerator_%d_%s", targetIDs[t], var.c_str() ));
@@ -460,6 +464,7 @@ int main(int argc, char * argv[]){
     auto simEventRate_QE_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_QE_%d_%s", targetIDs[0],var.c_str() )));
     auto simEventRate_RES_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_RES_%d_%s", targetIDs[0],var.c_str() )));
     auto simEventRate_DIS_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_DIS_%d_%s", targetIDs[0],var.c_str() )));
+    auto simEventRate_Other_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_Other_%d_%s", targetIDs[0],var.c_str() )));
     auto simEventRate_2p2h_combined = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_2p2h_%d_%s", targetIDs[0],var.c_str() )));
       
     for(int t = 1; t < targetIDs.size(); t++){
@@ -468,6 +473,7 @@ int main(int argc, char * argv[]){
       auto simEventRate_QE = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_QE_%d_%s", targetIDs[t],var.c_str() )));
       auto simEventRate_RES = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_RES_%d_%s", targetIDs[t],var.c_str() )));
       auto simEventRate_DIS = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_DIS_%d_%s", targetIDs[t],var.c_str() )));
+      auto simEventRate_Other = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_Other_%d_%s", targetIDs[t],var.c_str() )));
       auto simEventRate_2p2h = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("simEventRate_2p2h_%d_%s", targetIDs[t],var.c_str() )));
 
       effNum_combined->Add(effNum);
@@ -475,6 +481,7 @@ int main(int argc, char * argv[]){
       simEventRate_QE_combined->Add(simEventRate_QE);
       simEventRate_RES_combined->Add(simEventRate_RES);
       simEventRate_DIS_combined->Add(simEventRate_DIS);
+      simEventRate_Other_combined->Add(simEventRate_Other);
       simEventRate_2p2h_combined->Add(simEventRate_2p2h);
     }
 
@@ -483,6 +490,7 @@ int main(int argc, char * argv[]){
     simEventRate_QE_combined->Clone()->Write(Form("total_simEventRate_QE_%s",var.c_str() ));
     simEventRate_RES_combined->Clone()->Write(Form("total_simEventRate_RES_%s",var.c_str() )); 
     simEventRate_DIS_combined->Clone()->Write(Form("total_simEventRate_DIS_%s",var.c_str() )); 
+    simEventRate_DIS_combined->Clone()->Write(Form("total_simEventRate_Other_%s",var.c_str() )); 
     simEventRate_2p2h_combined->Clone()->Write(Form("total_simEventRate_2p2h_%s",var.c_str() ));  
 
     for(const auto& prefix: prefixes){
@@ -515,8 +523,8 @@ int main(int argc, char * argv[]){
       double min_energy = 0;
       double max_energy = 120;
 
-      auto& frw = PlotUtils::flux_reweighter(plist_string, nu_pdg, use_nue_constraint, n_flux_universes);
-      auto& frw2 = PlotUtils::flux_reweighter(plist_string, nu_pdg, use_nue_constraint, n_flux_universes);
+      auto& frw = PlotUtils::flux_reweighter("minervame6A", nu_pdg, use_nue_constraint, n_flux_universes);
+      auto& frw2 = PlotUtils::flux_reweighter("minervame6A", nu_pdg, use_nue_constraint, n_flux_universes);
 
      
       MnvH1D* flux;
@@ -564,7 +572,12 @@ int main(int argc, char * argv[]){
         // simulated event rate from efficiency denominator -> cross-section (to check with GENIE xSec)
         // MC cross-section calculated from the efficiency numerator
         // Unfolding inflates the statistical uncertainty and will give a reader the wrong impression of the size of the MC sample.
-        pot = mcpot;
+        if(plist_string.size() > 11){
+          pot = datapot; // if COMBINED histos, then scale by dataPOT!! because MCs already scaled by mcScale when added
+        }
+        else{
+          pot = mcpot;
+        }
         if (var=="Enu"){ // calculated simulated total cross-section for Enu
           auto simEventRate_cross_total = simEventRate_combined->Clone();
           simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
@@ -588,6 +601,12 @@ int main(int argc, char * argv[]){
           simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
           fUnfold->cd();
           simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
+          
+          //Other
+          auto simEventRate_Other_cross_total = simEventRate_Other_combined->Clone();
+          simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
+          fUnfold->cd();
+          simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s", prefix.c_str(), var.c_str() ));
 
           //2p2h
           auto simEventRate_2p2h_cross_total = simEventRate_2p2h_combined->Clone();
@@ -620,6 +639,12 @@ int main(int argc, char * argv[]){
         simEventRate_DIS_cross_dif = normalize(simEventRate_DIS_cross_dif, fluxIntegral, nNucleons, pot);
         fUnfold->cd();
         simEventRate_DIS_cross_dif->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
+
+        //Other
+        auto simEventRate_Other_cross_dif = simEventRate_Other_combined->Clone();
+        simEventRate_Other_cross_dif = normalize(simEventRate_Other_cross_dif, fluxIntegral, nNucleons, pot);
+        fUnfold->cd();
+        simEventRate_Other_cross_dif->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s", prefix.c_str(), var.c_str() ));
 
         //2p2h
         auto simEventRate_2p2h_cross_dif = simEventRate_2p2h_combined->Clone();
