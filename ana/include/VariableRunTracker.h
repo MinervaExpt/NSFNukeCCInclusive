@@ -33,6 +33,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   // selected mc reco histwrapper
   HW m_selected_mc_reco,m_selected_mc_reco_bkg,m_selected_data_reco, m_selected_mc_reco_signal;
+  HW m_selected_mc_reco_NotTracker,m_selected_mc_reco_WrongSign,m_selected_mc_reco_NC, m_selected_mc_reco_NotEmu;
   // HISTFOLIO
   // selected mc reco - signal background histfolio
   PlotUtils::HistFolio<MH1D> m_selected_mc_sb;
@@ -59,6 +60,18 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     MH1D* dummy_selected_mc_reco_signal = new MH1D(Form("selected_mc_reco_signal_%s", name), name, GetNBins(), bins.data());
     m_selected_mc_reco_signal = HW(dummy_selected_mc_reco_signal, univs, clear_bands);
 
+    MH1D* dummy_selected_mc_reco_NotTracker = new MH1D(Form("selected_mc_reco_NotTracker_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_reco_NotTracker = HW(dummy_selected_mc_reco_NotTracker, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_reco_WrongSign = new MH1D(Form("selected_mc_reco_WrongSign_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_reco_WrongSign = HW(dummy_selected_mc_reco_WrongSign, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_reco_NC = new MH1D(Form("selected_mc_reco_NC_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_reco_NC = HW(dummy_selected_mc_reco_NC, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_reco_NotEmu = new MH1D(Form("selected_mc_reco_NotEmu_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_reco_NotEmu = HW(dummy_selected_mc_reco_NotEmu, univs, clear_bands);
+
 
     MH1D* dummy_selected_data_reco = new MH1D(Form("selected_data_reco_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco = HW(dummy_selected_data_reco, univs, clear_bands);
@@ -68,15 +81,20 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     
     m_selected_mc_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("selected_mc_sb_%s", name), name, GetNBins(), bins.data());
     
-    m_selected_mc_sb.AddComponentHist("Signal");
-    m_selected_mc_sb.AddComponentHist("NotTracker");
-    m_selected_mc_sb.AddComponentHist("NotTracker_true");
-    m_selected_mc_sb.AddComponentHist("WrongSign");
-    m_selected_mc_sb.AddComponentHist("NC");
-    m_selected_mc_sb.AddComponentHist("NotEmu");
+    //m_selected_mc_sb.AddComponentHist("Signal");
+    //m_selected_mc_sb.AddComponentHist("NotTracker");
+    //m_selected_mc_sb.AddComponentHist("NotTracker_true");
+    //m_selected_mc_sb.AddComponentHist("WrongSign");
+    //m_selected_mc_sb.AddComponentHist("NC");
+    //m_selected_mc_sb.AddComponentHist("NotEmu");
 
     delete dummy_selected_mc_reco;
     delete dummy_selected_mc_reco_bkg;
+    delete dummy_selected_mc_reco_signal;
+    delete dummy_selected_mc_reco_NotTracker;
+    delete dummy_selected_mc_reco_WrongSign;
+    delete dummy_selected_mc_reco_NC;
+    delete dummy_selected_mc_reco_NotEmu;
     delete dummy_selected_data_reco;
   }
 
@@ -91,6 +109,10 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
       m_selected_mc_reco.hist->Write();
       m_selected_mc_reco_bkg.hist->Write();
       m_selected_mc_reco_signal.hist->Write();
+      m_selected_mc_reco_NotTracker.hist->Write();
+      m_selected_mc_reco_WrongSign.hist->Write();
+      m_selected_mc_reco_NC.hist->Write();
+      m_selected_mc_reco_NotEmu.hist->Write();
     }
     else m_selected_data_reco.hist->Write();
 
@@ -159,7 +181,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   //=======================================================================================
   void WriteAllHistogramsToFile(TFile& f,bool isMC) const {
     f.cd();
-       if(isMC) m_selected_mc_reco.hist->Write();
+       if(isMC) { m_selected_mc_reco.hist->Write();
+       }
        else m_selected_data_reco.hist->Write();
     // selected mc reco
   }
