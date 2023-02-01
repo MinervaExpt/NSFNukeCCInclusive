@@ -242,6 +242,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      ybin    = binsDef->GetEnergyBins("y");
      pTbin = binsDef->GetEnergyBins("muonPt"); 
      pZbin = binsDef->GetEnergyBins("muonPz"); 
+     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
+
    }
   
    //Q2bin = binsDef->GetSidebandBins("Q2");
@@ -274,7 +276,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var2D* x_y = new Var2D(*x, *y);  // y var
    Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
   
-   variables2d = {pZmu_pTmu };
+   variables2d = {};
    
    for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
