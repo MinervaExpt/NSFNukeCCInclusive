@@ -19,8 +19,10 @@ ROOT.TH1.AddDirectory(False)
 targetID = 99
 targetZ = 99
 
-#infile = ROOT.TFile("/minerva/data2/users/anezkak/ME6A_Tracker/Closure_Jan28/Hists_EventSelectionTracker_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
-infile = ROOT.TFile("Hists_EventSelectionTracker_Daisy_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
+pwd = sys.argv[1]
+plist = sys.argv[2]
+
+infile = ROOT.TFile(str(pwd)+"EventSelection_daisy_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -28,7 +30,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile("Hists_BkgSubtracted_EventSelection_Daisy_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
+out1 = ROOT.TFile("BkgSubtracted_EventSelection_daisy_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 
@@ -57,8 +59,8 @@ for var in vars:
     h_background_subtracted_data.Write()
 
 # write down POTs
-dataPOTout = TParameter(float)("DataPOT", dataPOT)
-mcPOTout = TParameter(float)("MCPOT", mcPOT)
+dataPOTout = TParameter('double')("DataPOT", dataPOT)
+mcPOTout = TParameter('double')("MCPOT", mcPOT)
 dataPOTout.Write()
 mcPOTout.Write()
 
