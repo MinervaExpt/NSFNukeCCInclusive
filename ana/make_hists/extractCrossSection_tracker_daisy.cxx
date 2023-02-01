@@ -249,8 +249,8 @@ int main(int argc, char * argv[]){
       "\t-./runEventLoop Path_to_Output_file \n\n"<<
       "\t-Path_to_Output_file\t =\t Path to the directory where the output ROOT file will be created \n"<<
       "\t-Target_number\t \t = \t Number of target, e.g. 1-5, or tracker 99 \n"<<
-      "\t-Material_atomic_number\t =\t Atomic number of material, e.g. 6, 26, 82, or tracker 99  \n" << std::endl;
-      //"\t-Playlist\t \t =\t eg. minervame1A"<< std::endl;
+      "\t-Material_atomic_number\t =\t Atomic number of material, e.g. 6, 26, 82, or tracker 99  \n" <<
+      "\t-Playlist\t \t =\t eg. minervame1A"<< std::endl;
     std::cout<<"-----------------------------------------------------------------------------------------\
 ------"<<std::endl;
     return 0;
@@ -259,8 +259,8 @@ int main(int argc, char * argv[]){
   string outdir = argv[1];
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
-
-  const std::string plist_string("minervame6A");
+  const string playlist= argv[4];
+  const std::string plist_string(playlist);
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
@@ -269,26 +269,26 @@ int main(int argc, char * argv[]){
 
   TString eventLoop, migr, efficiency;
 
- //bool RunCodeWithSystematics = false;
+  //bool RunCodeWithSystematics = false;
   // Read in background subtracted event rate, Migration and Efficiency
   if(RunCodeWithSystematics){
-        eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_Daisy_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
-        migr = Form("%s/Hists_Migration_Daisy_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
-        efficiency = Form("%s/Hists_Efficiency_Daisy_ML_ME6A_sys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+        eventLoop = Form("%s/BackgroundSubtracted/BkgSubtracted_EventSelection_daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
+        migr = Form("%s/Migration/Migration_Daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
+        efficiency = Form("%s/Efficiency/Efficiency_Daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
     }
   else{
-      eventLoop = Form("%s/Hists_BkgSubtracted_EventSelection_Daisy_nosys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
-      migr = Form("%s/Hists_Migration_Daisy_ML_ME6A_nosys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
-      efficiency = Form("%s/Hists_Efficiency_Daisy_ML_ME6A_nosys_t%d_z%02d_AntiNu.root", outdir.c_str(), targetID, targetZ);
+      eventLoop = Form("%s/BackgroundSubtracted/BkgSubtracted_EventSelection_daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
+      migr = Form("%s/Migration/Migration_Daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
+      efficiency = Form("%s/Efficiency/Efficiency_Daisy_%s_t%d_z%02d_sys.root", outdir.c_str(), plist_string.c_str(), targetID, targetZ);
   }
 
   TFile *fEventLoop = new TFile( eventLoop,"read" );
   TFile *fMigration = new TFile( migr,"read" );
   TFile *fEfficiency = new TFile( efficiency,"read" );
-
-  NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
+  
+  NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF("minervame6A");
   NukeCC_Binning  *binsDef = new NukeCC_Binning();
-  HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
+  HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist("minervame6A");
 
   // to iterate over variables
   std::vector<string> vars;
@@ -301,13 +301,14 @@ int main(int argc, char * argv[]){
   std::vector<string> prefixes;
   prefixes.push_back("mc");
   prefixes.push_back("data");
-
-  // output file
-  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%d_z%d_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
   
+  // output file
+  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%d_z%02d_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
+   std::cout<<"Hi"<<std::endl;
+
   // read in the POT information
-  TParameter<double> *mcPOT = (TParameter<double>*)fMigration->Get("MCPOT");
-  TParameter<double> *dataPOT = (TParameter<double>*)fMigration->Get("DataPOT");
+  TParameter<double> *mcPOT = (TParameter<double>*)fEventLoop->Get("MCPOT");
+  TParameter<double> *dataPOT = (TParameter<double>*)fEventLoop->Get("DataPOT");
   double mcpot = mcPOT->GetVal();
   double datapot = dataPOT->GetVal();
 
@@ -332,14 +333,16 @@ int main(int argc, char * argv[]){
       auto migration  = dynamic_cast<MnvH2D*>(fMigration->Get( Form("selected_Migration_daisy_%d_%s", petal, var.c_str())));
       auto effNum = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_mc_daisy_%d_%s", petal, var.c_str())));
       auto effDenom = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_%d_%s", petal, var.c_str())));
-      auto effDenom_QE = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_sb_%d_%s_QE", petal, var.c_str())));
-      auto effDenom_RES = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_sb_%d_%s_RES", petal, var.c_str())));
-      auto effDenom_DIS = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_sb_%d_%s_DIS", petal, var.c_str())));
-      auto effDenom_2p2h = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_sb_%d_%s_2p2h", petal, var.c_str())));
+      auto effDenom_QE = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_QE_%d_%s", petal, var.c_str())));
+      auto effDenom_RES = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_RES_%d_%s", petal, var.c_str())));
+      auto effDenom_DIS = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_DIS_%d_%s", petal, var.c_str())));
+      auto effDenom_Other = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_Other_%d_%s", petal, var.c_str())));
+      auto effDenom_2p2h = dynamic_cast<MnvH1D*>(fEfficiency->Get( Form("h_truth_daisy_2p2h_%d_%s", petal, var.c_str())));
       auto simEventRate = effDenom->Clone();
       auto simEventRate_QE = effDenom_QE->Clone();
       auto simEventRate_RES = effDenom_RES->Clone();
       auto simEventRate_DIS = effDenom_DIS->Clone();
+      auto simEventRate_Other = effDenom_Other->Clone();
       auto simEventRate_2p2h = effDenom_2p2h->Clone();
       fUnfold->cd();
 
@@ -347,6 +350,7 @@ int main(int argc, char * argv[]){
       simEventRate_QE->Clone()->Write(Form("simEventRate_QE_daisy_%d_%s", petal, var.c_str() ));
       simEventRate_RES->Clone()->Write(Form("simEventRate_RES_daisy_%d_%s", petal, var.c_str() ));
       simEventRate_DIS->Clone()->Write(Form("simEventRate_DIS_daisy_%d_%s", petal, var.c_str() ));
+      simEventRate_Other->Clone()->Write(Form("simEventRate_Other_daisy_%d_%s", petal, var.c_str() ));
       simEventRate_2p2h->Clone()->Write(Form("simEventRate_2p2h_daisy_%d_%s", petal, var.c_str() ));
 
       effNum->Clone()->Write(Form("efficiency_numerator_daisy_%d_%s", petal, var.c_str() ));
@@ -421,28 +425,32 @@ int main(int argc, char * argv[]){
       double min_energy = 0;
       double max_energy = 120;
 
-      auto& frw = PlotUtils::flux_reweighter(plist_string, nu_pdg, use_nue_constraint, n_flux_universes);
+      auto& frw = PlotUtils::flux_reweighter("minervame6A", nu_pdg, use_nue_constraint, n_flux_universes);
 
       //map of petal distributions
       std::map<int, MnvH1D*> daisy_petal_hists;
       std::map<int, MnvH1D*> daisy_petal_hists_QE;
       std::map<int, MnvH1D*> daisy_petal_hists_RES;
       std::map<int, MnvH1D*> daisy_petal_hists_DIS;
+      std::map<int, MnvH1D*> daisy_petal_hists_Other;
       std::map<int, MnvH1D*> daisy_petal_hists_2p2h;
       MnvH1D* h_eff_corr_tracker_to_carbon;
       MnvH1D* h_eff_corr_tracker_to_carbon_QE;
       MnvH1D* h_eff_corr_tracker_to_carbon_RES;
       MnvH1D* h_eff_corr_tracker_to_carbon_DIS;
+      MnvH1D* h_eff_corr_tracker_to_carbon_Other;
       MnvH1D* h_eff_corr_tracker_to_carbon_2p2h;
       MnvH1D* h_eff_corr_tracker_to_iron;
       MnvH1D* h_eff_corr_tracker_to_iron_QE;
       MnvH1D* h_eff_corr_tracker_to_iron_RES;
       MnvH1D* h_eff_corr_tracker_to_iron_DIS;
+      MnvH1D* h_eff_corr_tracker_to_iron_Other;
       MnvH1D* h_eff_corr_tracker_to_iron_2p2h;
       MnvH1D* h_eff_corr_tracker_to_lead;
       MnvH1D* h_eff_corr_tracker_to_lead_QE;
       MnvH1D* h_eff_corr_tracker_to_lead_RES;
       MnvH1D* h_eff_corr_tracker_to_lead_DIS;
+      MnvH1D* h_eff_corr_tracker_to_lead_Other;
       MnvH1D* h_eff_corr_tracker_to_lead_2p2h;
 
       // Efficiency corrected distribution to targets
@@ -453,6 +461,7 @@ int main(int argc, char * argv[]){
           daisy_petal_hists_QE[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_QE_daisy_%d_%s", petal, var.c_str() )));
           daisy_petal_hists_RES[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_RES_daisy_%d_%s", petal, var.c_str() )));
           daisy_petal_hists_DIS[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_DIS_daisy_%d_%s", petal, var.c_str() )));
+          daisy_petal_hists_Other[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_Other_daisy_%d_%s", petal, var.c_str() )));
           daisy_petal_hists_2p2h[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_2p2h_daisy_%d_%s", petal, var.c_str() )));
         }
         // Efficiency corrected distribution to targets
@@ -461,18 +470,21 @@ int main(int argc, char * argv[]){
         h_eff_corr_tracker_to_carbon_QE = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists_QE, project_dir );
         h_eff_corr_tracker_to_carbon_RES = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists_RES, project_dir );
         h_eff_corr_tracker_to_carbon_DIS = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists_DIS, project_dir );
+        h_eff_corr_tracker_to_carbon_Other = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists_Other, project_dir );
         h_eff_corr_tracker_to_carbon_2p2h = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists_2p2h, project_dir );
         //Iron
         h_eff_corr_tracker_to_iron = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists, project_dir );
         h_eff_corr_tracker_to_iron_QE = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists_QE, project_dir );
         h_eff_corr_tracker_to_iron_RES = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists_RES, project_dir );
         h_eff_corr_tracker_to_iron_DIS = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists_DIS, project_dir );
+        h_eff_corr_tracker_to_iron_Other = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists_Other, project_dir );
         h_eff_corr_tracker_to_iron_2p2h = frw.GetReweightedDaisySum(nu_pdg, "iron", daisy_petal_hists_2p2h, project_dir );
         //Lead
         h_eff_corr_tracker_to_lead = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists, project_dir );
         h_eff_corr_tracker_to_lead_QE = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists_QE, project_dir );
         h_eff_corr_tracker_to_lead_RES = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists_RES, project_dir );
         h_eff_corr_tracker_to_lead_DIS = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists_DIS, project_dir );
+        h_eff_corr_tracker_to_lead_Other = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists_Other, project_dir );
         h_eff_corr_tracker_to_lead_2p2h = frw.GetReweightedDaisySum(nu_pdg, "lead", daisy_petal_hists_2p2h, project_dir );
       }
       
@@ -498,18 +510,21 @@ int main(int argc, char * argv[]){
       h_eff_corr_tracker_to_carbon_QE->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_QE_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_carbon_RES->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_RES_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_carbon_DIS->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_DIS_%s_%s", prefix.c_str(),var.c_str() ));
+      h_eff_corr_tracker_to_carbon_Other->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_Other_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_carbon_2p2h->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_2p2h_%s_%s", prefix.c_str(),var.c_str() ));
       // iron
       h_eff_corr_tracker_to_iron->Clone()->Write(Form("h_eff_corr_tracker_to_iron_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_iron_QE->Clone()->Write(Form("h_eff_corr_tracker_to_iron_QE_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_iron_RES->Clone()->Write(Form("h_eff_corr_tracker_to_iron_RES_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_iron_DIS->Clone()->Write(Form("h_eff_corr_tracker_to_iron_DIS_%s_%s", prefix.c_str(),var.c_str() ));
+      h_eff_corr_tracker_to_iron_Other->Clone()->Write(Form("h_eff_corr_tracker_to_iron_Other_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_iron_2p2h->Clone()->Write(Form("h_eff_corr_tracker_to_iron_2p2h_%s_%s", prefix.c_str(),var.c_str() ));
       //lead
       h_eff_corr_tracker_to_lead->Clone()->Write(Form("h_eff_corr_tracker_to_lead_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_QE->Clone()->Write(Form("h_eff_corr_tracker_to_lead_QE_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_RES->Clone()->Write(Form("h_eff_corr_tracker_to_lead_RES_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_DIS->Clone()->Write(Form("h_eff_corr_tracker_to_lead_DIS_%s_%s", prefix.c_str(),var.c_str() ));
+      h_eff_corr_tracker_to_lead_Other->Clone()->Write(Form("h_eff_corr_tracker_to_lead_Other_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_2p2h->Clone()->Write(Form("h_eff_corr_tracker_to_lead_2p2h_%s_%s", prefix.c_str(),var.c_str() ));
 
 
@@ -567,7 +582,12 @@ int main(int argc, char * argv[]){
         // simulated event rate from efficiency denominator -> cross-section (to check with GENIE xSec)
         // MC cross-section calculated from the efficiency numerator
         // Unfolding inflates the statistical uncertainty and will give a reader the wrong impression of the size of the MC sample.
-          pot = mcpot;
+          if(plist_string.size() > 11){
+          pot = datapot; // if COMBINED histos, then scale by dataPOT!! because MCs already scaled by mcScale when added
+          }
+          else{
+            pot = mcpot;
+          }
           if (var=="Enu"){ // calculated simulated total cross-section for Enu
             auto simEventRate_cross_total = h_eff_corr_tracker_to_material[iter]->Clone();
             simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
@@ -590,6 +610,11 @@ int main(int argc, char * argv[]){
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              // Other
+              auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_carbon_Other->Clone();
+              simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
+              fUnfold->cd();
+              simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_carbon_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
@@ -612,6 +637,11 @@ int main(int argc, char * argv[]){
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              // Other
+              auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_iron_Other->Clone();
+              simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
+              fUnfold->cd();
+              simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_iron_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
@@ -635,6 +665,11 @@ int main(int argc, char * argv[]){
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              // Other
+              auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_lead_Other->Clone();
+              simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
+              fUnfold->cd();
+              simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_lead_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
@@ -670,6 +705,11 @@ int main(int argc, char * argv[]){
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            // Other
+            auto simEventRate_Other_cross = h_eff_corr_tracker_to_carbon_Other->Clone();
+            simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
+            fUnfold->cd();
+            simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_carbon_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
@@ -692,6 +732,11 @@ int main(int argc, char * argv[]){
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            // Other
+            auto simEventRate_Other_cross = h_eff_corr_tracker_to_iron_Other->Clone();
+            simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
+            fUnfold->cd();
+            simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_iron_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
@@ -715,6 +760,11 @@ int main(int argc, char * argv[]){
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            // Other
+            auto simEventRate_Other_cross = h_eff_corr_tracker_to_lead_Other->Clone();
+            simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
+            fUnfold->cd();
+            simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_lead_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
