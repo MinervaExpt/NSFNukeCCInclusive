@@ -81,21 +81,21 @@ int main(int argc, char * argv[]){
     return 0;
   }
 
-
-  string outdir=argv[1];
-  int targetID = atoi(argv[2]);
-  int targetZ = atoi(argv[3]);
-  const string playlist= argv[4];
+  string indir = argv[1];
+  string outdir = argv[2];
+  int targetID = atoi(argv[3]);
+  int targetZ = atoi(argv[4]);
+  const string playlist= argv[5];
 
   const std::string plist_string(playlist);
 
   TString histFileName;
   if(RunCodeWithSystematics){
     //histFileName = Form("%s/Hists_PlasticBackgd_with_SYS_FullDet_q2WfromBranch_ME1A_targetsCombined_t%d_z%02d_Nu_%s.root", outdir.c_str(), targetID, targetZ, getenv("NUKECC_TAG") ); 
-    histFileName = Form("/PlasticBkg_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName = Form("%s/PlasticBkg_%s_t%d_z%02d_sys.root", indir.c_str(), plist_string.c_str(), targetID, targetZ);
   }
   else{
-    histFileName = Form("/PlasticBkg_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName = Form("%s/PlasticBkg_%s_t%d_z%02d_nosys.root",indir.c_str(), plist_string.c_str(), targetID, targetZ);
   } 
  
   cout<<histFileName<<endl;
@@ -122,7 +122,6 @@ int main(int argc, char * argv[]){
   vars.push_back("planeDNN");
   vars.push_back("Enu");
   vars.push_back("x");
-  vars.push_back("thetaMu");
 
 
   TFile *f1 = new TFile( histFileName,"read" );
