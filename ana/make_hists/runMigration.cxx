@@ -136,7 +136,7 @@ int main(int argc, char *argv[]){
   else{
     histFileName += Form("/Migration_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
-   	   
+  std::cout<<"Hello"<<std::endl;	   
 	TFile fout(dir.Append(histFileName),"RECREATE");	
 	   
 	 // For 1D variables 
@@ -151,8 +151,8 @@ int main(int argc, char *argv[]){
 	 
 	 
 	 for (auto v : variablesMC) {
-	   v->WriteAllHistogramsToFileMig(fout, true);  
-	 }
+	  v->WriteAllHistogramsToFileMig(fout, true);  
+	  }
 
 
 	 // Plotting If you want for 1D
@@ -232,6 +232,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      ybin    = binsDef->GetEnergyBins("y");
      pTbin = binsDef->GetEnergyBins("muonPt"); 
      pZbin = binsDef->GetEnergyBins("muonPz"); 
+     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
+
    }
   
    //Q2bin = binsDef->GetSidebandBins("Q2");
@@ -254,7 +256,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, x09, xfine, xBrian, enu, emu, ehad, thetaMu};//{enu,ehad}; 
+   variables = {x, enu, thetaMu, emu};//{enu,ehad}; 
    
    //For 2D variable
 
@@ -265,7 +267,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     Var2D* x_y = new Var2D(*x, *y);  // y var
     Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
 
-    variables2d = {pZmu_pTmu };
+    variables2d = {};//{pZmu_pTmu };
    
    for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
