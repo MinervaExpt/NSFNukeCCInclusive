@@ -161,6 +161,10 @@ int main(int argc, char *argv[]){
   for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_reco_bkg.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_reco_signal.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_reco_NotTracker.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_reco_WrongSign.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_reco_NC.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_reco_NotEmu.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
@@ -369,7 +373,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 if(cutter->TrackerOnlyTrue(universe)){
                   if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
                     v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                    v->m_selected_mc_sb.GetComponentHist("Signal")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="x") Signal++;
                   }
                   else{
@@ -377,7 +380,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="x") Bkg++;
 
-                    v->m_selected_mc_sb.GetComponentHist("NotEmu")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_reco_NotEmu.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="x") NotEmu++;
                   }
                 }
@@ -385,9 +388,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   // background from outside of the tracker
                   v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="x") Bkg++;
-
-                  v->m_selected_mc_sb.GetComponentHist("NotTracker")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                  v->m_selected_mc_sb.GetComponentHist("NotTracker_true")->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
+                  
+                  v->m_selected_mc_reco_NotTracker.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  //v->m_selected_mc_sb.GetComponentHist("NotTracker_true")->Fill(v->GetTrueValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="x") NotTracker++;
                 }
               }
@@ -397,11 +400,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 if (v->GetName()=="x") Bkg++;
 
                 if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
-                  v->m_selected_mc_sb.GetComponentHist("NC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  v->m_selected_mc_reco_NC.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="x") NC++;
                 } 
                 else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
-                  v->m_selected_mc_sb.GetComponentHist("WrongSign")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  v->m_selected_mc_reco_WrongSign.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="x") WrongSign++;
                 }
               }

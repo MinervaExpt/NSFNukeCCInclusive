@@ -171,6 +171,9 @@ int main(int argc, char *argv[]){
   for (auto v : variablesMC) v->m_selected_mc_USplastic.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_DSplastic.SyncCVHistos();
   for (auto v : variablesMC) v->m_selected_mc_other.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_WrongSign.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_NC.SyncCVHistos();
+  for (auto v : variablesMC) v->m_selected_mc_NotEmu.SyncCVHistos();
   for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
    
   // DATA
@@ -407,7 +410,13 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if( universe->GetVecElem("ANN_plane_probs",0) < MIN_PROB_PLANE_CUT ) continue;
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
-              
+
+              for (auto v : variables2d){
+                if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
+                if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;	     
+                
+                v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+	            }
 
 	            for (auto v : variables){
 	              if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
@@ -423,25 +432,21 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                   if(cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) { // true fiducial z distance
                     if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
-                      v->m_selected_mc_sb.GetComponentHist("Signal")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu")  Signal++;
                     }
                     else{
                       // Background: out of muon energy range !
                       v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                      v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu") Bkg++;
-                      v->m_selected_mc_sb.GetComponentHist("NotEmu")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                      v->m_selected_mc_NotEmu.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                       if (v->GetName()=="Enu")  NotEmu++;
                     }
                   }
                   else{ 
                     //Background: different material !
                     v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                    v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") Bkg++;
-                    //v->m_selected_mc_sb.GetComponentHist("WrongMaterialOrTarget")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") WrongMaterialOrTarget++; 
                     
                     if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
@@ -451,19 +456,16 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                       // DS
                       if(universe->GetVecElem("ANN_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
                         v->m_selected_mc_DSplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                        v->m_selected_mc_sb.GetComponentHist("DS_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                         if (v->GetName()=="Enu") DS++;
                       }
                       // US
                       else if(universe->GetVecElem("ANN_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
                       v->m_selected_mc_USplastic.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                      v->m_selected_mc_sb.GetComponentHist("US_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                       if (v->GetName()=="Enu") US++;
                       }
                     }
                     else{
                       v->m_selected_mc_other.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                      v->m_selected_mc_sb.GetComponentHist("Other_trueval")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
                       if (v->GetName()=="Enu") other++;
                     }
                   }
@@ -471,11 +473,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 // Background: wrong sign events and neutral current events
                 else { 
                   v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-                  v->m_selected_mc_sb.GetComponentHist("Bkg")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                   if (v->GetName()=="Enu") Bkg++;
 
                   if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
-                    v->m_selected_mc_sb.GetComponentHist("NC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_NC.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") NC++;
                     if (-14 != universe->GetInt("mc_incoming") && 14 != universe->GetInt("mc_incoming")){
                       // if not muon antineutrino or muon neutrino -> print
@@ -485,7 +486,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                   }
 
                   else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
-                    v->m_selected_mc_sb.GetComponentHist("WrongSign")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                    v->m_selected_mc_WrongSign.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="Enu") WrongSign++;
                   }
                 }
