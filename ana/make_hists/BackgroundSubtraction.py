@@ -22,11 +22,13 @@ def BkgSubtractionMC(mc_hist, bkg_hist, var):
 ROOT.TH1.AddDirectory(False)
 
 pwd = sys.argv[1] 
-targetID = sys.argv[2] 
-targetZ = sys.argv[3]
+pwdPlastic = sys.argv[2]
+targetID = sys.argv[3] 
+targetZ = sys.argv[4]
+plist = sys.argv[5]
 
-mat = "Fe"
-trueZ = "Iron"
+mat = None
+trueZ = None
 
 if targetZ == "26":
   trueZ = "Iron"
@@ -40,9 +42,9 @@ if targetZ == "06":
   trueZ = "Carbon"
   mat = "C"
 
-infile = ROOT.TFile(str(pwd)+"/Hists_EventSelection_Bkg_ML_ME6A_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"READ")
-infileUntuned = ROOT.TFile.Open(str(pwd)+"/Hists_PlasticBkg_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
-scale = ROOT.TFile(str(pwd)+"/Plastic_ScaleFactors_t%s_z%s_minervame6A.root"%(targetID, targetZ), "READ")
+infile = ROOT.TFile(str(pwd)+"EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
+infileUntuned = ROOT.TFile.Open(str(pwd)+"/PlasticBkg_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
+scale = ROOT.TFile(str(pwdPlastic)+"/Plastic_ScaleFactors_t%s_z%s_%s.root"%(targetID, targetZ,plist), "READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
@@ -50,7 +52,7 @@ dataPOT = infile.Get("DataPOT").GetVal()
 mcScale =  dataPOT/mcPOT
 
 # files to write results in
-out1 = ROOT.TFile(str(pwd)+"/Hists_BkgSubtracted_EventSelection_sys_t%s_z%s_AntiNu.root"%(targetID, targetZ),"RECREATE")
+out1 = ROOT.TFile("BkgSubtracted_EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"RECREATE")
 
 vars = ["Enu", "x"]
 
@@ -61,7 +63,11 @@ for var in vars:
   bkgPlasticUS = infile.Get("selected_mc_USplastic_%s"%var)
   bkgPlasticDS = infile.Get("selected_mc_DSplastic_%s"%var)
   bkgOther = infile.Get("selected_mc_other_%s"%var)
+  bkgWrongSign = infile.Get("selected_mc_WrongSign_%s"%var)
+  bkgNC = infile.Get("selected_mc_NC_%s"%var)
+  bkgNotEmu = infile.Get("selected_mc_NotEmu_%s"%var)
   data = infile.Get("selected_data_reco_%s"%var)
+  
 
   # plastic scaling factors
   scaleUS = scale.Get("scaleFactor_US_%s"%var)
@@ -100,15 +106,24 @@ for var in vars:
 
   # scale by MC scale (POT normalisation)
   otherBkg_mc_scale = bkgOther.Clone("h_bkgOther_mc_scaled_%s"%var)
+  WrongSignBkg_mc_scale = bkgWrongSign.Clone("h_bkgWrongSign_mc_scaled_%s"%var)
+  NCBkg_mc_scale = bkgNC.Clone("h_bkgNC_mc_scaled_%s"%var)
+  NotEmuBkg_mc_scale = bkgOther.Clone("h_bkgNotEmu_mc_scaled_%s"%var)
   bkgPlasticUS_mc_scale = bkgPlasticUS_CHScaled.Clone("h_bkgPlasticUS_mc_scaled_%s"%var)
   bkgPlasticDS_mc_scale = bkgPlasticDS_CHScaled.Clone("h_bkgPlasticDS_mc_scaled_%s"%var)
 
   otherBkg_mc_scale.Scale(mcScale)
+  WrongSignBkg_mc_scale.Scale(mcScale)
+  NCBkg_mc_scale.Scale(mcScale)
+  NotEmuBkg_mc_scale.Scale(mcScale)
   bkgPlasticUS_mc_scale.Scale(mcScale)
   bkgPlasticDS_mc_scale.Scale(mcScale)
 
   # save POT scaled background
   bkgAdded_mc_scale = otherBkg_mc_scale.Clone("h_bkgAdded_mc_scaled_%s"%var)
+  bkgAdded_mc_scale.Add(WrongSignBkg_mc_scale)
+  bkgAdded_mc_scale.Add(NCBkg_mc_scale)
+  bkgAdded_mc_scale.Add(NotEmuBkg_mc_scale)
   bkgAdded_mc_scale.Add(bkgPlasticUS_mc_scale)
   bkgAdded_mc_scale.Add(bkgPlasticDS_mc_scale)
 
@@ -131,11 +146,12 @@ for var in vars:
   bkg_subtracted_data_notConstrained.Write()
 
 # write down POTs
-dataPOTout = TParameter(float)("DataPOT", dataPOT)
-mcPOTout = TParameter(float)("MCPOT", mcPOT)
+dataPOTout = TParameter('double')("DataPOT", dataPOT)
+mcPOTout = TParameter('double')("MCPOT", mcPOT)
 dataPOTout.Write()
 mcPOTout.Write()
 
+
 out1.Close()
 out1.Close()
-raw_input("Done")
+print("DONE %s %s %02s"%(plist, targetID, targetZ))
