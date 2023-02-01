@@ -145,6 +145,11 @@ int main(int argc, char *argv[]){
    FillVariable(chainTruth, helicity, utils, cutter,binsDef,variablesTruth,variables2DTruth,false, targetID, targetZ, plist_string,doDIS);
    
    for (auto v : variablesTruth) v->m_selected_truth_reco.SyncCVHistos();
+   for (auto v : variablesTruth) v->m_selected_truth_reco_QE.SyncCVHistos();
+   for (auto v : variablesTruth) v->m_selected_truth_reco_RES.SyncCVHistos();
+   for (auto v : variablesTruth) v->m_selected_truth_reco_DIS.SyncCVHistos();
+   for (auto v : variablesTruth) v->m_selected_truth_reco_Other.SyncCVHistos();
+   for (auto v : variablesTruth) v->m_selected_truth_reco_2p2h.SyncCVHistos();
    for (auto v : variables2DTruth) v->m_selected_truth_reco.SyncCVHistos();
  
    for (auto v : variablesMC) {
@@ -395,23 +400,23 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
       // For MC cross-section int type breakdown
       if (universe->GetInt("mc_intType") == 1){ // QE
-        v->m_selected_truth_reco_sb.GetComponentHist("QE")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+        v->m_selected_truth_reco_QE.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
         QE++;
       }
       else if (universe->GetInt("mc_intType") == 2){ // RES
-        v->m_selected_truth_reco_sb.GetComponentHist("RES")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+        v->m_selected_truth_reco_RES.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
         RES++;
       }
       else if (universe->GetInt("mc_intType") == 3){ // DIS 
-        v->m_selected_truth_reco_sb.GetComponentHist("DIS")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+        v->m_selected_truth_reco_DIS.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
         DIS++;
       }
       else if (universe->GetInt("mc_intType") == 8){ // 2p2h
-        v->m_selected_truth_reco_sb.GetComponentHist("2p2h")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+        v->m_selected_truth_reco_2p2h.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
         npnh++;
       }
       else{ // other
-        v->m_selected_truth_reco_sb.GetComponentHist("Other")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+        v->m_selected_truth_reco_Other.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
         other++;
       }
 	   }

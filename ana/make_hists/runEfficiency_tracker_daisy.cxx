@@ -162,8 +162,13 @@ int main(int argc, char *argv[]){
     v->m_selected_truth_reco.SyncCVHistos();
     for(int petal=0; petal<12; petal++){
       v->daisy_petal_denom_hists[petal].SyncCVHistos();
+      v->daisy_petal_denom_hists_QE[petal].SyncCVHistos();
+      v->daisy_petal_denom_hists_RES[petal].SyncCVHistos();
+      v->daisy_petal_denom_hists_DIS[petal].SyncCVHistos();
+      v->daisy_petal_denom_hists_Other[petal].SyncCVHistos();
+      v->daisy_petal_denom_hists_2p2h[petal].SyncCVHistos();
     }
-  }
+    }
    
   for (auto v : variables2DTruth) {
     v->m_selected_truth_reco.SyncCVHistos();
@@ -449,23 +454,23 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
        // For MC cross-section int type breakdown
         if (universe->GetInt("mc_intType") == 1){ // QE
-          v->daisy_petal_denom_hists_sb[petal].GetComponentHist("QE")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+          v->daisy_petal_denom_hists_QE[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           QE++;
         }
         else if (universe->GetInt("mc_intType") == 2){ // RES
-          v->daisy_petal_denom_hists_sb[petal].GetComponentHist("RES")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+          v->daisy_petal_denom_hists_RES[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           RES++;
         }
         else if (universe->GetInt("mc_intType") == 3){ // DIS 
-          v->daisy_petal_denom_hists_sb[petal].GetComponentHist("DIS")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+          v->daisy_petal_denom_hists_DIS[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           DIS++;
         }
         else if (universe->GetInt("mc_intType") == 8){ // 2p2h
-          v->daisy_petal_denom_hists_sb[petal].GetComponentHist("2p2h")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+          v->daisy_petal_denom_hists_2p2h[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           npnh++;
         }
         else{ // other
-          v->daisy_petal_denom_hists_sb[petal].GetComponentHist("Other")->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
+          v->daisy_petal_denom_hists_Other[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           other++;
         }
 	    }
