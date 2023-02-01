@@ -68,6 +68,21 @@ for key in _file0.GetListOfKeys():
         #print _name
         temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
         outkeys[_name] = temp_key
+    elif temp_key.ClassName() in add_type and 'truth' in _name:
+        #print temp_key.ClassName()
+        #print _name
+        temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
+        outkeys[_name] = temp_key
+    if temp_key.ClassName() in add_type and 'Migration' in _name:
+        #print temp_key.ClassName()
+        #print _name
+        temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
+        outkeys[_name] = temp_key
+    elif temp_key.ClassName() in add_type and 'response' in _name:
+        #print temp_key.ClassName()
+        #print _name
+        temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
+        outkeys[_name] = temp_key
     elif temp_key.ClassName() in add_type and 'data' in _name:
     # data files are left unchanged
         outkeys[_name] = temp_key
@@ -103,11 +118,32 @@ for i in range(1,len(allfiles)):
             key_mem.Add(temp_key)
             _outfile.WriteTObject(key_mem,_name)
 
-        if temp_key.ClassName() in add_type and 'mc' in _name: 
+        if temp_key.ClassName() in add_type and 'mc' in _name:
             # mc histos are combined using 
             # h_mc_me6A*data_pot_me6A/mc_pot_me6A + h_mc_me6B*data_pot_me6B/mc_pot_me6B procedure
             #print temp_key.ClassName()
             #print _name
+            temp_key.Scale(dataPOT/mcPOT)
+            key_mem = outkeys.get(_name)
+            key_mem.Add(temp_key)
+            _outfile.WriteTObject(key_mem,_name)
+
+        if temp_key.ClassName() in add_type and 'truth' in _name:
+            # for efficiency denominator
+            temp_key.Scale(dataPOT/mcPOT)
+            key_mem = outkeys.get(_name)
+            key_mem.Add(temp_key)
+            _outfile.WriteTObject(key_mem,_name)
+        
+        if temp_key.ClassName() in add_type and 'Migration' in _name:
+            # for migration matrix
+            temp_key.Scale(dataPOT/mcPOT)
+            key_mem = outkeys.get(_name)
+            key_mem.Add(temp_key)
+            _outfile.WriteTObject(key_mem,_name)
+
+        if temp_key.ClassName() in add_type and 'response' in _name:
+            # for migration response
             temp_key.Scale(dataPOT/mcPOT)
             key_mem = outkeys.get(_name)
             key_mem.Add(temp_key)
@@ -120,9 +156,9 @@ print("Total Data POT: " + str(total_data_pot))
 
 # write total pot to the out file
 _outfile.cd()
-mcPOTout = TParameter(float)("MCPOT", total_mc_pot)
+mcPOTout = TParameter('double')("MCPOT", total_mc_pot)
 mcPOTout.Write()
-dataPOTout = TParameter(float)("DataPOT", total_data_pot)
+dataPOTout = TParameter('double')("DataPOT", total_data_pot)
 dataPOTout.Write()
 # close file
 _outfile.Close()
