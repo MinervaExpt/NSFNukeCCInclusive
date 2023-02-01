@@ -52,6 +52,11 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
   HW daisy_petal_num_hists[12];
   HW daisy_petal_denom_hists[12];
+  HW daisy_petal_denom_hists_QE[12];
+  HW daisy_petal_denom_hists_RES[12];
+  HW daisy_petal_denom_hists_DIS[12];
+  HW daisy_petal_denom_hists_Other[12];
+  HW daisy_petal_denom_hists_2p2h[12];
   HW2D daisy_petal_migration_hists[12];
  // HISTFOLIO
   // selected mc reco - signal background histfolio
@@ -88,16 +93,36 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
       MH1D* dummy_selected_truth_reco_daisy = new MH1D(Form("h_truth_daisy_%d_%s", petal, name), name, GetNBins(), bins.data());
       daisy_petal_denom_hists[petal] = HW(dummy_selected_truth_reco_daisy, univs, clear_bands);
 
+      MH1D* dummy_selected_truth_reco_daisy_QE = new MH1D(Form("h_truth_daisy_QE_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_denom_hists_QE[petal] = HW(dummy_selected_truth_reco_daisy_QE, univs, clear_bands);
+      
+      MH1D* dummy_selected_truth_reco_daisy_RES = new MH1D(Form("h_truth_daisy_RES_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_denom_hists_RES[petal] = HW(dummy_selected_truth_reco_daisy_RES, univs, clear_bands);
+
+      MH1D* dummy_selected_truth_reco_daisy_DIS = new MH1D(Form("h_truth_daisy_DIS_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_denom_hists_DIS[petal] = HW(dummy_selected_truth_reco_daisy_DIS, univs, clear_bands);
+
+      MH1D* dummy_selected_truth_reco_daisy_Other = new MH1D(Form("h_truth_daisy_Other_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_denom_hists_Other[petal] = HW(dummy_selected_truth_reco_daisy_Other, univs, clear_bands);
+
+      MH1D* dummy_selected_truth_reco_daisy_2p2h = new MH1D(Form("h_truth_daisy_2p2h_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_denom_hists_2p2h[petal] = HW(dummy_selected_truth_reco_daisy_2p2h, univs, clear_bands);
+
       daisy_petal_denom_hists_sb[petal] = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("h_truth_daisy_sb_%d_%s", petal, name), name, GetNBins(), bins.data());
 
-      daisy_petal_denom_hists_sb[petal].AddComponentHist("QE");
-      daisy_petal_denom_hists_sb[petal].AddComponentHist("RES");
-      daisy_petal_denom_hists_sb[petal].AddComponentHist("DIS");
-      daisy_petal_denom_hists_sb[petal].AddComponentHist("Other");
-      daisy_petal_denom_hists_sb[petal].AddComponentHist("2p2h");
+      //daisy_petal_denom_hists_sb[petal].AddComponentHist("QE");
+      //daisy_petal_denom_hists_sb[petal].AddComponentHist("RES");
+      //daisy_petal_denom_hists_sb[petal].AddComponentHist("DIS");
+      //daisy_petal_denom_hists_sb[petal].AddComponentHist("Other");
+      //daisy_petal_denom_hists_sb[petal].AddComponentHist("2p2h");
 
       delete dummy_selected_mc_reco_daisy;
       delete dummy_selected_truth_reco_daisy;
+      delete dummy_selected_truth_reco_daisy_QE;
+      delete dummy_selected_truth_reco_daisy_RES;
+      delete dummy_selected_truth_reco_daisy_DIS;
+      delete dummy_selected_truth_reco_daisy_Other;
+      delete dummy_selected_truth_reco_daisy_2p2h;
     }
 
     //For Data
@@ -255,6 +280,11 @@ void getResponseObjects1D(T univs)
       m_selected_truth_reco.hist->Write();
       for(int petal=0; petal<12; petal++){
         daisy_petal_denom_hists[petal].hist->Write();
+        daisy_petal_denom_hists_QE[petal].hist->Write();
+        daisy_petal_denom_hists_RES[petal].hist->Write();
+        daisy_petal_denom_hists_DIS[petal].hist->Write();
+        daisy_petal_denom_hists_Other[petal].hist->Write();
+        daisy_petal_denom_hists_2p2h[petal].hist->Write();
         daisy_petal_denom_hists_sb[petal].WriteToFile(f);
       }
     }

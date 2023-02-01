@@ -37,6 +37,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   // selected mc reco histwrapper
   HW m_selected_mc_reco, m_selected_data_reco, m_selected_truth_reco, m_selected_data_reco_sb, m_selected_mc_true;
+  HW m_selected_truth_reco_QE, m_selected_truth_reco_RES, m_selected_truth_reco_DIS, m_selected_truth_reco_Other, m_selected_truth_reco_2p2h;
 
   typedef PlotUtils::Hist2DWrapper<NUKECC_ANA::CVUniverse> HW2D;
   HW2D mresp1D;
@@ -75,6 +76,21 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     MH1D* dummy_selected_truth_reco = new MH1D(Form("h_truth_%s", name), name, GetNBins(), bins.data());
     m_selected_truth_reco = HW(dummy_selected_truth_reco, univs, clear_bands);
 
+    MH1D* dummy_selected_truth_reco_QE = new MH1D(Form("h_truth_QE_%s", name), name, GetNBins(), bins.data());
+    m_selected_truth_reco_QE = HW(dummy_selected_truth_reco_QE, univs, clear_bands);
+
+    MH1D* dummy_selected_truth_reco_RES = new MH1D(Form("h_truth_RES_%s", name), name, GetNBins(), bins.data());
+    m_selected_truth_reco_RES = HW(dummy_selected_truth_reco_RES, univs, clear_bands);
+
+    MH1D* dummy_selected_truth_reco_DIS = new MH1D(Form("h_truth_DIS_%s", name), name, GetNBins(), bins.data());
+    m_selected_truth_reco_DIS = HW(dummy_selected_truth_reco_DIS, univs, clear_bands);
+
+    MH1D* dummy_selected_truth_reco_Other = new MH1D(Form("h_truth_Other_%s", name), name, GetNBins(), bins.data());
+    m_selected_truth_reco_Other = HW(dummy_selected_truth_reco_Other, univs, clear_bands);
+
+    MH1D* dummy_selected_truth_reco_2p2h = new MH1D(Form("h_truth_2p2h_%s", name), name, GetNBins(), bins.data());
+    m_selected_truth_reco_2p2h = HW(dummy_selected_truth_reco_2p2h, univs, clear_bands);
+
     //For Data
     MH1D* dummy_selected_data_reco = new MH1D(Form("h_data_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco = HW(dummy_selected_data_reco, univs, clear_bands);
@@ -95,11 +111,11 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
  //  m_selected_data_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(
  //    Form("selected_data_sb_%s", name), name, GetNBins(), bins.data());
 
-    m_selected_truth_reco_sb.AddComponentHist("QE");
-    m_selected_truth_reco_sb.AddComponentHist("RES");
-    m_selected_truth_reco_sb.AddComponentHist("DIS");
-    m_selected_truth_reco_sb.AddComponentHist("Other");
-    m_selected_truth_reco_sb.AddComponentHist("2p2h");
+    //m_selected_truth_reco_sb.AddComponentHist("QE");
+    //m_selected_truth_reco_sb.AddComponentHist("RES");
+    // m_selected_truth_reco_sb.AddComponentHist("DIS");
+    //m_selected_truth_reco_sb.AddComponentHist("Other");
+    //m_selected_truth_reco_sb.AddComponentHist("2p2h");
     
    // m_selected_data_sb.AddComponentHist("Data");
 
@@ -107,11 +123,16 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
     m_selected_Migration = HW2D(dummy_selected_Migration, univs, clear_bands);
 
 
-delete dummy_selected_mc_reco;
-delete dummy_selected_truth_reco;
-delete dummy_selected_Migration;
-delete dummy_selected_mc_true;
-delete dummy_selected_data_reco;
+    delete dummy_selected_mc_reco;
+    delete dummy_selected_truth_reco;
+    delete dummy_selected_truth_reco_QE;
+    delete dummy_selected_truth_reco_RES;
+    delete dummy_selected_truth_reco_DIS;
+    delete dummy_selected_truth_reco_Other;
+    delete dummy_selected_truth_reco_2p2h;
+    delete dummy_selected_Migration;
+    delete dummy_selected_mc_true;
+    delete dummy_selected_data_reco;
   }
 
 
@@ -221,6 +242,11 @@ void getResponseObjects1D(T univs)
     if(isMC) { m_selected_mc_reco.hist->Write();
     }
     else { m_selected_truth_reco.hist->Write();
+           m_selected_truth_reco_QE.hist->Write();
+           m_selected_truth_reco_RES.hist->Write();
+           m_selected_truth_reco_DIS.hist->Write();
+           m_selected_truth_reco_Other.hist->Write();
+           m_selected_truth_reco_2p2h.hist->Write();
            m_selected_truth_reco_sb.WriteToFile(f);
     }
 }
@@ -235,9 +261,9 @@ void getResponseObjects1D(T univs)
                m_selected_mc_true.hist->Write();
                m_selected_Migration.hist->Write();
                mresp1D.hist->Write();
-}
+    }
     else {m_selected_data_reco.hist->Write();
-}
+    }
     // selected mc  histfolio fir Hist Stacking
    //if(isMC) m_selected_mc_sb.WriteToFile(f);
    //else m_selected_data_reco_sb.hist->Write();
