@@ -33,7 +33,8 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
   // HISTWRAPPER
   // selected mc reco histwrapper
   HW m_selected_mc_reco,m_selected_mc_reco_bkg,m_selected_mc_reco_signal,m_selected_data_reco,m_selected_data_reco_sb;
-  HW m_selected_mc_USplastic, m_selected_mc_DSplastic, m_selected_mc_plastic, m_selected_mc_other  ;
+  HW m_selected_mc_USplastic, m_selected_mc_DSplastic, m_selected_mc_plastic, m_selected_mc_other;
+  HW m_selected_mc_WrongSign, m_selected_mc_NC, m_selected_mc_NotEmu;
 
   // HISTFOLIO
   // selected mc reco - signal background histfolio
@@ -50,66 +51,71 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
     // HISTWRAPPER
     // selected mc reco histwrapper
-    MH1D* dummy_selected_mc_reco = new MH1D(Form("selected_mc_reco_%s", name), name,
-                                      GetNBins(), bins.data());
+    // MC
+    MH1D* dummy_selected_mc_reco = new MH1D(Form("selected_mc_reco_%s", name), name, GetNBins(), bins.data());
     m_selected_mc_reco = HW(dummy_selected_mc_reco, univs, clear_bands);
 
-    MH1D* dummy_selected_mc_reco_bkg = new MH1D(Form("selected_mc_reco_bkg_%s", name), name,
-                                      GetNBins(), bins.data());
+    MH1D* dummy_selected_mc_reco_bkg = new MH1D(Form("selected_mc_reco_bkg_%s", name), name, GetNBins(), bins.data());
     m_selected_mc_reco_bkg = HW(dummy_selected_mc_reco_bkg, univs, clear_bands);
 
-    MH1D* dummy_selected_mc_reco_signal = new MH1D(Form("selected_mc_reco_signal_%s", name), name,
-                                      GetNBins(), bins.data());
+    MH1D* dummy_selected_mc_reco_signal = new MH1D(Form("selected_mc_reco_signal_%s", name), name, GetNBins(), bins.data());
     m_selected_mc_reco_signal = HW(dummy_selected_mc_reco_signal, univs, clear_bands);
 
+    MH1D* dummy_selected_mc_plastic = new MH1D(Form("selected_mc_plastic_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_plastic = HW(dummy_selected_mc_plastic, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_USplastic = new MH1D(Form("selected_mc_USplastic_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_USplastic = HW(dummy_selected_mc_USplastic, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_DSplastic = new MH1D(Form("selected_mc_DSplastic_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_DSplastic = HW(dummy_selected_mc_DSplastic, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_other = new MH1D(Form("selected_mc_other_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_other= HW(dummy_selected_mc_other, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_WrongSign = new MH1D(Form("selected_mc_WrongSign_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_WrongSign= HW(dummy_selected_mc_WrongSign, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_NC = new MH1D(Form("selected_mc_NC_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_NC= HW(dummy_selected_mc_NC, univs, clear_bands);
+
+    MH1D* dummy_selected_mc_NotEmu = new MH1D(Form("selected_mc_NotEmu_%s", name), name, GetNBins(), bins.data());
+    m_selected_mc_NotEmu= HW(dummy_selected_mc_NotEmu, univs, clear_bands);
+
+    // Data
     MH1D* dummy_selected_data_reco = new MH1D(Form("selected_data_reco_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco = HW(dummy_selected_data_reco, univs, clear_bands);
 
-
     MH1D* selected_data_reco_sb = new MH1D(Form("selected_data_reco_sb_%s", name), name, GetNBins(), bins.data());
     m_selected_data_reco_sb = HW(selected_data_reco_sb, univs, clear_bands);
-
-    MH1D* dummy_selected_mc_plastic = new MH1D(Form("selected_mc_plastic_%s", name), name,
-                                      GetNBins(), bins.data());
-    m_selected_mc_plastic = HW(dummy_selected_mc_plastic, univs, clear_bands);
-
-    MH1D* dummy_selected_mc_USplastic = new MH1D(Form("selected_mc_USplastic_%s", name), name,
-                                      GetNBins(), bins.data());
-    m_selected_mc_USplastic = HW(dummy_selected_mc_USplastic, univs, clear_bands);
-
-    MH1D* dummy_selected_mc_DSplastic = new MH1D(Form("selected_mc_DSplastic_%s", name), name,
-                                      GetNBins(), bins.data());
-    m_selected_mc_DSplastic = HW(dummy_selected_mc_DSplastic, univs, clear_bands);
-
-    MH1D* dummy_selected_mc_other = new MH1D(Form("selected_mc_other_%s", name), name,
-                                      GetNBins(), bins.data());
-    m_selected_mc_other= HW(dummy_selected_mc_other, univs, clear_bands);
   
   // HISTFOLIO
     // selected mc reco - signal background histfolio
     
    m_selected_mc_sb = PlotUtils::HistFolio<PlotUtils::MnvH1D>(Form("selected_mc_sb_%s", name), name, GetNBins(), bins.data());
     
-    m_selected_mc_sb.AddComponentHist("Signal");
-  
-    m_selected_mc_sb.AddComponentHist("Bkg");
-    m_selected_mc_sb.AddComponentHist("WrongSign");
-    m_selected_mc_sb.AddComponentHist("NC");
-    m_selected_mc_sb.AddComponentHist("NotEmu");
+    //m_selected_mc_sb.AddComponentHist("Signal");
+    //m_selected_mc_sb.AddComponentHist("Bkg");
+    //m_selected_mc_sb.AddComponentHist("WrongSign");
+    //m_selected_mc_sb.AddComponentHist("NC");
+    //m_selected_mc_sb.AddComponentHist("NotEmu");
     //m_selected_mc_sb.AddComponentHist("WrongMaterialOrTarget");
-    m_selected_mc_sb.AddComponentHist("US_trueval");
-    m_selected_mc_sb.AddComponentHist("DS_trueval");
-    m_selected_mc_sb.AddComponentHist("Other_trueval");
+    //m_selected_mc_sb.AddComponentHist("US_trueval");
+    //m_selected_mc_sb.AddComponentHist("DS_trueval");
+    //m_selected_mc_sb.AddComponentHist("Other_trueval");
     //m_selected_mc_sb.AddComponentHist("MC");
     //m_selected_data_sb.AddComponentHist("Data");
-delete dummy_selected_mc_reco;
-delete dummy_selected_mc_reco_bkg;
-delete dummy_selected_mc_reco_signal;
-delete dummy_selected_data_reco;
-delete dummy_selected_mc_USplastic;
-delete dummy_selected_mc_DSplastic;
-delete dummy_selected_mc_plastic;
-delete dummy_selected_mc_other;
+    delete dummy_selected_mc_reco;
+    delete dummy_selected_mc_reco_bkg;
+    delete dummy_selected_mc_reco_signal;
+    delete dummy_selected_data_reco;
+    delete dummy_selected_mc_USplastic;
+    delete dummy_selected_mc_DSplastic;
+    delete dummy_selected_mc_plastic;
+    delete dummy_selected_mc_other;
+    delete dummy_selected_mc_WrongSign;
+    delete dummy_selected_mc_NC;
+    delete dummy_selected_mc_NotEmu;
   }
 
   //=======================================================================================
@@ -127,6 +133,9 @@ delete dummy_selected_mc_other;
       m_selected_mc_USplastic.hist->Write();
       m_selected_mc_DSplastic.hist->Write();
       m_selected_mc_other.hist->Write();
+      m_selected_mc_WrongSign.hist->Write();
+      m_selected_mc_NC.hist->Write();
+      m_selected_mc_NotEmu.hist->Write();
     }
     else m_selected_data_reco.hist->Write();
 
