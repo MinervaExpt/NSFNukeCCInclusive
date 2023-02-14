@@ -42,8 +42,8 @@ if targetZ == "06":
   trueZ = "Carbon"
   mat = "C"
 
-infile = ROOT.TFile(str(pwd)+"EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
-infileUntuned = ROOT.TFile.Open(str(pwd)+"/PlasticBkg_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
+infile = ROOT.TFile(str(pwd)+"/EventSelection/EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
+infileUntuned = ROOT.TFile.Open(str(pwd)+"/PlastisSidebands/PlasticBkg_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ), "READ")#%(str(targetID),str(targetZ)))
 scale = ROOT.TFile(str(pwdPlastic)+"/Plastic_ScaleFactors_t%s_z%s_%s.root"%(targetID, targetZ,plist), "READ")
 
 # Scale factor to scale MC to data
