@@ -345,8 +345,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   HW2D m_selected_mc_reco,m_selected_data_reco,m_selected_truth_reco,m_selected_Migration, mresp;
   //MinervaUnfold::MnvResponse* Response;
   std::map<std::string,MinervaUnfold::MnvResponse*> Response;
-  std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr;
-  std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr2;
+  //std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr;
+  //std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr2;
 
   MnvH2D *migrationH = NULL;
   MnvH2D *h_reco = NULL;
@@ -356,6 +356,11 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
 
   HW2D daisy_petal_num2d_hists[12];
   HW2D daisy_petal_denom2d_hists[12];
+  HW2D daisy_petal_denom2d_hists_QE[12];
+  HW2D daisy_petal_denom2d_hists_RES[12];
+  HW2D daisy_petal_denom2d_hists_DIS[12];
+  HW2D daisy_petal_denom2d_hists_Other[12];
+  HW2D daisy_petal_denom2d_hists_2p2h[12];
 
   //=======================================================================================
   // INITIALIZE ALL HISTOGRAMS
@@ -380,12 +385,31 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     MH2D* dummy_selected_mc2d_reco = new MH2D(Form("h_mc2d_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     daisy_petal_num2d_hists[petal] = HW2D(dummy_selected_mc2d_reco, univs, clear_bands);
     
-    
     MH2D* dummy_selected_truth2d_reco = new MH2D(Form("h_truth2d_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     daisy_petal_denom2d_hists[petal] = HW2D(dummy_selected_truth2d_reco, univs, clear_bands);
 
+    MH2D* dummy_selected_truth2d_reco_daisy_QE = new MH2D(Form("h_truth2d_daisy_QE_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    daisy_petal_denom2d_hists_QE[petal] = HW2D(dummy_selected_truth2d_reco_daisy_QE, univs, clear_bands);
+    
+    MH2D* dummy_selected_truth2d_reco_daisy_RES = new MH2D(Form("h_truth2d_daisy_RES_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    daisy_petal_denom2d_hists_RES[petal] = HW2D(dummy_selected_truth2d_reco_daisy_RES, univs, clear_bands);
+
+    MH2D* dummy_selected_truth2d_reco_daisy_DIS = new MH2D(Form("h_truth2d_daisy_DIS_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    daisy_petal_denom2d_hists_DIS[petal] = HW2D(dummy_selected_truth2d_reco_daisy_DIS, univs, clear_bands);
+
+    MH2D* dummy_selected_truth2d_reco_daisy_Other = new MH2D(Form("h_truth2d_daisy_Other_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    daisy_petal_denom2d_hists_Other[petal] = HW2D(dummy_selected_truth2d_reco_daisy_Other, univs, clear_bands);
+
+    MH2D* dummy_selected_truth2d_reco_daisy_2p2h = new MH2D(Form("h_truth2d_daisy_2p2h_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    daisy_petal_denom2d_hists_2p2h[petal] = HW2D(dummy_selected_truth2d_reco_daisy_2p2h, univs, clear_bands);
+
     delete dummy_selected_mc2d_reco;
     delete dummy_selected_truth2d_reco;
+    delete dummy_selected_truth2d_reco_daisy_QE;
+    delete dummy_selected_truth2d_reco_daisy_RES;
+    delete dummy_selected_truth2d_reco_daisy_DIS;
+    delete dummy_selected_truth2d_reco_daisy_Other;
+    delete dummy_selected_truth2d_reco_daisy_2p2h;
 
   }
     
@@ -424,53 +448,51 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
 
 
 
-void SetupResponse(std::map<const std::string, int> systematics){
+MinervaUnfold::MnvResponse* SetupResponse(MinervaUnfold::MnvResponse* Response, int petal, std::map<const std::string, int> systematics){
 //void SetupResponse(T univs){
 
-	   const char* name = GetName().c_str();
-	   axis_binning bin_x, bin_y;
-	   bin_x.uniform=false;
-	
-     	   vector<double> vx;
-	   
-	   for(int i=0; i<=GetNBinsX(); i++){vx.push_back(GetBinVecX().data()[i]);}
-     	   
-	   vector<double> vy;
-	   for(int j=0; j<=GetNBinsY(); j++){vy.push_back(GetBinVecY().data()[j]);}
-	   bin_x.bin_edges = vx;
-	   bin_x.nbins	    = GetNBinsX();
-	   bin_x.min 	    = GetBinVecX().data()[0];
-	   bin_x.max       = GetBinVecX().data()[GetNBinsX()];  
-	   bin_y.bin_edges = vy;
-	   bin_y.nbins	    = GetNBinsY();
-	   bin_y.min 	    = GetBinVecY().data()[0];
-	   bin_y.max       = GetBinVecY().data()[GetNBinsY()]; 
+  const char* name = GetName().c_str();
+  axis_binning bin_x, bin_y;
+  bin_x.uniform=false;
 
-	   //Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("selected_mc_response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
-	   Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
+      vector<double> vx;
+  
+  for(int i=0; i<=GetNBinsX(); i++){vx.push_back(GetBinVecX().data()[i]);}
+      
+  vector<double> vy;
+  for(int j=0; j<=GetNBinsY(); j++){vy.push_back(GetBinVecY().data()[j]);}
+  bin_x.bin_edges = vx;
+  bin_x.nbins	    = GetNBinsX();
+  bin_x.min 	    = GetBinVecX().data()[0];
+  bin_x.max       = GetBinVecX().data()[GetNBinsX()];  
+  bin_y.bin_edges = vy;
+  bin_y.nbins	    = GetNBinsY();
+  bin_y.min 	    = GetBinVecY().data()[0];
+  bin_y.max       = GetBinVecY().data()[GetNBinsY()]; 
+
+  //Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("selected_mc_response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
+  Response = new MinervaUnfold::MnvResponse(Form("response2d_daisy_%d_%s", petal, name), name, bin_x, bin_y, bin_x, bin_y, systematics);
+
+  return Response;
 }
+
 
 //===================================================================================
 //
 //===================================================================================
-void FillResponse(double x_reco, double y_reco, double x_true, double y_true, const std::string name, double w, int unv){
- 	for(mnv_itr = Response.begin(); mnv_itr != Response.end(); ++mnv_itr){
-		(mnv_itr->second)->Fill(x_reco,y_reco,x_true,y_true,name,unv, w);
-	}		
-	
-	
-}
+void FillResponse(MinervaUnfold::MnvResponse* Response, double x_reco, double y_reco, double x_true, double y_true, const std::string name, double w, int unv){
+  Response->Fill(x_reco,y_reco,x_true,y_true,name,unv, w);
+}		
+
 //===================================================================================
 //
 //===================================================================================
 template <typename T>
-void getResponseObjects(T univs)
+void getResponseObjects(MinervaUnfold::MnvResponse* Response, T univs)
 {
- // bool status = false;
-  for(mnv_itr2 = Response.begin(); mnv_itr2 != Response.end(); ++mnv_itr2){
-                (mnv_itr2->second)->GetMigrationObjects( migrationH, h_reco, h_truth );;
-        }
-  const bool clear_bands = true;  
+   
+  bool check = Response->GetMigrationObjects( migrationH, h_reco, h_truth );
+  const bool clear_bands = false;  
   mresp = HW2D(migrationH, univs, clear_bands);
 }
 
@@ -499,8 +521,13 @@ void WriteAllHistogramsToFileEff(TFile& f,bool isMC) const {
     else { 
       m_selected_truth_reco.hist->Write();
       for(int petal=0; petal<12; petal++){
-          daisy_petal_denom2d_hists[petal].hist->Write();
-      }
+        daisy_petal_denom2d_hists[petal].hist->Write();
+        daisy_petal_denom2d_hists_QE[petal].hist->Write();
+        daisy_petal_denom2d_hists_RES[petal].hist->Write();
+        daisy_petal_denom2d_hists_DIS[petal].hist->Write();
+        daisy_petal_denom2d_hists_Other[petal].hist->Write();
+        daisy_petal_denom2d_hists_2p2h[petal].hist->Write();  
+    }
      }
     // selected mc reco
   }
