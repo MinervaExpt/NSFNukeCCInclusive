@@ -4,8 +4,11 @@ from ROOT import PlotUtils
 from ROOT import TLegend
 from ROOT import THStack
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 plist = sys.argv[2]
+scale = sys.argv[3]
 
 targetID = 99
 targetZ = 99
@@ -17,16 +20,14 @@ mnv = PlotUtils.MnvPlotter()
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 2:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 vars = ["Enu", "x"]
 
 for var in vars:
-
+    total = infile.Get("selected_mc_reco_%s"%var)
     signal = infile.Get("selected_mc_reco_signal_%s"%var)
     # All background categories
     NotTracker = infile.Get("selected_mc_reco_NotTracker_%s"%var)
@@ -35,6 +36,14 @@ for var in vars:
     NotEmu = infile.Get("selected_mc_reco_NotEmu_%s"%var)
 
     data_hist = infile.Get("selected_data_reco_%s"%var)
+
+    # Background percentage
+    signal_per = round(signal.Integral()*100/total.Integral(),1)
+    NotTracker_per = round(NotTracker.Integral()*100/total.Integral(),1)
+    WrongSign_per = round(WrongSign.Integral()*100/total.Integral(),1)
+    NC_per = round(NC.Integral()*100/total.Integral(),1)
+    NotEmu_per = round(NotEmu.Integral()*100/total.Integral(),1) #100 - signal_per - US_hist_per - DS_hist_per - other_hist_per - WrongSign_per - NC_per
+    print(NotEmu_per)
 
     signal.Scale(signal.GetBinWidth(1), "width")
     NotTracker.Scale(NotTracker.GetBinWidth(1), "width")
@@ -55,7 +64,7 @@ for var in vars:
     NotEmu.SetLineColor(ROOT.kGray)
 
     signal.SetFillColor(ROOT.kGray+2)
-    signal.SetFillStyle(3005)
+    signal.SetFillStyle(3002)
     NotTracker.SetFillColor(30)
     WrongSign.SetFillColor(ROOT.kRed-6)
     NC.SetFillColor(ROOT.kBlue-5)
@@ -75,6 +84,7 @@ for var in vars:
     data_hist.SetLineWidth(1)
     data_hist.SetLineStyle(1)
     data_hist.SetLineColor(1)
+    data_hist.SetMaximum(data_hist.GetMaximum()*1.3)
     data_hist.Draw("HIST p E1 X0") # for error bars, suppressed error bars along X
 
 
@@ -89,7 +99,7 @@ for var in vars:
     stack.Draw("SAME HIST")
 
     if var == "Enu":
-        data_hist.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
+        data_hist.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
         data_hist.GetYaxis().SetTitle("Events/GeV")
 
     if var == "x":
@@ -103,20 +113,20 @@ for var in vars:
 
     mnv.AddHistoTitle("Tracker", 0.05, 1)
 
-    legend = TLegend(0.55,0.64,0.80,0.89)
+    legend = TLegend(0.40,0.60,0.80,0.85)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
     legend.AddEntry(data_hist, " Data", "ep")
-    legend.AddEntry(signal, " Signal", "fl")
+    legend.AddEntry(signal, " Signal ("+ str(signal_per) +"%)", "f")
     if WrongSign.GetEntries() != 0:
-        legend.AddEntry(WrongSign, " Wrong sign", "fl")
+        legend.AddEntry(WrongSign, " Wrong sign ("+ str(WrongSign_per) +"%)", "fl")
     if NC.GetEntries() != 0:
-        legend.AddEntry(NC, " Neutral current", "fl")
+        legend.AddEntry(NC, " Neutral current ("+ str(NC_per) +"%)", "fl")
     if NotTracker.GetEntries() != 0:
-        legend.AddEntry(NotTracker, " Outside tracker", "fl")
+        legend.AddEntry(NotTracker, " Outside tracker ("+ str(NotTracker_per) +"%)", "fl")
     if NotEmu.GetEntries() != 0:
-        legend.AddEntry(NotEmu, " Outside muon energy", "fl")
-    legend.SetTextFont(62)
+        legend.AddEntry(NotEmu, " Outside muon energy ("+ str(NotEmu_per) +"%)", "fl")
+    legend.SetTextFont(42)
     legend.Draw()
 
     canvas1.SetLogy(False)

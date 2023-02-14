@@ -5,10 +5,13 @@ from ROOT import TLegend
 from ROOT import THStack
 from ROOT import gStyle
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 targetID = sys.argv[2] 
 targetZ = sys.argv[3]
 plist = sys.argv[4]
+scale = sys.argv[5]
 
 infile= ROOT.TFile(str(dirpwd)+"EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
@@ -17,11 +20,9 @@ mnv = PlotUtils.MnvPlotter()
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 4:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 mat = None
 trueZ = None
@@ -41,7 +42,7 @@ if targetZ == "06":
 vars = ["Enu", "x"]
 
 for var in vars:
-
+    total = infile.Get("selected_mc_reco_%s"%var)
     signal = infile.Get("selected_mc_reco_signal_%s"%var)
     # All background categories
     #MaterialOrTarget = infile.Get("selected_mc_sb_%s_WrongMaterialOrTarget"%var)
@@ -54,6 +55,17 @@ for var in vars:
 
     data_hist = infile.Get("selected_data_reco_%s"%var)
 
+    # Background percentage
+    signal_per = round(signal.Integral()*100/total.Integral(),1)
+    US_hist_per = round(US_hist.Integral()*100/total.Integral(),1)
+    DS_hist_per = round(DS_hist.Integral()*100/total.Integral(),1)
+    other_hist_per = round(other_hist.Integral()*100/total.Integral(),1)
+    WrongSign_per = round(WrongSign.Integral()*100/total.Integral(),1)
+    NC_per = round(NC.Integral()*100/total.Integral(),1)
+    NotEmu_per = round(NotEmu.Integral()*100/total.Integral(),1) #100 - signal_per - US_hist_per - DS_hist_per - other_hist_per - WrongSign_per - NC_per
+    print(NotEmu_per)
+
+    total.Scale(total.GetBinWidth(1), "width")
     signal.Scale(signal.GetBinWidth(1), "width")
     DS_hist.Scale(DS_hist.GetBinWidth(1), "width")
     US_hist.Scale(US_hist.GetBinWidth(1), "width")
@@ -62,6 +74,7 @@ for var in vars:
     NC.Scale(NC.GetBinWidth(1), "width")
     NotEmu.Scale(NotEmu.GetBinWidth(1), "width")
 
+    total.Scale(mcScale)
     signal.Scale(mcScale)
     DS_hist.Scale(mcScale)
     US_hist.Scale(mcScale)
@@ -83,7 +96,7 @@ for var in vars:
 
     signal.SetFillColor(ROOT.kGray+2)
     #signal.SetFillColor(46)
-    signal.SetFillStyle(3005)
+    signal.SetFillStyle(3002)
     DS_hist.SetFillColor(ROOT.kOrange-2)
     US_hist.SetFillColor(30)
     other_hist.SetFillColor(38)
@@ -109,7 +122,7 @@ for var in vars:
     data_hist.SetLineWidth(1)
     data_hist.SetLineStyle(1)
     data_hist.SetLineColor(1)
-    data_hist.SetMaximum(data_hist.GetMaximum()*1.2)
+    data_hist.SetMaximum(data_hist.GetMaximum()*1.3)
     data_hist.Draw("HIST p E1 X0") # for error bars, suppressed error bars along X
     
     
@@ -167,22 +180,22 @@ for var in vars:
 
     mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
 
-    legend = TLegend(0.50,0.60,0.80,0.89)
+    legend = TLegend(0.40,0.60,0.80,0.89)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
     legend.AddEntry(data_hist, " Data", "ep")
-    legend.AddEntry(signal, " Signal", "f")
-    legend.AddEntry(US_hist, " Upstream plastic", "fl")
-    legend.AddEntry(DS_hist, " Downstream plastic", "fl")
-    legend.AddEntry(other_hist, " Other", "fl")
+    legend.AddEntry(signal, " Signal ("+ str(signal_per) +"%)", "f")
+    legend.AddEntry(US_hist, " Upstream plastic ("+ str(US_hist_per) +"%)", "fl")
+    legend.AddEntry(DS_hist, " Downstream plastic ("+ str(DS_hist_per) +"%)", "fl")
+    legend.AddEntry(other_hist, " Other ("+ str(other_hist_per) +"%)", "fl")
     if WrongSign.GetEntries() != 0:
-        legend.AddEntry(WrongSign, " Wrong sign", "fl")
+        legend.AddEntry(WrongSign, " Wrong sign ("+ str(WrongSign_per) +"%)", "fl")
     if NC.GetEntries() != 0:
-        legend.AddEntry(NC, " Neutral current", "fl")
+        legend.AddEntry(NC, " Neutral current ("+ str(NC_per) +"%)", "fl")
     if NotEmu.GetEntries() != 0:
-        legend.AddEntry(NotEmu, " Outside muon energy", "fl")
-    legend.SetTextFont(62)
+        legend.AddEntry(NotEmu, " Outside muon energy ("+ str(NotEmu_per) +"%)", "fl")
+    legend.SetTextFont(42)
     legend.Draw()
 
     #canvas1.SetLogy()
