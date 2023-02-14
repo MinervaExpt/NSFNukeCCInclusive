@@ -79,7 +79,10 @@ int main(int argc, char *argv[]){
 
 
   // MasterAnaDev tuples?
-  const std::string plist_string(playlist);    
+  const std::string plist_string(playlist); 
+
+  //const std::string mc_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/MasterAnaDev_MC_minervame6A_short.txt"); 
+  //const std::string data_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/MasterAnaDev_Data_minervame6A_short.txt");
 
   const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
@@ -158,14 +161,39 @@ int main(int argc, char *argv[]){
   std::cout << "Processing MC and filling histograms" << std::endl;
 
   FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
-  for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_bkg.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_signal.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_NotTracker.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_WrongSign.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_NC.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_NotEmu.SyncCVHistos();
-  for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
+  for (auto v : variablesMC) {
+    v->m_selected_mc_reco.SyncCVHistos();
+    // Interaction types
+    v->m_selected_mc_reco_QE.SyncCVHistos();
+    v->m_selected_mc_reco_RES.SyncCVHistos();
+    v->m_selected_mc_reco_DIS.SyncCVHistos();
+    v->m_selected_mc_reco_2p2h.SyncCVHistos();
+    v->m_selected_mc_reco_OtherIT.SyncCVHistos();
+    // Background breakdown
+    v->m_selected_mc_reco_bkg.SyncCVHistos();
+    v->m_selected_mc_reco_signal.SyncCVHistos();
+    v->m_selected_mc_reco_NotTracker.SyncCVHistos();
+    v->m_selected_mc_reco_WrongSign.SyncCVHistos();
+    v->m_selected_mc_reco_NC.SyncCVHistos();
+    v->m_selected_mc_reco_NotEmu.SyncCVHistos();
+
+  }
+  for (auto v : variables2DMC) {
+    v->m_selected_mc_reco.SyncCVHistos();
+    // Interaction type
+    v->m_selected_mc_reco_QE.SyncCVHistos();
+    v->m_selected_mc_reco_RES.SyncCVHistos();
+    v->m_selected_mc_reco_DIS.SyncCVHistos();
+    v->m_selected_mc_reco_2p2h.SyncCVHistos();
+    v->m_selected_mc_reco_OtherIT.SyncCVHistos();
+    // Background breakdown
+    v->m_selected_mc_reco_bkg.SyncCVHistos();
+    v->m_selected_mc_reco_signal.SyncCVHistos();
+    v->m_selected_mc_reco_NotTracker.SyncCVHistos();
+    v->m_selected_mc_reco_WrongSign.SyncCVHistos();
+    v->m_selected_mc_reco_NC.SyncCVHistos();
+    v->m_selected_mc_reco_NotEmu.SyncCVHistos();
+  }
    
   // DATA
   std::cout << "Processing Data and filling histograms" << std::endl;
@@ -312,6 +340,12 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int NC = 0;
   int WrongSign = 0;
 
+  int QE = 0;
+  int RES = 0;
+  int DIS = 0;
+  int npnh = 0;
+  int otherIT = 0 ;
+
   //int neutralcur = 0;
   //int wrongsign = 0;
   
@@ -355,6 +389,57 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
               if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+
+              // Interaction breakdown
+              if (universe->GetInt("mc_intType") == 1){ // QE
+                v->m_selected_mc_reco_QE.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              }
+              else if (universe->GetInt("mc_intType") == 2){ // RES
+                v->m_selected_mc_reco_RES.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              }
+              else if (universe->GetInt("mc_intType") == 3){ // DIS 
+                v->m_selected_mc_reco_DIS.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              }
+              else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+                v->m_selected_mc_reco_2p2h.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              }
+              else{ // other
+                v->m_selected_mc_reco_OtherIT.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              }
+
+              // Background breakdown              
+
+              // Signal
+              if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
+                if(cutter->TrackerOnlyTrue(universe)){
+                  if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
+                    v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                  }
+                  else{
+                    // background out of muon energy range
+                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+
+                    v->m_selected_mc_reco_NotEmu.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                  }
+                }
+                else{
+                  // background from outside of the tracker
+                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                  
+                  v->m_selected_mc_reco_NotTracker.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+              }
+              // Background: wrong sign events and neutral current events
+              else { 
+                v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+
+                if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
+                  v->m_selected_mc_reco_NC.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                } 
+                else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
+                  v->m_selected_mc_reco_WrongSign.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+              }
             }
 
             for (auto v : variables){
@@ -366,7 +451,30 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
       
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
               //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-            
+              
+              // Interaction breakdown
+              if (universe->GetInt("mc_intType") == 1){ // QE
+                v->m_selected_mc_reco_QE.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                QE++;
+              }
+              else if (universe->GetInt("mc_intType") == 2){ // RES
+                v->m_selected_mc_reco_RES.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                RES++;
+              }
+              else if (universe->GetInt("mc_intType") == 3){ // DIS 
+                v->m_selected_mc_reco_DIS.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                DIS++;
+              }
+              else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+                v->m_selected_mc_reco_2p2h.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                npnh++;
+              }
+              else{ // other
+                v->m_selected_mc_reco_OtherIT.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                otherIT++;
+              }
+
+              // Background breakdown            
               
               // Signal
               if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
@@ -470,15 +578,22 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Muon Energy cut  = "<< reco4 << std::endl;
   std::cout << "Muon theta cut  = " << reco5 << std::endl;
   std::cout << "**********************************" << std::endl;
+  if (isMC) {
+    std::cout<<"Interaction Type "<<std::endl;
+    std::cout << "QE = " << QE << std::endl;
+    std::cout << "RES = " << RES << std::endl;
+    std::cout << "DIS= " << DIS << std::endl;
+    std::cout << "2p2h = " << npnh << std::endl;
+    std::cout << "Other = " << otherIT << std::endl;
+    std::cout << "**********************************" << std::endl;
 
-  if(isMC){
-  std::cout << "Signal and Background " << std::endl;
-  std::cout << "Signal  = "<< Signal/univ_norm<< std::endl;
-  std::cout << "All background = "<< Bkg/univ_norm << std::endl;
-  std::cout << "Not Tracker  = "<< NotTracker/univ_norm << std::endl;
-  std::cout << "Neutral current (NC+CC) = "<< NC/univ_norm<< std::endl;
-  std::cout << "Wrong sign (CC) = "<< WrongSign/univ_norm << std::endl;
-  std::cout << "Not muon energy = "<< NotEmu/univ_norm<< std::endl;
+    std::cout << "Signal and Background " << std::endl;
+    std::cout << "Signal  = "<< Signal<< std::endl;
+    std::cout << "All background = "<< Bkg<< std::endl;
+    std::cout << "Not Tracker  = "<< NotTracker << std::endl;
+    std::cout << "Neutral current (NC+CC) = "<< NC<< std::endl;
+    std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
+    std::cout << "Not muon energy = "<< NotEmu<< std::endl;
   }
   
   //return variables;

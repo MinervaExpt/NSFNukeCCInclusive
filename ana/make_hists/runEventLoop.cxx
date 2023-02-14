@@ -93,6 +93,7 @@ int main(int argc, char *argv[]){
   // NukeCC Tuples ?
   // NukeCC Tuples ?
   const std::string plist_string(playlist);
+  
   const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
@@ -164,17 +165,43 @@ int main(int argc, char *argv[]){
   std::cout << "Processing MC and filling histograms" << std::endl;
 
   FillVariable(chainMC, helicity, utils, cutter,binsDef,variablesMC,variables2DMC,true,targetID, targetZ, plist_string,doDIS);     
-  for (auto v : variablesMC) v->m_selected_mc_reco.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_bkg.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_reco_signal.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_plastic.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_USplastic.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_DSplastic.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_other.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_WrongSign.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_NC.SyncCVHistos();
-  for (auto v : variablesMC) v->m_selected_mc_NotEmu.SyncCVHistos();
-  for (auto v : variables2DMC) v->m_selected_mc_reco.SyncCVHistos();
+  for (auto v : variablesMC) {
+    v->m_selected_mc_reco.SyncCVHistos();
+    // Interaction types
+    v->m_selected_mc_reco_QE.SyncCVHistos();
+    v->m_selected_mc_reco_RES.SyncCVHistos();
+    v->m_selected_mc_reco_DIS.SyncCVHistos();
+    v->m_selected_mc_reco_2p2h.SyncCVHistos();
+    v->m_selected_mc_reco_OtherIT.SyncCVHistos();
+    // Background breakdown
+    v->m_selected_mc_reco_bkg.SyncCVHistos();
+    v->m_selected_mc_reco_signal.SyncCVHistos();
+    v->m_selected_mc_USplastic.SyncCVHistos();
+    v->m_selected_mc_DSplastic.SyncCVHistos();
+    v->m_selected_mc_other.SyncCVHistos();
+    v->m_selected_mc_WrongSign.SyncCVHistos();
+    v->m_selected_mc_NC.SyncCVHistos();
+    v->m_selected_mc_NotEmu.SyncCVHistos();
+  }
+
+  for (auto v : variables2DMC) {
+    v->m_selected_mc_reco.SyncCVHistos();
+    // Interaction types
+    v->m_selected_mc_reco_QE.SyncCVHistos();
+    v->m_selected_mc_reco_RES.SyncCVHistos();
+    v->m_selected_mc_reco_DIS.SyncCVHistos();
+    v->m_selected_mc_reco_2p2h.SyncCVHistos();
+    v->m_selected_mc_reco_OtherIT.SyncCVHistos();
+    // Background breakdown
+    v->m_selected_mc_reco_bkg.SyncCVHistos();
+    v->m_selected_mc_reco_signal.SyncCVHistos();
+    v->m_selected_mc_USplastic.SyncCVHistos();
+    v->m_selected_mc_DSplastic.SyncCVHistos();
+    v->m_selected_mc_other.SyncCVHistos();
+    v->m_selected_mc_WrongSign.SyncCVHistos();
+    v->m_selected_mc_NC.SyncCVHistos();
+    v->m_selected_mc_NotEmu.SyncCVHistos();
+  }
    
   // DATA
   std::cout << "Processing Data and filling histograms" << std::endl;
@@ -364,6 +391,24 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int US=0;
   int DS=0;
   int other=0;
+
+  int QE = 0;
+  int RES = 0;
+  int DIS = 0;
+  int npnh = 0;
+  int otherIT = 0 ;
+
+  int Signal2d = 0;
+  int NotEmu2d = 0;
+  int WrongMaterialOrTarget2d = 0;
+  int plastic2d = 0;
+  int Bkg2d = 0;
+  int WrongSign2d = 0; // just CC antinu
+  int NC2d = 0; // both nu and antinu
+  int otherneutrinotype2d = 0;
+  int US2d=0;
+  int DS2d=0;
+  int other2d=0;
   
   CVUniverse *dataverse = new CVUniverse(chain,0);
     
@@ -411,13 +456,91 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               //if( universe->GetVecElem("ANN_plane_probs",0) < 0.2 ) continue;	   
               reco4++;
 
+              // 2D SELECTION
+
               for (auto v : variables2d){
                 if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
                 if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;	     
                 
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+
+                // Interaction breakdown
+                if (universe->GetInt("mc_intType") == 1){ // QE
+                  v->m_selected_mc_reco_QE.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+                else if (universe->GetInt("mc_intType") == 2){ // RES
+                  v->m_selected_mc_reco_RES.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+                else if (universe->GetInt("mc_intType") == 3){ // DIS 
+                  v->m_selected_mc_reco_DIS.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+                else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+                  v->m_selected_mc_reco_2p2h.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+                else{ // other
+                  v->m_selected_mc_reco_OtherIT.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                }
+
+                // Background breakdown
+                // Signal
+                if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
+                  if(cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) { // true fiducial z distance
+                    if(cutter->PassTrueMuEnergyCut(universe)){
+                      v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  Signal2d++;
+                    }
+                    else{
+                      // Background: out of muon energy range !
+                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+                      v->m_selected_mc_NotEmu.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  NotEmu2d++;
+                    }
+                  }
+                  else{ 
+                    //Background: different material !
+                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                    if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+                    
+                    if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
+                      v->m_selected_mc_plastic.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  plastic2d++;
+                      
+                      // DS
+                      if(universe->GetVecElem("ANN_vtx", 2) < universe->GetVecElem("mc_vtx", 2)){ // DS
+                        v->m_selected_mc_DSplastic.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                        if (v->GetName()=="pZmu_pTmu")  DS2d++;
+                      }
+                      // US
+                      else if(universe->GetVecElem("ANN_vtx", 2) > universe->GetVecElem("mc_vtx", 2)){ // US
+                      v->m_selected_mc_USplastic.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  US2d++;
+                      }
+                    }
+                    else{
+                      v->m_selected_mc_other.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                      if (v->GetName()=="pZmu_pTmu")  other2d++;
+                    }
+                  }
+                }
+                // Background: wrong sign events and neutral current events
+                else { 
+                  v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                  if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+
+                  if( 1 != universe->GetInt("mc_current")){ // NC neutrino and antineutrino
+                    v->m_selected_mc_NC.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                    if (v->GetName()=="pZmu_pTmu")  NC2d++;
+                  }
+
+                  else if( -14 != universe->GetInt("mc_incoming") ){ // CC neutrino only
+                    v->m_selected_mc_WrongSign.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                    if (v->GetName()=="pZmu_pTmu")  WrongSign2d++;
+                  }
+                }
 	            }
 
+              // 1D SELECTION
 	            for (auto v : variables){
 	              if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
 	              if( v->GetName()=="Enu") reco5++;
@@ -427,7 +550,31 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	     
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                 //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
-              
+
+                // Interaction breakdown
+                if (universe->GetInt("mc_intType") == 1){ // QE
+                  v->m_selected_mc_reco_QE.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  QE++;
+                }
+                else if (universe->GetInt("mc_intType") == 2){ // RES
+                  v->m_selected_mc_reco_RES.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  RES++;
+                }
+                else if (universe->GetInt("mc_intType") == 3){ // DIS 
+                  v->m_selected_mc_reco_DIS.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  DIS++;
+                }
+                else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+                  v->m_selected_mc_reco_2p2h.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  npnh++;
+                }
+                else{ // other
+                  v->m_selected_mc_reco_OtherIT.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+                  otherIT++;
+                }
+
+                // Background breakdown
+
                 // Signal
                 if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                   if(cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) { // true fiducial z distance
@@ -570,21 +717,43 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Muon Energy cut  = "<< reco5 << std::endl;
   std::cout << "Muon theta cut  = " << reco6 << std::endl;
   std::cout << "**********************************" << std::endl;
+  if (isMC) {
+    std::cout<<"Interaction Type "<<std::endl;
+    std::cout << "QE = " << QE << std::endl;
+    std::cout << "RES = " << RES << std::endl;
+    std::cout << "DIS= " << DIS << std::endl;
+    std::cout << "2p2h = " << npnh << std::endl;
+    std::cout << "Other = " << otherIT << std::endl;
+    std::cout << "**********************************" << std::endl;
 
-  std::cout << "Signal and Background " << std::endl;
-  std::cout << "Signal  = "<< Signal<< std::endl;
-  std::cout << "All background = "<< Bkg << std::endl;
-  std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
-  std::cout << "Out of that is NOT Plastic = " << other << std::endl;
-  std::cout << "Out of that is Plastic = " << plastic << std::endl;
-  std::cout << "Out of that is US plastic  = " << US << std::endl;
-  std::cout << "Out of that is DS plastic  = " << DS << std::endl;
-  std::cout << "Neutral current (nu+antinu) = "<< NC<< std::endl;
-  std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
-  std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
-  std::cout << "Not muon energy = "<< NotEmu << std::endl;
-  std::cout << "**********************************" << std::endl;
-  
+    std::cout << "Signal and Background " << std::endl;
+    std::cout << "Signal  = "<< Signal<< std::endl;
+    std::cout << "All background = "<< Bkg << std::endl;
+    std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget << std::endl;
+    std::cout << "Out of that is NOT Plastic = " << other << std::endl;
+    std::cout << "Out of that is Plastic = " << plastic << std::endl;
+    std::cout << "Out of that is US plastic  = " << US << std::endl;
+    std::cout << "Out of that is DS plastic  = " << DS << std::endl;
+    std::cout << "Neutral current (nu+antinu) = "<< NC<< std::endl;
+    std::cout << "Other neutrino types = " << otherneutrinotype << std::endl;
+    std::cout << "Wrong sign (CC) = "<< WrongSign << std::endl;
+    std::cout << "Not muon energy = "<< NotEmu << std::endl;
+    std::cout << "**********************************" << std::endl;
+
+    std::cout << "Signal and Background 2D " << std::endl;
+    std::cout << "Signal  = "<< Signal2d<< std::endl;
+    std::cout << "All background = "<< Bkg << std::endl;
+    std::cout << "Wrong target or material  = "<< WrongMaterialOrTarget2d << std::endl;
+    std::cout << "Out of that is NOT Plastic = " << other2d << std::endl;
+    std::cout << "Out of that is Plastic = " << plastic2d << std::endl;
+    std::cout << "Out of that is US plastic  = " << US2d << std::endl;
+    std::cout << "Out of that is DS plastic  = " << DS2d << std::endl;
+    std::cout << "Neutral current (nu+antinu) = "<< NC2d<< std::endl;
+    std::cout << "Other neutrino types = " << otherneutrinotype2d << std::endl;
+    std::cout << "Wrong sign (CC) = "<< WrongSign2d << std::endl;
+    std::cout << "Not muon energy = "<< NotEmu2d << std::endl;
+    std::cout << "**********************************" << std::endl;
+  }
   //return variables;
 }
 //=============================================================================

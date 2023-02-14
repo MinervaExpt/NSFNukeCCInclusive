@@ -84,7 +84,9 @@ int main(int argc, char *argv[]){
   //const std::string reco_tree_name("MasterAnaDev");
 
   // NukeCC Tuples ?
-  const std::string plist_string(playlist);    
+  const std::string plist_string(playlist);
+  //const std::string mc_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/try.txt"); 
+  //const std::string data_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/MasterAnaDev_data_AnaTuple_run00022246_Playlist.root");  
   const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
@@ -171,6 +173,7 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_reco.SyncCVHistos();
     for(int petal=0; petal<12; petal++){
       v->daisy_petal_mc2d_hists[petal].SyncCVHistos();
+      v->daisy_petal_mc2d_hists_bkg[petal].SyncCVHistos();
     }
   }
    
@@ -337,6 +340,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int NC = 0;
   int WrongSign = 0;
 
+  int Signal2d = 0;
+  int Bkg2d = 0;
+
   //int neutralcur = 0;
   //int wrongsign = 0;
   
@@ -389,8 +395,33 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
               if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-              v->daisy_petal_mc2d_hists[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+              v->daisy_petal_mc2d_hists[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
 
+              // Signal
+              if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
+                if(cutter->TrackerOnlyTrue(universe)){
+                  if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
+                    v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
+                    if (v->GetName()=="pZmu_pTmu")  Signal2d++;
+
+                  }
+                  else{
+                    // background out of muon energy range
+                    v->daisy_petal_mc2d_hists_bkg[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
+                    if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+                  }
+                }
+                else{
+                  // background from outside of the tracker
+                  v->daisy_petal_mc2d_hists_bkg[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
+                  if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+                }
+              }
+              // Background: wrong sign events and neutral current events
+              else { 
+                v->daisy_petal_mc2d_hists_bkg[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
+                if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+              }
             }
 
             for (auto v : variables){
@@ -403,6 +434,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
               
               v->daisy_petal_mc_hists[petal].univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
+              
 
               //v->m_selected_mc_sb.GetComponentHist("MC")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
             
@@ -533,6 +565,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   std::cout << "Neutral current (NC+CC) = "<< NC/univ_norm<< std::endl;
   std::cout << "Wrong sign (CC) = "<< WrongSign/univ_norm << std::endl;
   std::cout << "Not muon energy = "<< NotEmu/univ_norm<< std::endl;
+
+  std::cout << "Signal and Background 2D " << std::endl;
+  std::cout << "Signal  = "<< Signal2d/univ_norm<< std::endl;
+  std::cout << "All background = "<< Bkg2d/univ_norm << std::endl;
   }
   
   //return variables;
