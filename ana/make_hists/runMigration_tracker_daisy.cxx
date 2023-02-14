@@ -124,8 +124,8 @@ int main(int argc, char *argv[]){
 	 //double  MCscale=1.0;
 	 
 	 std::cout<<" MCScale= "<<MCscale<<std::endl; 
-	 std::vector<Var*> variablesMC,variablesData; 
-	 std::vector<Var2D*> variables2DMC,variables2DData; 
+	 std::vector<Var*> variablesMC; 
+	 std::vector<Var2D*> variables2DMC; 
 
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	TString histFileName;
@@ -152,11 +152,6 @@ int main(int argc, char *argv[]){
       v->daisy_petal_migration_hists[petal].SyncCVHistos(); 
     }
    }
-
-	 for (auto v : variables2DMC){
-     v-> mresp.SyncCVHistos();
-   }
-	 
 	 
 	 for (auto v : variablesMC) {
 	   v->WriteAllHistogramsToFileMig(fout, true);
@@ -173,11 +168,6 @@ int main(int argc, char *argv[]){
 	 }//End 1D plotting 
 	 */
 
-	 //For 2D variable
-
-	 for (auto v : variables2DMC) {
-	   v->WriteAllHistogramsToFileMig(fout,true);
-	 }
 
   fout.cd();
   auto dataPOTOut = new TParameter<double>("DataPOT", DataPot);
@@ -185,13 +175,6 @@ int main(int argc, char *argv[]){
   dataPOTOut->Write();
   mcPOTOut->Write(); 
 	 
-	 //Plotting in 2D
-	   
-	 //for(int i=0; i< variables2DMC.size();i++){
-	   //Plot2D(variables2DMC[i]->mresp.hist, variables2DMC[i]->GetName(), variables2DMC[i]->GetNameX(), variables2DMC[i]->GetNameY()); //Plotting line that I somehow cannot delete without producing memory errors, but no one else can reproduce. --ANF 2020.4.6
-	 //Plot2D(variables2DData[i]->m_selected_data_reco.hist, variables2DData[i]->GetName(), variables2DData[i]->GetNameX(),variables2DData[i]->GetNameY());
-	     
-	 //}//End 2D plotting
   std::cout << "DONE" << std::endl;
 
 
@@ -266,23 +249,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    
    //std::vector<Var*> variables = {enu,ehad}; 
    variables = {x, enu, emu, thetaMu};//{enu,ehad}; 
-   
-   //For 2D variable
-
-   Var2D* W_Q2     = new Var2D(*W, *Q2);
-   Var2D* enu_ehad = new Var2D(*enu, *ehad);
-   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
-   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
-   Var2D* x_y = new Var2D(*x, *y);  // y var
-   Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
   
-   variables2d = {};
-   
-   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
 
    //Migration starts here!
-   for (auto v : variables2d) v->SetupResponse(error_name);
    for (auto v : variables) v->SetupResponse1D(error_name);
     
   int reco0=0;
@@ -351,22 +321,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     // check x, y, z, coordinates
     // count how many are there 
 
-		 for (auto v : variables2d){
-	    if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
-	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
-      
-      if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
-	    //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
-      // NO TRUE angle cut, efficiency corrected
-	  
-      
-      v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-      //v->m_selected_Migration.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetWeight()); 
-      
-      //Migration stuff
-      v->FillResponse(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe),v->GetTrueValueX(*universe), v->GetTrueValueY(*universe),universe->ShortName(),universe->GetWeight(),unv_count); 
-		 }
-
 	   for (auto v : variables){
 	     if( v->GetName()!="Emu")   if(!cutter->PassMuEnergyCut(universe)) continue;
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassThetaCut(universe))continue;
@@ -390,7 +344,6 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      }
   }//End entries loop
  
- for (auto v : variables2d) v->getResponseObjects(error_bands);
  for (auto v : variables) v->getResponseObjects1D(error_bands);
  
  for(auto band : error_bands){
