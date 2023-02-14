@@ -303,7 +303,7 @@ int main(int argc, char * argv[]){
   prefixes.push_back("data");
   
   // output file
-  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%d_z%02d_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
+  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%02d_z%02d_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
    std::cout<<"Hi"<<std::endl;
 
   // read in the POT information
