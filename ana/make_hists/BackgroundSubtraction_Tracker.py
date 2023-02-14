@@ -22,7 +22,7 @@ targetZ = 99
 pwd = sys.argv[1]
 plist = sys.argv[2]
 
-infile = ROOT.TFile(str(pwd)+"EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
+infile = ROOT.TFile(str(pwd)+"/EventSelection/EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
