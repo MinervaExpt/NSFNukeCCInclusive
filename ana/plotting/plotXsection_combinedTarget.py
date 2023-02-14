@@ -4,10 +4,13 @@ from ROOT import PlotUtils
 from ROOT import gStyle
 from ROOT import TLegend
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 targetID = sys.argv[2] 
 targetZ = sys.argv[3]
 plist = sys.argv[4]
+scale = sys.argv[5]
 
 mat = None
 trueZ = None
@@ -38,11 +41,9 @@ mnv = PlotUtils.MnvPlotter()
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 4:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 vars = ["Enu", "x"]
 

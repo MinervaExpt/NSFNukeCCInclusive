@@ -5,8 +5,11 @@ from ROOT import gStyle
 from ROOT import TLegend
 from ROOT import gPad
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 plist = sys.argv[2]
+scale = sys.argv[3]
 
 targetID = 99 
 targetZ = 99
@@ -20,11 +23,9 @@ material = 'tracker_daisy'
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 2:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 mat = None
 trueZ = None

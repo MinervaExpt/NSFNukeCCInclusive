@@ -6,10 +6,13 @@ from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F, TColor, TLegend
 import os,sys
 from ROOT import PlotUtils
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 targetID = sys.argv[2] 
 targetZ = sys.argv[3]
 plist = sys.argv[4]
+scale = sys.argv[5]
 
 infile= ROOT.TFile(str(dirpwd)+"/Efficiency_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
 
@@ -20,11 +23,9 @@ ROOT.TH1.AddDirectory(False)
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 4:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 mat = None
 trueZ = None
@@ -287,7 +288,7 @@ for var in vars:
         mnv2.AddHistoTitle("Efficiency Denominator: Target %s %s"%(targetID, trueZ), 0.04, 1)
 
     canvas1.Modified()
-    canvas1.Print("Eficiency_t%s_z%02s_%s_%s_FracErrDenom.png"%(targetID, targetZ, var, plist))
+    canvas1.Print("Efficiency_t%s_z%02s_%s_%s_FracErrDenom.png"%(targetID, targetZ, var, plist))
 
     # Ratio
     mnv2.DrawErrorSummary(ratio, "TL", True, True, 0.0, False, "",True);
@@ -308,6 +309,12 @@ for var in vars:
                 k.SetY1(0.10) #Enu
                 if targetZ == "99":
                     k.SetY1(0.03) #Enu
+                if targetZ == "06":
+                    k.SetY1(0.06) #Enu
+                if targetZ == "26":
+                    if targetID == "5":
+                        k.SetY1(0.09) #Enu
+
 
             if var == "x":
                 k.SetNColumns(2)
@@ -315,6 +322,22 @@ for var in vars:
                 k.SetY1(0.06) #x
                 if targetZ == "99":
                     k.SetY1(0.025) #x
+                if targetZ == "06":
+                    k.SetY1(0.055) #x
+                if targetZ == "26":
+                    if targetID == "2":
+                        k.SetY1(0.09) #x
+                    if targetID == "3":
+                        k.SetY1(0.09) #x
+                    if targetID == "5":
+                        k.SetY1(0.08) #x
+                if targetZ == "82":
+                    if targetID == "2":
+                        k.SetY1(0.055) #x
+                    if targetID == "3":
+                        k.SetY1(0.05) #x
+                    if targetID == "4":
+                        k.SetY1(0.05) #x
 
     if targetZ == "99":
         mnv2.AddHistoTitle("Efficiency %s"%(trueZ), 0.05, 1)
@@ -322,6 +345,6 @@ for var in vars:
         mnv2.AddHistoTitle("Efficiency Target %s %s"%(targetID, trueZ), 0.04, 1)
 
     canvas1.Modified()
-    canvas1.Print("Eficiency_t%s_z%02s_%s_%s_FracErr.png"%(targetID, targetZ, var, plist))
+    canvas1.Print("Efficiency_t%s_z%02s_%s_%s_FracErr.png"%(targetID, targetZ, var, plist))
 
 print("DONE %s %s %02s"%(plist, targetID, targetZ))
