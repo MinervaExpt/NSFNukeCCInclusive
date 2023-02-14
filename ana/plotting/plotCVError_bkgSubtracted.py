@@ -3,10 +3,13 @@ import os,sys
 from ROOT import PlotUtils
 from ROOT import gStyle
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 targetID = sys.argv[2] 
 targetZ = sys.argv[3]
 plist = sys.argv[4]
+scale = sys.argv[5]
 
 infile= ROOT.TFile(str(dirpwd)+"/BkgSubtracted_EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
 
@@ -16,11 +19,9 @@ mnv = PlotUtils.MnvPlotter()
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 4:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 mat = None
 trueZ = None
@@ -56,7 +57,7 @@ for var in vars:
         mc_hist.GetYaxis().SetTitle("Events/GeV")
         data_hist.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
         if targetZ != "99":
-            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
 
     if var == "x":
         mc_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")

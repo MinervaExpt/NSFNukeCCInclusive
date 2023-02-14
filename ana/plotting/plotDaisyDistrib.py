@@ -7,8 +7,12 @@ from ROOT import TLegend
 from ROOT import gPad
 import numpy as np
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 plist = sys.argv[2]
+scale = sys.argv[3]
+
 
 targetID = 99
 targetZ = 99
@@ -20,11 +24,9 @@ mnv = PlotUtils.MnvPlotter()
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
 
-mcScale = None
-if len(sys.argv) > 2:
+mcScale = dataPOT/mcPOT
+if scale == "1":
     mcScale = 1
-else:
-    mcScale =  dataPOT/mcPOT
 
 mcColors = ROOT.MnvColors.GetColors(ROOT.MnvColors.kGlasbeyPalette)
 
