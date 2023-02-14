@@ -638,7 +638,8 @@ GridCanvas* plotYAxis1DRebinPt(std::vector<std::pair<TH2*, const char*> > histAn
 
 
   const int nLabels=6;
-  const double positions[nLabels]={0.4,1,1.5,2,2.5};
+  //const double positions[nLabels]={0.4,1,1.5,2,2.48};
+  const double positions[nLabels]={0.36,0.96,1.46,1.96,2.46};
   const char* valueStrings[nLabels]={"0.4","1.0","1.5","2.5","4.5"};
   
   gc->SetManualXLabels(nLabels, positions, valueStrings,0.03);
@@ -1682,8 +1683,6 @@ GridCanvas* plotXAxis1DRebinPz(std::vector<std::pair<TH2*, const char*> > histAn
     }
 
 
-    
-
     //    drawBinRange(histAndOpts[0].first, 2, i+1, celltitle.c_str(), ".2f", false,ncolumns,nrows);
     drawBinRange(histAndOpts[0].first, 2, i+1, celltitle.c_str(), ".2f", false);
 
@@ -1699,11 +1698,9 @@ GridCanvas* plotXAxis1DRebinPz(std::vector<std::pair<TH2*, const char*> > histAn
       la2->Draw();
     }
   }
-
   const int nLabels=5;
   const double positions[nLabels]={4,10,16,20,24};
   const char* valueStrings[nLabels]={"4","10","20", "40", "60"};
-  
   gc->SetManualXLabels(nLabels, positions, valueStrings,0.03);
   gc->SetXTitle(xaxistitle.c_str());
     //  gc->SetYTitle("d^{2}#sigma/dp_{T}dp_{||} (x10^{-39} cm^{2}/GeV^{2}/c^{2}/C^{12})");
