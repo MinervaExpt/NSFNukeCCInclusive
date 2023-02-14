@@ -3,6 +3,8 @@ import os,sys
 from ROOT import PlotUtils
 from ROOT import gStyle
 
+ROOT.gROOT.SetBatch(True)
+
 def colNormalize(hist):
         norm_hist = hist.Clone()
         norm_hist.Reset()
@@ -99,13 +101,6 @@ for var in vars:
                 new.GetYaxis().SetTitle("True Bjorken x")
                 new.SetMarkerSize(1.2)
 
-        if var == "x":
-                mc_hist.GetXaxis().SetTitle("Reconstructed Muon Anngle bin number")
-                mc_hist.GetYaxis().SetTitle("True Muon Angle bin number")
-                mc_hist.SetMarkerSize(1.5)
-                new.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
-                new.GetYaxis().SetTitle("True Muon Angle (Deg)")
-                new.SetMarkerSize(1.2)
 
         '''
         if myvariable == "x09":

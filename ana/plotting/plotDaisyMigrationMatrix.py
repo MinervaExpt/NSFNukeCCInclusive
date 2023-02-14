@@ -4,6 +4,8 @@ import os,sys
 from ROOT import PlotUtils
 from ROOT import gStyle
 
+ROOT.gROOT.SetBatch(True)
+
 def colNormalize(hist):
         norm_hist = hist.Clone()
         norm_hist.Reset()
@@ -165,4 +167,4 @@ void MnvPlotter::DrawNormalizedMigrationHistogram(
 {
 '''
 
-print("DONE %s 99 99"%(plist))
+print("DONE %s 99 99 Daisy"%(plist))
