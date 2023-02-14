@@ -144,3 +144,4 @@ ana/panel_plottingConcise/BackgroundBreakDown1
 ana/panel_plottingConcise/background_error_plot_gridAbsoluteError
 ana/panel_plottingConcise/plotDaisyEfficiencyNumDenom2D
 ana/panel_plottingConcise/SamePlot
+ana/panel_plottingConcise/libGridCanvas.so
