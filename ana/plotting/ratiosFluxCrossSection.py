@@ -6,6 +6,8 @@ from ROOT import TGaxis
 from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F, TColor, TLegend
 from ROOT import PlotUtils
 
+ROOT.gROOT.SetBatch(True)
+
 target = ROOT.TFile("/minerva/data2/users/anezkak/22-06-22-xSec_ratios_daisy/CrossSection_Daisy_t3_z06_minervame6A.root")
 tracker = ROOT.TFile("/minerva/data2/users/anezkak/22-06-22-xSec_ratios_daisy/CrossSection_Daisy_t99_z99_minervame6A.root")
 material = 'carbon'
