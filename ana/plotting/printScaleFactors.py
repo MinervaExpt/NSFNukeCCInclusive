@@ -3,6 +3,8 @@ import os,sys
 from ROOT import PlotUtils
 import math as m
 
+ROOT.gROOT.SetBatch(True)
+
 dirpwd = sys.argv[1]
 outdir = sys.argv[2]
 targetID = sys.argv[3] 

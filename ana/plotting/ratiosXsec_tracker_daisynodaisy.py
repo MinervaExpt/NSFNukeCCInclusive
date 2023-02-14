@@ -6,6 +6,8 @@ from ROOT import TGaxis
 from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F, TColor, TLegend
 from ROOT import PlotUtils
 
+ROOT.gROOT.SetBatch(True)
+
 nodaisy = ROOT.TFile("rootFiles/CrossSection_t99_z99_minervame6A.root")
 infile = ROOT.TFile("rootFiles/CrossSection_Daisy_t99_z99_minervame6A.root")
 

@@ -5,6 +5,8 @@ from ROOT import PlotUtils
 import ctypes
 import math as m
 
+ROOT.gROOT.SetBatch(True)
+
 def plotStackRatio(mnvPlotter, mcArray, data, mcScale, tuning, sideband, var):#, #tuning, sideband,):
     #Apply a different color for each MC category
     mcColors = MnvColors.GetColors(MnvColors.kOkabeItoDarkPalette)

@@ -6,6 +6,8 @@ from ROOT import TGaxis
 from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F, TColor, TLegend
 from ROOT import PlotUtils
 
+ROOT.gROOT.SetBatch(True)
+
 #targetID = sys.argv[1] 
 #targetZ = sys.argv[2]
 targetZ = sys.argv[1]
