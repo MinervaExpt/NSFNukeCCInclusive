@@ -70,7 +70,8 @@ int main(int argc, char *argv[]){
   //const std::string mc_file_list("../include/playlists/shortMC.txt");
   //const std::string data_file_list("../include/playlists/shortData.tx");
   //const std::string reco_tree_name("MasterAnaDev");
-  const std::string plist_string(playlist);
+  const std::string plist_string(playlist);  
+
   const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
@@ -112,6 +113,7 @@ int main(int argc, char *argv[]){
    NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
    NukeCC_Binning  *binsDef = new NukeCC_Binning();
   
+    PlotUtils::ChainWrapper* chainData = util.m_data;
     PlotUtils::ChainWrapper* chainTruth = util.m_truth;
     PlotUtils::ChainWrapper* chainMC = util.m_mc;
     HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
@@ -174,6 +176,12 @@ int main(int argc, char *argv[]){
     v->m_selected_truth_reco.SyncCVHistos();
     for(int petal=0; petal<12; petal++){
       v->daisy_petal_denom2d_hists[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists_QE[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists_RES[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists_DIS[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists_Other[petal].SyncCVHistos();
+      v->daisy_petal_denom2d_hists_2p2h[petal].SyncCVHistos();  
     }
   }
  
@@ -442,6 +450,23 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	    v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
       v->daisy_petal_denom2d_hists[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
 
+      // For MC cross-section int type breakdown
+        if (universe->GetInt("mc_intType") == 1){ // QE
+          v->daisy_petal_denom2d_hists_QE[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+        }
+        else if (universe->GetInt("mc_intType") == 2){ // RES
+          v->daisy_petal_denom2d_hists_RES[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+        }
+        else if (universe->GetInt("mc_intType") == 3){ // DIS 
+          v->daisy_petal_denom2d_hists_DIS[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+        }
+        else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+          v->daisy_petal_denom2d_hists_2p2h[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+        }
+        else{ // other 
+          v->daisy_petal_denom2d_hists_Other[petal].univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+        }
+
 	   }
 	   for (auto v : variables){
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
@@ -452,7 +477,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
        v->daisy_petal_denom_hists[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
 
-       // For MC cross-section int type breakdown
+        // For MC cross-section int type breakdown
         if (universe->GetInt("mc_intType") == 1){ // QE
           v->daisy_petal_denom_hists_QE[petal].univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
           QE++;

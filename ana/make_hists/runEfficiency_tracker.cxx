@@ -109,6 +109,7 @@ int main(int argc, char *argv[]){
    NukeCC_Cuts     *cutter  = new NukeCC_Cuts();
    NukeCC_Binning  *binsDef = new NukeCC_Binning();
   
+    PlotUtils::ChainWrapper* chainData = util.m_data;
     PlotUtils::ChainWrapper* chainTruth = util.m_truth;
     PlotUtils::ChainWrapper* chainMC = util.m_mc;
     HelicityType::t_HelicityType helicity = utils->GetHelicityFromPlaylist(plist_string);
@@ -151,7 +152,14 @@ int main(int argc, char *argv[]){
    for (auto v : variablesTruth) v->m_selected_truth_reco_DIS.SyncCVHistos();
    for (auto v : variablesTruth) v->m_selected_truth_reco_Other.SyncCVHistos();
    for (auto v : variablesTruth) v->m_selected_truth_reco_2p2h.SyncCVHistos();
-   for (auto v : variables2DTruth) v->m_selected_truth_reco.SyncCVHistos();
+   for (auto v : variables2DTruth) {
+    v->m_selected_truth_reco.SyncCVHistos();
+    v->m_selected_truth_reco_QE.SyncCVHistos();
+    v->m_selected_truth_reco_RES.SyncCVHistos();
+    v->m_selected_truth_reco_DIS.SyncCVHistos();
+    v->m_selected_truth_reco_Other.SyncCVHistos();
+    v->m_selected_truth_reco_2p2h.SyncCVHistos();
+   }
  
    for (auto v : variablesMC) {
      v->WriteAllHistogramsToFileEff(fout, true);
@@ -271,7 +279,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {};
+  variables2d = {pZmu_pTmu};
    
   //smakefor (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
@@ -389,10 +397,27 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;	     
 	    if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
 	    v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+
+       // For MC cross-section int type breakdown
+      if (universe->GetInt("mc_intType") == 1){ // QE
+        v->m_selected_truth_reco_QE.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+      }
+      else if (universe->GetInt("mc_intType") == 2){ // RES
+        v->m_selected_truth_reco_RES.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+      }
+      else if (universe->GetInt("mc_intType") == 3){ // DIS 
+        v->m_selected_truth_reco_DIS.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+      }
+      else if (universe->GetInt("mc_intType") == 8){ // 2p2h
+        v->m_selected_truth_reco_2p2h.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+      }
+      else{ // other
+        v->m_selected_truth_reco_Other.univHist(universe)->Fill(v->GetTrueValueX(*universe), v->GetTrueValueY(*universe), universe->GetTruthWeight());
+      }
 	   }
 	   for (auto v : variables){
 	     if( v->GetName()!="ThetaMu") if(!cutter->PassTrueThetaCut(universe))continue;
-       if( v->GetName()=="Enu") mc_truth2++;
+       if( v->GetName()=="Enu") mc_truth2++;  
 	     if( v->GetName()!="Emu")   if(!cutter->PassTrueMuEnergyCut(universe)) continue;
        if( v->GetName()=="Enu") mc_truth3++;
       v->m_selected_truth_reco.univHist(universe)->Fill(v->GetTrueValue(*universe, 0), universe->GetTruthWeight());
