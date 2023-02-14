@@ -298,6 +298,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   //=======================================================================================
   // HISTWRAPPER
   HW2D m_selected_mc_reco,m_selected_data_reco,m_selected_truth_reco,m_selected_Migration, mresp;
+  HW2D m_selected_truth_reco_QE, m_selected_truth_reco_RES, m_selected_truth_reco_DIS, m_selected_truth_reco_Other, m_selected_truth_reco_2p2h;
+
   //MinervaUnfold::MnvResponse* Response;
   std::map<std::string,MinervaUnfold::MnvResponse*> Response;
   std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr;
@@ -322,29 +324,35 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     MH2D* dummy_selected_mc_reco =
         new MH2D(Form("h_mc_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_reco = HW2D(dummy_selected_mc_reco, univs, clear_bands);
-    
-    
-    MH2D* dummy_selected_truth_reco =
-        new MH2D(Form("h_truth_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+
+    //////////For Efficiency 
+    MH2D* dummy_selected_truth_reco = new MH2D(Form("h_truth_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_truth_reco = HW2D(dummy_selected_truth_reco, univs, clear_bands);
-    
-   // MH2D* dummy_selected_truth_reco =
-   //     new MH2D(Form("selected_truth2d_reco_%s", name), name, setBinLogX(), GetBinVecX().data(), setBinLogY(), GetBinVecY().data());
-   //              GetBinVecX().data(), setBinLogY(), GetBinVecY().data());
-   // m_selected_truth_reco = HW2D(dummy_selected_truth_reco, univs, clear_bands);
+
+    MH2D* dummy_selected_truth_reco_QE = new MH2D(Form("h_truth_QE_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_truth_reco_QE = HW2D(dummy_selected_truth_reco_QE, univs, clear_bands);
+
+    MH2D* dummy_selected_truth_reco_RES = new MH2D(Form("h_truth_RES_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_truth_reco_RES = HW2D(dummy_selected_truth_reco_RES, univs, clear_bands);
+
+    MH2D* dummy_selected_truth_reco_DIS = new MH2D(Form("h_truth_DIS_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_truth_reco_DIS = HW2D(dummy_selected_truth_reco_DIS, univs, clear_bands);
+
+    MH2D* dummy_selected_truth_reco_Other = new MH2D(Form("h_truth_Other_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_truth_reco_Other = HW2D(dummy_selected_truth_reco_Other, univs, clear_bands);
+
+    MH2D* dummy_selected_truth_reco_2p2h = new MH2D(Form("h_truth_2p2h_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    m_selected_truth_reco_2p2h = HW2D(dummy_selected_truth_reco_2p2h, univs, clear_bands);
+
 
     MH2D* dummy_selected_data_reco =
         new MH2D(Form("h_data_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_data_reco = HW2D(dummy_selected_data_reco, univs, clear_bands);
     
 
-    /*MH2D* dummy_selected_Migration =
-        new MH2D(Form("selected_Migration_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsX(), GetBinVecX().data());
-    m_selected_Migration = HW2D(dummy_selected_Migration, univs, clear_bands);*/
-    
 
     /////For 2D analysis
-    MH2D* dummy_selected_Migration = new MH2D(Form("Migration_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsX(), GetBinVecX().data());
+    MH2D* dummy_selected_Migration = new MH2D(Form("selected_Migration_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsX(), GetBinVecX().data());
     m_selected_Migration = HW2D(dummy_selected_Migration, univs, clear_bands);///For 2D Migration
    
 
@@ -356,6 +364,11 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     //delete Response; 
     delete dummy_selected_mc_reco;
     delete dummy_selected_truth_reco;
+    delete dummy_selected_truth_reco_QE;
+    delete dummy_selected_truth_reco_RES;
+    delete dummy_selected_truth_reco_DIS;
+    delete dummy_selected_truth_reco_Other;
+    delete dummy_selected_truth_reco_2p2h;
     delete dummy_selected_Migration;
     delete dummy_selected_data_reco;
   }
@@ -366,27 +379,26 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
 void SetupResponse(std::map<const std::string, int> systematics){
 //void SetupResponse(T univs){
 
-	   const char* name = GetName().c_str();
-	   axis_binning bin_x, bin_y;
-	   bin_x.uniform=false;
+	const char* name = GetName().c_str();
+	axis_binning bin_x, bin_y;
+	bin_x.uniform=false;
 	
-     	   vector<double> vx;
+  vector<double> vx;
 	   
-	   for(int i=0; i<=GetNBinsX(); i++){vx.push_back(GetBinVecX().data()[i]);}
+	for(int i=0; i<=GetNBinsX(); i++){vx.push_back(GetBinVecX().data()[i]);}
      	   
-	   vector<double> vy;
-	   for(int j=0; j<=GetNBinsY(); j++){vy.push_back(GetBinVecY().data()[j]);}
-	   bin_x.bin_edges = vx;
-	   bin_x.nbins	    = GetNBinsX();
-	   bin_x.min 	    = GetBinVecX().data()[0];
-	   bin_x.max       = GetBinVecX().data()[GetNBinsX()];  
-	   bin_y.bin_edges = vy;
-	   bin_y.nbins	    = GetNBinsY();
-	   bin_y.min 	    = GetBinVecY().data()[0];
-	   bin_y.max       = GetBinVecY().data()[GetNBinsY()]; 
+	vector<double> vy;
+	for(int j=0; j<=GetNBinsY(); j++){vy.push_back(GetBinVecY().data()[j]);}
+	bin_x.bin_edges = vx;
+	bin_x.nbins	    = GetNBinsX();
+	bin_x.min 	    = GetBinVecX().data()[0];
+	bin_x.max       = GetBinVecX().data()[GetNBinsX()];  
+	bin_y.bin_edges = vy;
+	bin_y.nbins	    = GetNBinsY();
+	bin_y.min 	    = GetBinVecY().data()[0];
+	bin_y.max       = GetBinVecY().data()[GetNBinsY()]; 
 
-	   //Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("selected_mc_response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
-	   Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
+	Response.insert(pair<const std::string, MinervaUnfold::MnvResponse*>(name, new MinervaUnfold::MnvResponse(Form("response2d_%s", name), name, bin_x, bin_y, bin_x, bin_y, systematics))); 
 }
 
 //===================================================================================
@@ -396,8 +408,6 @@ void FillResponse(double x_reco, double y_reco, double x_true, double y_true, co
  	for(mnv_itr = Response.begin(); mnv_itr != Response.end(); ++mnv_itr){
 		(mnv_itr->second)->Fill(x_reco,y_reco,x_true,y_true,name,unv, w);
 	}		
-	
-	
 }
 //===================================================================================
 //
@@ -409,7 +419,7 @@ void getResponseObjects(T univs)
   for(mnv_itr2 = Response.begin(); mnv_itr2 != Response.end(); ++mnv_itr2){
                 (mnv_itr2->second)->GetMigrationObjects( migrationH, h_reco, h_truth );;
         }
-  const bool clear_bands = true;  
+  const bool clear_bands = false;  
   mresp = HW2D(migrationH, univs, clear_bands);
 }
 
@@ -429,9 +439,16 @@ void WriteAllHistogramsToFile(TFile& f,bool isMC) const {
 //=======================================================================================
 void WriteAllHistogramsToFileEff(TFile& f,bool isMC) const {
     f.cd();
-       if(isMC){ m_selected_mc_reco.hist->Write();
+       if(isMC){
+        m_selected_mc_reco.hist->Write();
    }  
-    else { m_selected_truth_reco.hist->Write();
+    else { 
+      m_selected_truth_reco.hist->Write();
+      m_selected_truth_reco_QE.hist->Write();
+      m_selected_truth_reco_RES.hist->Write();
+      m_selected_truth_reco_DIS.hist->Write();
+      m_selected_truth_reco_Other.hist->Write();
+      m_selected_truth_reco_2p2h.hist->Write();
      }
     // selected mc reco
   }
@@ -441,10 +458,8 @@ void WriteAllHistogramsToFileEff(TFile& f,bool isMC) const {
 void WriteAllHistogramsToFileMig(TFile& f,bool isMC) const {
     f.cd();
        if(isMC){ m_selected_mc_reco.hist->Write();
-                 m_selected_Migration.hist->Write();
-      //for (auto responses:Response)responses.second->GetMigrationMatrix()->Write();   
-        mresp.hist->Write(); 
-   }//  Response->GetMigrationMatrix()->Write();}   
+                 mresp.hist->Write(); 
+        } 
     else {m_selected_data_reco.hist->Write();
      }
   }
