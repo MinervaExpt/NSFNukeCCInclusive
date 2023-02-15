@@ -392,7 +392,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             //std::cout << "Petal" << petal << std::endl;
 
             for (auto v : variables2d){
-              if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
+              //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
               if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
               v->daisy_petal_mc2d_hists[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
@@ -400,16 +400,9 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               // Signal
               if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                 if(cutter->TrackerOnlyTrue(universe)){
-                  if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
-                    v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
-                    if (v->GetName()=="pZmu_pTmu")  Signal2d++;
+                  v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
+                  if (v->GetName()=="pZmu_pTmu")  Signal2d++;
 
-                  }
-                  else{
-                    // background out of muon energy range
-                    v->daisy_petal_mc2d_hists_bkg[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
-                    if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
-                  }
                 }
                 else{
                   // background from outside of the tracker

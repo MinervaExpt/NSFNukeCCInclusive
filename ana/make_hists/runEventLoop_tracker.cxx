@@ -192,7 +192,7 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_reco_NotTracker.SyncCVHistos();
     v->m_selected_mc_reco_WrongSign.SyncCVHistos();
     v->m_selected_mc_reco_NC.SyncCVHistos();
-    v->m_selected_mc_reco_NotEmu.SyncCVHistos();
+    //v->m_selected_mc_reco_NotEmu.SyncCVHistos();
   }
    
   // DATA
@@ -386,7 +386,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
             reco3++;
 
             for (auto v : variables2d){
-              if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
+              //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
               if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
               v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
 
@@ -412,15 +412,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               // Signal
               if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                 if(cutter->TrackerOnlyTrue(universe)){
-                  if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
-                    v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                  }
-                  else{
-                    // background out of muon energy range
-                    v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-
-                    v->m_selected_mc_reco_NotEmu.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                  }
+                  v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
                 }
                 else{
                   // background from outside of the tracker

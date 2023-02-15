@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_other.SyncCVHistos();
     v->m_selected_mc_WrongSign.SyncCVHistos();
     v->m_selected_mc_NC.SyncCVHistos();
-    v->m_selected_mc_NotEmu.SyncCVHistos();
+    //v->m_selected_mc_NotEmu.SyncCVHistos();
   }
    
   // DATA
@@ -399,7 +399,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   int otherIT = 0 ;
 
   int Signal2d = 0;
-  int NotEmu2d = 0;
+  //int NotEmu2d = 0;
   int WrongMaterialOrTarget2d = 0;
   int plastic2d = 0;
   int Bkg2d = 0;
@@ -459,7 +459,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               // 2D SELECTION
 
               for (auto v : variables2d){
-                if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
+                //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
                 if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;	     
                 
                 v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
@@ -485,17 +485,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 // Signal
                 if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                   if(cutter->IsInTrueMaterial(universe,targetID, targetZ,false)) { // true fiducial z distance
-                    if(cutter->PassTrueMuEnergyCut(universe)){
-                      v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                      if (v->GetName()=="pZmu_pTmu")  Signal2d++;
-                    }
-                    else{
-                      // Background: out of muon energy range !
-                      v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                      if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
-                      v->m_selected_mc_NotEmu.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                      if (v->GetName()=="pZmu_pTmu")  NotEmu2d++;
-                    }
+                    v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+                    if (v->GetName()=="pZmu_pTmu")  Signal2d++;
                   }
                   else{ 
                     //Background: different material !
@@ -751,7 +742,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     std::cout << "Neutral current (nu+antinu) = "<< NC2d<< std::endl;
     std::cout << "Other neutrino types = " << otherneutrinotype2d << std::endl;
     std::cout << "Wrong sign (CC) = "<< WrongSign2d << std::endl;
-    std::cout << "Not muon energy = "<< NotEmu2d << std::endl;
+    //std::cout << "Not muon energy = "<< NotEmu2d << std::endl;
     std::cout << "**********************************" << std::endl;
   }
   //return variables;

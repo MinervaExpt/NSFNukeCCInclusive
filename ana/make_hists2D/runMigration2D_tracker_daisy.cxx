@@ -290,11 +290,11 @@ void FillVariable(TFile* fout, PlotUtils::ChainWrapper* chain, HelicityType::t_H
 
 
 		 for (auto v : variables2d){
-	    if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
+	    //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(universe)) continue;
 	    if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(universe)) continue;
       if( v->GetName()=="pZmu_pTmu") reco7++;
 
-      if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
+      //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassTrueMuEnergyCut(universe)) continue;
 	    //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
       // NO TRUE angle cut, efficiency corrected
 	    if( v->GetName()=="pZmu_pTmu") reco8++;   

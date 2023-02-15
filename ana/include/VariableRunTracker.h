@@ -177,7 +177,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   //=======================================================================================
   // HISTWRAPPER
   HW2D m_selected_mc_reco,m_selected_mc_reco_bkg,m_selected_data_reco, m_selected_mc_reco_signal;
-  HW2D m_selected_mc_reco_NotTracker,m_selected_mc_reco_WrongSign,m_selected_mc_reco_NC, m_selected_mc_reco_NotEmu;
+  HW2D m_selected_mc_reco_NotTracker,m_selected_mc_reco_WrongSign,m_selected_mc_reco_NC; // m_selected_mc_reco_NotEmu;
   HW2D m_selected_mc_reco_QE, m_selected_mc_reco_RES, m_selected_mc_reco_DIS, m_selected_mc_reco_2p2h, m_selected_mc_reco_OtherIT;
 
 
@@ -233,8 +233,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     MH2D* dummy_selected_mc_reco_NC = new MH2D(Form("selected_mc_reco2d_NC_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_mc_reco_NC = HW2D(dummy_selected_mc_reco_NC, univs, clear_bands);
 
-    MH2D* dummy_selected_mc_reco_NotEmu = new MH2D(Form("selected_mc_reco2d_NotEmu_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
-    m_selected_mc_reco_NotEmu = HW2D(dummy_selected_mc_reco_NotEmu, univs, clear_bands);
+    //MH2D* dummy_selected_mc_reco_NotEmu = new MH2D(Form("selected_mc_reco2d_NotEmu_%s", name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+    //m_selected_mc_reco_NotEmu = HW2D(dummy_selected_mc_reco_NotEmu, univs, clear_bands);
 
     MH2D* dummy_selected_data_reco = new MH2D(Form("selected_data2d_reco_%s", name), name, GetNBinsX(),GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
     m_selected_data_reco = HW2D(dummy_selected_data_reco, univs, clear_bands);
@@ -250,7 +250,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     delete dummy_selected_mc_reco_NotTracker;
     delete dummy_selected_mc_reco_WrongSign;
     delete dummy_selected_mc_reco_NC;
-    delete dummy_selected_mc_reco_NotEmu;
+    //delete dummy_selected_mc_reco_NotEmu;
     delete dummy_selected_data_reco;
   }
 
@@ -271,7 +271,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
         m_selected_mc_reco_NotTracker.hist->Write();
         m_selected_mc_reco_WrongSign.hist->Write();
         m_selected_mc_reco_NC.hist->Write();
-        m_selected_mc_reco_NotEmu.hist->Write();
+        //m_selected_mc_reco_NotEmu.hist->Write();
        }
        else m_selected_data_reco.hist->Write();
     // selected mc reco
