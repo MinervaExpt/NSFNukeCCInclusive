@@ -32,7 +32,7 @@ mcScale =  dataPOT/mcPOT
 # files to write results in
 out1 = ROOT.TFile("BkgSubtracted_EventSelection_daisy_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"RECREATE")
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 
 for var in vars:
   for petal in range(0,12):
