@@ -105,7 +105,7 @@ namespace NUKECC_ANA
   const double MAX_RECO_E = 120.*1000; //in MeV // cut out events with neutrino energy larger than this
 
   const double MIN_RECO_E_MU = 2.*1000; //in MeV // cut out events with muon energy smaller than this
-  const double MAX_RECO_E_MU = 50.*1000; //in MeV // cut out events with muon energy larger than this
+  const double MAX_RECO_E_MU = 20.*1000; //in MeV // cut out events with muon energy larger than this
 
   // Inelastic Cut
   const bool USE_INEL_CUT = false;           // should I use the inelastic cut to get a dis-like sample?
