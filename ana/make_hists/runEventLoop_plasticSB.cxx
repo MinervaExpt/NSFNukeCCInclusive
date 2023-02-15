@@ -190,6 +190,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
   std::vector<double> ThetaMuBin,Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin;
   std::vector<double> planeDNNbin;
+  std::vector<double> pTbin, pZbin;
 
   if (doDIS){
     Enubin = binsDef->GetDISBins("Enu"); 
@@ -210,6 +211,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
     ybin = binsDef->GetEnergyBins("y");
     planeDNNbin = binsDef->GetEnergyBins("planeDNN");
     ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
+    pTbin = binsDef->GetEnergyBins("muonPt"); 
+    pZbin = binsDef->GetEnergyBins("muonPz"); 
   }
 
   Q2bin = binsDef->GetSidebandBins("Q2");
@@ -224,6 +227,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* x = new Var("x", "x", xbin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
   Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
+  Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
+  Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
    
   //variables = {planeDNN, enu, ehad, emu, x, y, W, Q2}; 
   variables = {planeDNN, enu, x, thetaMu, pTmu, pZmu}; 
