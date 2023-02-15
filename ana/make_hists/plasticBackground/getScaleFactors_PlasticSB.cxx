@@ -122,7 +122,9 @@ int main(int argc, char * argv[]){
   vars.push_back("planeDNN");
   vars.push_back("Enu");
   vars.push_back("x");
-
+  vars.push_back("pTmu");
+  vars.push_back("pZmu");
+  
 
   TFile *f1 = new TFile( histFileName,"read" );
 
