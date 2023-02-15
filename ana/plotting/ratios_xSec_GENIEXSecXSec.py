@@ -37,7 +37,7 @@ mnv = PlotUtils.MnvPlotter()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x"]
+vars = ["Enu","x", "pTmu", "pZmu"]
 
 for var in vars:
 
@@ -54,12 +54,20 @@ for var in vars:
     ratio.SetLineColor(ROOT.kRed)
 
     if var == "Enu":
-        ratio.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
-        ratio.GetYaxis().SetTitle("Events/GeV")
+      ratio.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
+      ratio.GetYaxis().SetTitle("Events/GeV")
 
     if var == "x":
-        ratio.GetXaxis().SetTitle("Bjorken x")
-        ratio.GetYaxis().SetTitle("Events (norm.)")
+      ratio.GetXaxis().SetTitle("Bjorken x")
+      ratio.GetYaxis().SetTitle("Events (norm.)")
+    
+    if var == "pTmu":
+      ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+      ratio.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "pZmu":
+      ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+      ratio.GetYaxis().SetTitle("Events/(GeV/c)")
 
     ratio.GetXaxis().CenterTitle()
     ratio.GetYaxis().CenterTitle()

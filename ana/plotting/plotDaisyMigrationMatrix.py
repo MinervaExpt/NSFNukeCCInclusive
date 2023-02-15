@@ -48,7 +48,7 @@ infile= ROOT.TFile(str(dirpwd)+"/Migration_Daisy_%s_t99_z99_sys.root"%(plist))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
-vars = ["Enu", "x"] #"ThetamuDeg"]
+vars = ["Enu", "x", "pTmu", "pZmu"] #"ThetamuDeg"]
 
 for var in vars:
         for petal in range(0,12):
@@ -71,6 +71,16 @@ for var in vars:
                 if var == "x":
                         new.GetXaxis().SetTitle("Reconstructed Bjorken x")
                         new.GetYaxis().SetTitle("True Bjorken x")
+                        new.SetMarkerSize(1.2)
+
+                if var == "pTmu":
+                        new.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+                        new.GetYaxis().SetTitle("True Muon p_{T} (GeV/c)")
+                        new.SetMarkerSize(1.2)
+                
+                if var == "pZmu":
+                        new.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+                        new.GetYaxis().SetTitle("True Muon p_{Z} (GeV/c)")
                         new.SetMarkerSize(1.2)
 
                 '''

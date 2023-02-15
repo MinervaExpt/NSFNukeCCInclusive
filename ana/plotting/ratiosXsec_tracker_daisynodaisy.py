@@ -16,7 +16,7 @@ mnv = PlotUtils.MnvPlotter()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x"]
+vars = ["Enu","x", "pTmu", "pZmu"]
 
 for var in vars:
     if var=="Enu":
@@ -75,6 +75,18 @@ for var in vars:
         ratio_mc_C.GetYaxis().SetTitle("Events (norm.)")
         ratio_data_C.GetXaxis().SetTitle("Bjorken x")
         ratio_data_C.GetYaxis().SetTitle("Events (norm.)")
+
+    if var == "pTmu":
+        ratio_mc_C.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_mc_C.GetYaxis().SetTitle("Events/(GeV/c)")
+        ratio_data_C.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_data_C.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "pZmu":
+        ratio_mc_C.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio_mc_C.GetYaxis().SetTitle("Events/(GeV/c)")
+        ratio_data_C.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio_data_C.GetYaxis().SetTitle("Events/(GeV/c)")    
 
     ratio_mc_C.GetXaxis().CenterTitle()
     ratio_mc_C.GetYaxis().CenterTitle()

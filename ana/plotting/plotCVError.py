@@ -44,7 +44,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x"]#, "ThetamuDeg"]
+vars = ["Enu", "x", "pTmu", "pZmu"]#, "ThetamuDeg"]
 
 for var in vars:
 
@@ -63,6 +63,14 @@ for var in vars:
     if var == "ThetamuDe":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
         mc_hist.GetYaxis().SetTitle("Events/Deg")
+    
+    if var == "pTmu":
+        mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "pZmu":
+        mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
     '''
     if myvariable == "xfine":

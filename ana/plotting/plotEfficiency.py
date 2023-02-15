@@ -46,7 +46,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 for var in vars:
     # numerator vs denominator
     num_hist = infile.Get("h_mc_%s"%var) # selected signal
@@ -75,6 +75,18 @@ for var in vars:
         denom_hist.GetYaxis().SetTitle("Events (norm.)")
         num_hist.GetXaxis().SetTitle("Bjorken x")
         num_hist.GetYaxis().SetTitle("Events (norm.)")
+    if var == "pTmu":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        denom_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+        num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+    if var == "pZmu":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        denom_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+        num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
     ratio.GetYaxis().SetTitle("Efficiency")
     ratio.GetXaxis().CenterTitle()

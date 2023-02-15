@@ -34,7 +34,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 
 steps = [ 'crossSection', 'crossSection_total']
 #steps = ['crossSection', 'crossSection_total']
@@ -72,6 +72,28 @@ for step in steps:
                 gStyle.SetTitleSize(0.05,"y")
             else:
                 mc_hist_C.GetYaxis().SetTitle("Events (norm.)")
+
+        if var == "pTmu":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+            if step == "crossSection":
+                mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
+                gStyle.SetTitleSize(0.05,"y")
+            elif step == "crossSection_total":
+                mc_hist.GetYaxis().SetTitle("#sigma (10^{-38} cm^{2}/CH)")
+                gStyle.SetTitleSize(0.05,"y")
+            else:
+                mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
+       
+        if var == "pZmu":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            if step == "crossSection":
+                mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
+                gStyle.SetTitleSize(0.05,"y")
+            elif step == "crossSection_total":
+                mc_hist.GetYaxis().SetTitle("#sigma (10^{-38} cm^{2}/CH)")
+                gStyle.SetTitleSize(0.05,"y")
+            else:
+                mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
         if step == "crossSection":
             mc_hist_C.Scale(1E39)

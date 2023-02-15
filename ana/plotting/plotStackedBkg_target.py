@@ -39,7 +39,7 @@ if targetZ == "06":
     trueZ = "Carbon"
     mat = "C"
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 
 for var in vars:
     total = infile.Get("selected_mc_reco_%s"%var)
@@ -159,6 +159,14 @@ for var in vars:
     if var == "x":
         data_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         data_hist.GetYaxis().SetTitle("Events (norm.)")
+    
+    if var == "pTmu":
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        data_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "pZmu":
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        data_hist.GetYaxis().SetTitle("Events/(GeV/c)")   
 
 
     '''

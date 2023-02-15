@@ -27,7 +27,7 @@ if scale == "1":
 
 mcColors = ROOT.MnvColors.GetColors(ROOT.MnvColors.kGlasbeyPalette)
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 
 
 for var in vars:
@@ -51,6 +51,12 @@ for var in vars:
         elif var == "vtxx_vtxy":
             mc_hist.GetXaxis().SetTitle("Vertex X (cm)")
             mc_hist.GetYaxis().SetTitle("Vertex Y (cm)")
+        elif var == "pTmu":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+            mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+        elif var == "pZmu":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         mc_hist.GetXaxis().CenterTitle()
         mc_hist.GetYaxis().CenterTitle()
         mc_hist.SetMaximum(mc_hist.GetMaximum()*1.2)

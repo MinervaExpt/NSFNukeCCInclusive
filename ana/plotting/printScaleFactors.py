@@ -32,7 +32,7 @@ infileUntuned = ROOT.TFile.Open(str(dirpwd)+"/PlasticBkg_%s_t%s_z%02s_sys.root"%
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
-vars = ["planeDNN", "Enu", "x"]
+vars = ["planeDNN", "Enu", "x", "pTmu", "pZmu"]
 
 for var in vars:
     upstream = infile.Get("scaleFactor_US_%s"%var)
@@ -97,6 +97,12 @@ for var in vars:
 
     if var == "planeDNN":
         upstreamStat.GetXaxis().SetTitle("Plane Number")
+    
+    if var == "pTmu":
+        upstreamStat.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+       
+    if var == "pZmu":
+        upstreamStat.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
 
     upstreamStat.GetYaxis().SetTitle("Scaling Factor")
     upstreamStat.GetXaxis().CenterTitle()

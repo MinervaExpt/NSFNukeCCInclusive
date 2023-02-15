@@ -109,6 +109,14 @@ for var in vars:
         ratio_mc.GetXaxis().SetTitle("Bjorken x")
         ratio_mc.GetYaxis().SetTitle("Events (norm.)")
 
+    if var == "pTmu":
+        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
+       
+    if var == "pZmu":
+        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
+
     ratio_mc.GetXaxis().CenterTitle()
     ratio_mc.GetYaxis().CenterTitle()
     ratio_mc.GetYaxis().SetNdivisions(505)

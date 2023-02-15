@@ -42,7 +42,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu", "pZmu"]
 
 for var in vars:
 
@@ -65,6 +65,21 @@ for var in vars:
         data_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         if targetZ != "99":
             data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Bjorken x") 
+
+    if var == "pTmu":
+        mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c")
+        if targetZ != "99":
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c") 
+
+    if var == "pZmu":
+        mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c")
+        if targetZ != "99":
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c") 
+
 
     '''
     if myvariable == "xfine":
