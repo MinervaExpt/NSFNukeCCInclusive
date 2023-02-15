@@ -92,21 +92,20 @@ int main(int argc, char *argv[]){
  // std::map<std::string, std::vector<CVUniverse*> > error_bands =
    //   GetErrorBands(util.m_mc);
 
-   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
-   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-   PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
-   PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
-   PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
-   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
-   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
-   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
-   //Tracker or nuke (what clusters are accepted for reconstruction)
-   PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
-   //Neutron CV reweight is on by default (recommended you keep this on)
-   PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
-   //Elastics are on by default (recommended you keep this on)
-   PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
-
+  PlotUtils::MinervaUniverse::SetNuEConstraint(true);
+  PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
+  PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
+  PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
+  PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
+  PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(true);
+  PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+  // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
+  //Tracker or nuke (what clusters are accepted for reconstruction)
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  //Neutron CV reweight is on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
+  //Elastics are on by default (recommended you keep this on)
+  PlotUtils::MinervaUniverse::SetMHRWeightElastics(true);
 
      
    NukeCCUtilsNSF  *utils   = new NukeCCUtilsNSF(plist_string);
