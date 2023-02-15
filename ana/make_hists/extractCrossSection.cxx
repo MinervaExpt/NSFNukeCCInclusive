@@ -297,6 +297,8 @@ int main(int argc, char * argv[]){
   std::vector<string> vars;
   vars.push_back("Enu");
   vars.push_back("x");
+  vars.push_back("pTmu");
+  vars.push_back("pZmu");
 
   // to iterate over mc and data
   std::vector<string> prefixes;
