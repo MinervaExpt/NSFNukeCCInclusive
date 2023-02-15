@@ -256,7 +256,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu, thetaMu, emu};//{enu,ehad}; 
+   variables = {x, enu, thetaMu, emu, pTmu, pZmu};//{enu,ehad}; 
    
    //For 2D variable
 

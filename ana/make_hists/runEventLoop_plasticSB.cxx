@@ -226,7 +226,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
    
   //variables = {planeDNN, enu, ehad, emu, x, y, W, Q2}; 
-  variables = {planeDNN, enu, x, thetaMu}; 
+  variables = {planeDNN, enu, x, thetaMu, pTmu, pZmu}; 
       
   std::vector<int> targetIDs;
     

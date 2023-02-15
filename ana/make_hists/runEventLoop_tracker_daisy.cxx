@@ -304,7 +304,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
 
   //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {enu,  x, thetaMu}; //{enu,ehad}; 
+  variables = {enu,  x, thetaMu, pTmu, pZmu}; //{enu,ehad}; 
 
   // 2D Variables 
   // 2D Variables 

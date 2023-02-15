@@ -248,7 +248,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
    
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu, emu, thetaMu};//{enu,ehad}; 
+   variables = {x, enu, emu, thetaMu, pTmu, pZmu};//{enu,ehad}; 
   
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
 

@@ -311,7 +311,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
   //variables = {emu, ehad, enu, thetaMu, x, x09, xfine, xBrian, y, Q2, W, vtxx, vtxy, vtxz, ANNPlaneProb, planeDNN, pTmu, pZmu}; //{enu,ehad}; 
-  variables = {enu, x,vtxz, planeDNN, Q2, pTmu, pZmu, thetaMu}; //{enu,ehad}; 
+  variables = {enu, x,vtxz, planeDNN, pTmu, pZmu, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
