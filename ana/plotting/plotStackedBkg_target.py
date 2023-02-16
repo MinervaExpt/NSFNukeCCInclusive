@@ -4,6 +4,7 @@ from ROOT import PlotUtils
 from ROOT import TLegend
 from ROOT import THStack
 from ROOT import gStyle
+from ROOT import gPad
 
 ROOT.gROOT.SetBatch(True)
 
@@ -137,6 +138,9 @@ for var in vars:
     stack.Add(US_hist)
     stack.Add(signal)
     stack.Draw("SAME HIST")
+
+    gPad.RedrawAxis()
+    gPad.Update()
     
 
     '''

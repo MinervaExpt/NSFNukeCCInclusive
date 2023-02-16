@@ -3,6 +3,7 @@ import os,sys
 from ROOT import PlotUtils
 from ROOT import TLegend
 from ROOT import THStack
+from ROOT import gPad
 
 ROOT.gROOT.SetBatch(True)
 
@@ -114,6 +115,8 @@ for var in vars:
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         data_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
+    gPad.RedrawAxis()
+    gPad.Update()
 
     data_hist.GetXaxis().CenterTitle()
     data_hist.GetYaxis().CenterTitle()
