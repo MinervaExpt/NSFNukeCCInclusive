@@ -41,6 +41,11 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   MnvH2D* dataMnv=(MnvH2D*)f1->Get("selected_data_reco2d_pZmu_pTmu");
   MnvH2D* mcMnv=(MnvH2D*)f1->Get("selected_mc_reco2d_pZmu_pTmu");
+  MnvH2D* mcMnv_QE=(MnvH2D*)f1->Get("selected_mc_reco2d_QE_pZmu_pTmu");
+  MnvH2D* mcMnv_RES=(MnvH2D*)f1->Get("selected_mc_reco2d_RES_pZmu_pTmu");
+  MnvH2D* mcMnv_DIS=(MnvH2D*)f1->Get("selected_mc_reco2d_DIS_pZmu_pTmu");
+  MnvH2D* mcMnv_2p2h=(MnvH2D*)f1->Get("selected_mc_reco2d_2p2h_pZmu_pTmu");
+  MnvH2D* mcMnv_OtherIT=(MnvH2D*)f1->Get("selected_mc_reco2d_OtherIT_pZmu_pTmu");
 
   string trueZ;
   string mat;
@@ -93,11 +98,20 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   if(targetID==99){
     dataMnv->Scale(1e-4, "width");
     mcMnv->Scale(scale*1e-4, "width");
+    mcMnv_QE->Scale(scale*1e-4, "width");
+    mcMnv_RES->Scale(scale*1e-4, "width");
+    mcMnv_DIS->Scale(scale*1e-4, "width");
+    mcMnv_2p2h->Scale(scale*1e-4, "width");
+    mcMnv_OtherIT->Scale(scale*1e-4, "width");
   }
   else{
     dataMnv->Scale(1e-3, "width");
     mcMnv->Scale(scale*1e-3, "width");
-
+    mcMnv_QE->Scale(scale*1e-3, "width");
+    mcMnv_RES->Scale(scale*1e-3, "width");
+    mcMnv_DIS->Scale(scale*1e-3, "width");
+    mcMnv_2p2h->Scale(scale*1e-3, "width");
+    mcMnv_OtherIT->Scale(scale*1e-3, "width");
   }
 
   //mcMnv_qe->Scale(scale*1e-5,"width");
@@ -114,6 +128,12 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   TH2* data=new TH2D(dataMnv->GetCVHistoWithError());
   TH2* mc=new TH2D(mcMnv->GetCVHistoWithStatError());
   TH2* mcTotalError=new TH2D(mcMnv->GetCVHistoWithError());
+
+  TH2* mc_qe =new TH2D(mcMnv_QE->GetCVHistoWithStatError());
+  TH2* mc_res =new TH2D(mcMnv_RES->GetCVHistoWithStatError());
+  TH2* mc_dis =new TH2D(mcMnv_DIS->GetCVHistoWithStatError());
+  TH2* mc_2p2h =new TH2D(mcMnv_2p2h->GetCVHistoWithStatError());
+  TH2* mc_otherit =new TH2D(mcMnv_OtherIT->GetCVHistoWithStatError());
 
   //TH2* mc_qe = new TH2D(mcMnv_qe->GetCVHistoWithStatError());
   //TH2* mc_res = new TH2D(mcMnv_res->GetCVHistoWithStatError());
@@ -134,22 +154,17 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   mcTotalError->SetFillColor(kRed);
   mcTotalError->SetFillStyle(3002);
 
-  //mc_qe->SetLineColor(mycolors[2]);
-  //mc_res->SetLineColor(mycolors[0]);
-  //mc_dis_dis->SetLineColor(kViolet-3);
-  //mc_dis_sis->SetLineColor(mycolors[1]);
-  //mc_oth->SetLineColor(mycolors[4]);
-  //mc_bkg->SetLineColor(mycolors[8]);
+  mc_qe->SetLineColor(38);
+  mc_res->SetLineColor(30);
+  mc_dis->SetLineColor(kMagenta+2);
+  mc_2p2h->SetLineColor(41);
+  mc_otherit->SetLineColor(12);
 
-  //Add 2p2h with qe to reduce number of categories
-  //mc_qe->Add(mc_2p2h);
-
-  //mc_qe->SetLineWidth(1.5);
-  //mc_res->SetLineWidth(1.5);
-  //mc_dis_dis->SetLineWidth(1.5);
-  //mc_dis_sis->SetLineWidth(1.5);
-  //mc_oth->SetLineWidth(1.5);
-  //mc_bkg->SetLineWidth(1.5);
+  mc_qe->SetLineWidth(2);
+  mc_res->SetLineWidth(2);
+  mc_dis->SetLineWidth(2);
+  mc_2p2h->SetLineWidth(2);
+  mc_otherit->SetLineWidth(2);
 
   // These line and marker styles will be propagated to the 1D plots
   dataStat->SetMarkerStyle(kFullCircle);
@@ -188,12 +203,11 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   histAndOpts.push_back(std::make_pair(dataStat, "histpe1"));
   histAndOpts.push_back(std::make_pair(mcTotalError,       "graphe3"));
   histAndOpts.push_back(std::make_pair(mc,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_qe,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_res,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_dis_dis,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_dis_sis,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_oth,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_bkg,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_qe,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_res,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_dis,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_2p2h,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_otherit,       "graph0LX"));
   histAndOpts.push_back(std::make_pair(data,     "histpe1"));
 
 
@@ -238,19 +252,18 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   title->Draw();
 
 
-  TLegend* leg=new TLegend(0.6, 0.05, 0.95, 0.32);
-  leg->SetNColumns(2);
+  TLegend* leg=new TLegend(0.34, 0.1, 0.99, 0.32);
+  leg->SetNColumns(3);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
   leg->AddEntry(mc, "MINERvA Tune v1", "l");
-  //leg->AddEntry(mc_qe,"QE+2p2h","l");
-  //leg->AddEntry(mc_res,"Resonant","l");
-  //leg->AddEntry(mc_dis_dis,"True DIS","l");
-  //leg->AddEntry(mc_dis_sis,"Soft DIS","l");
-  //leg->AddEntry(mc_oth,"Other CC","l");
-  //leg->AddEntry(mc_bkg,"Background","l");
+  leg->AddEntry(mc_qe,"QE","l");
+  leg->AddEntry(mc_res,"RES","l");
+  leg->AddEntry(mc_2p2h,"2p2h","l");
+  leg->AddEntry(mc_dis,"DIS","l");
+  leg->AddEntry(mc_otherit,"Other","l");
 
   TLegend* leg2 = new TLegend(0.6, 0.2525, 0.95, 0.32);
   leg2->SetNColumns(2);
@@ -290,7 +303,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   
   else{
     //gc->Print(doMultipliers ? "nu-2d-xsec-comps-pt-multiplier.eps" : "nu-2d-xsec-comps-pt.eps");
-    gc->Print(doMultipliers ? Form("%s/EventSelection2D_t%d_z%02d_%s_pt_multiplier.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/EventSelection2D_t%d_z%02d_%s_pt.png", outdir.c_str(), targetID, targetZ, plist.c_str()));
+    gc->Print(doMultipliers ? Form("%s/EventSelection2D_t%d_z%02d_%s_pt_multiplier_intType.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/EventSelection2D_t%d_z%02d_%s_pt_intType.png", outdir.c_str(), targetID, targetZ, plist.c_str()));
     //gc->Print(doMultipliers ? "nu-2d-xsec-comps-pt-multiplier.C" : "nu-2d-xsec-comps-pt.C");
   }
   
@@ -339,7 +352,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   else{
     //gc2->Print(doMultipliers ? "nu-2d-xsec-comps-pz-multiplier.eps" : "nu-2d-xsec-comps-pz.eps");
-    gc2->Print(doMultipliers ? Form("%s/EventSelection2D_t%d_z%02d_%s_pz_multiplier.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/EventSelection2D_t%d_z%02d_%s_pz.png", outdir.c_str(),  targetID, targetZ, plist.c_str()));
+    gc2->Print(doMultipliers ? Form("%s/EventSelection2D_t%d_z%02d_%s_pz_multiplier_intType.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/EventSelection2D_t%d_z%02d_%s_pz_intType.png", outdir.c_str(),  targetID, targetZ, plist.c_str()));
     //gc2->Print(doMultipliers ? "nu-2d-xsec-comps-pz-multiplier.C" : "nu-2d-xsec-comps-pz.C");
   }
 
