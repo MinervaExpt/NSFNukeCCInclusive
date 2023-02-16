@@ -103,7 +103,7 @@ public:
         const double thetamu = (toBeamFrame * muon).theta();
         if(thetamu*rad_to_deg>=17.0) return false; //This is a YAML parameter
         
-        if( 2000.0 >= muon_E || muon_E >= 50000.0 ) return false;
+        if( 2000.0 >= muon_E || muon_E >= 20000.0 ) return false;
         
         //if( muon_theta*rad_to_deg >= 17.0 ) return false;
 
