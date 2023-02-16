@@ -16,7 +16,6 @@ using namespace PlotUtils;
 namespace {
     const double TRACKER_ZMIN = 6117;
     const double TRACKER_ZMAX = 8193;
-    const int targetZ = 6;
 }
 bool debug=false;
 bool anyTracker=false;//true;
@@ -199,49 +198,49 @@ public:
         if((int)chw.GetValue("mc_incoming", entry)!=-14) return false;
         if((int)chw.GetValue("mc_current", entry)!=1) return false;
         if(!InHex(chw,entry,850.0)) return false;
-        if( (int)chw.GetValue("truth_targetZ",entry) != targetZ) return false;
+        if( (int)chw.GetValue("truth_targetZ",entry) != m_nucleus) return false;
 
-        if(targetZ == 6){ // carbon
+        if(m_nucleus == 6){ // carbon
           
           if((int)chw.GetValue("truth_targetID",entry) == 3) {
-            if(!PassTrueDistToDivisionCut( chw, entry, 3, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 3, m_nucleus, 25.0)) return false;
           }
           
           else{return false;}
         }
 
-        if(targetZ == 26){ // iron
+        if(m_nucleus == 26){ // iron
         
           if ((int)chw.GetValue("truth_targetID",entry) == 2){
-            if(!PassTrueDistToDivisionCut( chw, entry, 2, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 2, m_nucleus, 25.0)) return false;
           }
           
           else if((int)chw.GetValue("truth_targetID",entry) == 3) {
-            if(!PassTrueDistToDivisionCut( chw, entry, 3, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 3, m_nucleus, 25.0)) return false;
           }
           
           else if (((int)chw.GetValue("truth_targetID",entry) == 5)){
-            if(!PassTrueDistToDivisionCut( chw, entry, 5, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 5, m_nucleus, 25.0)) return false;
           }
           
           else{return false;}
         }
 
-        if(targetZ == 82){ //lead
+        if(m_nucleus == 82){ //lead
         
           if ((int)chw.GetValue("truth_targetID",entry) == 2){
-            if(!PassTrueDistToDivisionCut( chw, entry, 2, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 2, m_nucleus, 25.0)) return false;
           }
           
           else if((int)chw.GetValue("truth_targetID",entry) == 3) {
-            if(!PassTrueDistToDivisionCut( chw, entry, 3, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 3, m_nucleus, 25.0)) return false;
           }
           
           else if((int)chw.GetValue("truth_targetID",entry) == 4){
-            if(!PassTrueDistToDivisionCut( chw, entry, 4, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 4, m_nucleus, 25.0)) return false;
           }
           else if (((int)chw.GetValue("truth_targetID",entry) == 5)){
-            if(!PassTrueDistToDivisionCut( chw, entry, 5, targetZ, 25.0)) return false;
+            if(!PassTrueDistToDivisionCut( chw, entry, 5, m_nucleus, 25.0)) return false;
           }
           
           else{return false;}
@@ -265,14 +264,24 @@ public:
 
 //======================
 
-int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax, const std::vector<const char*> fileNames)
+int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax, const std::vector<const char*> fileNames, int targetZ, string outdir)
 {
   string nuc_name = "";
-  if(targetZ==6) nuc_name = "carbon";
-  if(targetZ==26) nuc_name = "iron";
-  if(targetZ==82) nuc_name = "lead";
+  string targetID = "";
+  if(targetZ==6) {
+    nuc_name = "carbon";
+    targetID = "3";
+  }
+  if(targetZ==26) {
+    nuc_name = "iron";
+    targetID = "235"; 
+  }
+  if(targetZ==82) {
+    nuc_name = "lead";
+    targetID = "2345";
+  }
 
-  const char* fileName = Form("GENIEXSecExtract_CCInclusive_multi%s.root", nuc_name.c_str()) ;
+  const char* fileName = Form("%s/GENIEXSecExtract_CCInclusive_t%s_z%02d.root", outdir.c_str(), targetID.c_str(), targetZ) ;
   auto outFile = TFile::Open(fileName, "CREATE");
   if(!outFile)
   {
@@ -328,7 +337,7 @@ int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax
         }
         
         
-        char* name = Form( "%s_%s_std", nuc_name.c_str(), varName.c_str());
+        char* name = Form( "%s_%s_%s_std", nuc_name.c_str(), targetID.c_str(), varName.c_str());
         cout<<"making cross section for "<< targetZ<<endl;
         NukeCCXSec* xsec = new NukeCCXSec( name, targetZ, true );
         
@@ -376,14 +385,17 @@ int main( int argc, char *argv[] )
 
     TH1::AddDirectory(kFALSE); //Needed so that MnvH1D gets to clean up its own MnvLatErrorBands (which are TH1Ds).
 
-    std::vector<const char*> fileNames(argv+1, argv+argc);
+    std::vector<const char*> fileNames(argv+3, argv+argc);
 
     bool antinu=true;
 
     int Emin=0; //GeV
     int Emax=120; //GeV 
 
-    return runXSecLooper_NukeCC(antinu, Emin, Emax, fileNames);
+    string outdir = argv[1];
+    int targetZ = atoi(argv[2]);
+
+    return runXSecLooper_NukeCC(antinu, Emin, Emax, fileNames, targetZ, outdir);
     
     cout << "Exit running the GENIE XSection Extraction for the NukeCC analysis" << endl;
 }

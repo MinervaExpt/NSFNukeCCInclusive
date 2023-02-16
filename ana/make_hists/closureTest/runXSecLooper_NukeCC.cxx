@@ -204,9 +204,9 @@ public:
 
 //======================
 
-int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax, const std::vector<const char*> fileNames)
+int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax, const std::vector<const char*> fileNames, int targetID, int targetZ, string outdir)
 {
-  const char* fileName = "GENIEXSecExtract_CCInclusive_lead2.root";
+  const char* fileName = Form("%s/GENIEXSecExtract_CCInclusive_t%d_z%02d.root", outdir.c_str(), targetID, targetZ);
   auto outFile = TFile::Open(fileName, "CREATE");
   if(!outFile)
   {
@@ -251,11 +251,11 @@ int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax
     vector<int> targetZs;
     //targetZs.push_back(6);
     //targetZs.push_back(26);
-    targetZs.push_back(82);
+    targetZs.push_back(targetZ);
     
     vector<int> targetIDs;
     //targetIDs.push_back(1);
-    targetIDs.push_back(2);
+    targetIDs.push_back(targetID);
     //targetIDs.push_back(3);
     //targetIDs.push_back(4);
     //targetIDs.push_back(5);
@@ -345,20 +345,28 @@ int runXSecLooper_NukeCC(const bool antinu, const double Emin, const double Emax
 
 int main( int argc, char *argv[] )
 {
-    cout << "Enter running the GENIE Xsection Extraction for the NukeCC analysis" << endl;
+  cout << "Enter running the GENIE Xsection Extraction for the NukeCC analysis" << endl;
 
-    cout << "running genie xsection extraction" << endl;
+  cout << "running genie xsection extraction" << endl;
 
-    TH1::AddDirectory(kFALSE); //Needed so that MnvH1D gets to clean up its own MnvLatErrorBands (which are TH1Ds).
+  TH1::AddDirectory(kFALSE); //Needed so that MnvH1D gets to clean up its own MnvLatErrorBands (which are TH1Ds).
 
-    std::vector<const char*> fileNames(argv+1, argv+argc);
+  std::vector<const char*> fileNames(argv+4, argv+argc);
 
-    bool antinu=true;
+  bool antinu=true;
 
-    int Emin=0; //GeV
-    int Emax=120; //GeV 
+  int Emin=0; //GeV
+  int Emax=120; //GeV 
 
-    return runXSecLooper_NukeCC(antinu, Emin, Emax, fileNames);
-    
-    cout << "Exit running the GENIE XSection Extraction for the NukeCC analysis" << endl;
+  string outdir = argv[1];
+  int targetID = atoi(argv[2]);
+  int targetZ = atoi(argv[3]);
+
+  cout << "Outdir " << outdir << std::endl;
+  cout << "Target ID " << targetID << std::endl;
+  cout << "Target Z " << targetZ << std::endl;
+
+  return runXSecLooper_NukeCC(antinu, Emin, Emax, fileNames, targetID, targetZ, outdir);
+  
+  cout << "Exit running the GENIE XSection Extraction for the NukeCC analysis" << endl;
 }
