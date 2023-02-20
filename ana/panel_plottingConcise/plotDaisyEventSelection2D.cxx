@@ -41,6 +41,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
 
   MnvH2D* dataMnv=(MnvH2D*)f1->Get(Form("selected_data_reco2d_daisy_%d_pZmu_pTmu",petal ));
   MnvH2D* mcMnv=(MnvH2D*)f1->Get(Form("selected_mc_reco2d_daisy_%d_pZmu_pTmu", petal));
+  MnvH2D* mcMnv_bkg=(MnvH2D*)f1->Get(Form("selected_mc_reco2d_bkg_daisy_%d_pZmu_pTmu", petal));
 
   string trueZ;
   string mat;
@@ -93,10 +94,12 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   if(targetID==99){
     dataMnv->Scale(1e-4, "width");
     mcMnv->Scale(scale*1e-4, "width");
+    mcMnv_bkg->Scale(scale*1e-4, "width");
   }
   else{
     dataMnv->Scale(1e-3, "width");
     mcMnv->Scale(scale*1e-3, "width");
+    mcMnv_bkg->Scale(scale*1e-3, "width");
 
   }
 
@@ -114,6 +117,8 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   TH2* data=new TH2D(dataMnv->GetCVHistoWithError());
   TH2* mc=new TH2D(mcMnv->GetCVHistoWithStatError());
   TH2* mcTotalError=new TH2D(mcMnv->GetCVHistoWithError());
+
+  TH2* mc_bkg=new TH2D(mcMnv_bkg->GetCVHistoWithStatError());
 
   //TH2* mc_qe = new TH2D(mcMnv_qe->GetCVHistoWithStatError());
   //TH2* mc_res = new TH2D(mcMnv_res->GetCVHistoWithStatError());
@@ -133,6 +138,9 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   mcTotalError->SetLineWidth(2);
   mcTotalError->SetFillColor(kRed);
   mcTotalError->SetFillStyle(3002);
+
+  mc_bkg->SetLineColor(13);
+  mc_bkg->SetLineWidth(2);
 
   //mc_qe->SetLineColor(mycolors[2]);
   //mc_res->SetLineColor(mycolors[0]);
@@ -188,7 +196,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   histAndOpts.push_back(std::make_pair(dataStat, "histpe1"));
   histAndOpts.push_back(std::make_pair(mcTotalError,       "graphe3"));
   histAndOpts.push_back(std::make_pair(mc,       "graph0LX"));
-  //histAndOpts.push_back(std::make_pair(mc_qe,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(mc_bkg,       "graph0LX"));
   //histAndOpts.push_back(std::make_pair(mc_res,       "graph0LX"));
   //histAndOpts.push_back(std::make_pair(mc_dis_dis,       "graph0LX"));
   //histAndOpts.push_back(std::make_pair(mc_dis_sis,       "graph0LX"));
@@ -238,14 +246,14 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   title->Draw();
 
 
-  TLegend* leg=new TLegend(0.6, 0.05, 0.95, 0.32);
-  leg->SetNColumns(2);
+  TLegend* leg=new TLegend(0.35, 0.05, 0.99, 0.32);
+  leg->SetNColumns(3);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
   leg->AddEntry(mc, "MINERvA Tune v1", "l");
-  //leg->AddEntry(mc_qe,"QE+2p2h","l");
+  leg->AddEntry(mc_bkg,"Background","l");
   //leg->AddEntry(mc_res,"Resonant","l");
   //leg->AddEntry(mc_dis_dis,"True DIS","l");
   //leg->AddEntry(mc_dis_sis,"Soft DIS","l");
