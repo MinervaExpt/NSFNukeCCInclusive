@@ -492,6 +492,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                     //Background: different material !
                     v->m_selected_mc_reco_bkg.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
                     if (v->GetName()=="pZmu_pTmu")  Bkg2d++;
+                    if (v->GetName()=="pZmu_pTmu") WrongMaterialOrTarget2d++; 
                     
                     if(universe->GetInt("truth_targetID") == 0 ){ // targetID is plastic == same as picking everything that is not target 1,2,3,4,5 or water
                       v->m_selected_mc_plastic.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
