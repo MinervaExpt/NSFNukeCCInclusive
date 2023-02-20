@@ -431,7 +431,7 @@ int main(int argc, char * argv[]){
         //d'Aogstini unfolding
         std::cout << "===================================== \n" << std::flush;
         std::cout << "============= UNFOLDING =============\n" << std::flush;
-        int nIterations=5;    
+        int nIterations=3;    
         std::cout << "Number of iterations: " << nIterations << "\n" << std::flush;
 
         // UNFOLDING
