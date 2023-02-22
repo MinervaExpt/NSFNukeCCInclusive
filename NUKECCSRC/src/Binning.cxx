@@ -232,7 +232,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
       binsLowEdge.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     }
     else if( var == "Enu" ){
-      double tmpBins[]  = { 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20.} //, 25.0, 30., 40., 50. }; // changed on 22/02/2023
+      double tmpBins[]  = { 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20.}; //, 25.0, 30., 40., 50. }; // changed on 22/02/2023
       binsLowEdge.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     }
     else if( var == "EnuFlux" ){
