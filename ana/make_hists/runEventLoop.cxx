@@ -332,7 +332,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   variables = {emu, enu, x, vtxz, planeDNN, pTmu, pZmu1D, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
-  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
+  Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu); 
   Var2D* W_Q2 = new Var2D(*W, *Q2);
   Var2D* enu_ehad = new Var2D(*enu, *ehad);
   Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
@@ -667,7 +667,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
         //reco6++;
 
  	      for (auto v : variables2d){
-	        if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(dataverse)) continue;
+	        //if( v->GetNameX()!="Emu" && v->GetNameY()!="Emu")  if(!cutter->PassMuEnergyCut(dataverse)) continue;
 	        if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassThetaCut(dataverse)) continue;	     
 	    
 	        v->m_selected_data_reco.hist->Fill(v->GetRecoValueX(*dataverse), v->GetRecoValueY(*dataverse));
