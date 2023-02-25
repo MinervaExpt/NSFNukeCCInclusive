@@ -123,7 +123,8 @@ int main(int argc, char * argv[]){
   vars.push_back("Enu");
   vars.push_back("x");
   vars.push_back("pTmu");
-  vars.push_back("pZmu");
+  vars.push_back("pZmu1D");
+  vars.push_back("ThetamuDeg");
   
 
   TFile *f1 = new TFile( histFileName,"read" );

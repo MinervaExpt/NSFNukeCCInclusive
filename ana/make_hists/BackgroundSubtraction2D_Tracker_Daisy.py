@@ -22,8 +22,8 @@ targetZ = 99
 pwd = sys.argv[1]
 plist = sys.argv[2]
 
-infile=ROOT.TFile("/minerva/data/users/anezkak/02-02-2023/2D/minervame6A/Testing/EventSelection_daisy_minervame6A_t99_z99_sys.root")
-#infile = ROOT.TFile(str(pwd)+"/EventSelection/EventSelection_daisy_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
+#infile=ROOT.TFile("/minerva/data/users/anezkak/02-02-2023/2D/minervame6A/Testing/EventSelection_daisy_minervame6A_t99_z99_sys.root")
+infile = ROOT.TFile(str(pwd)+"/EventSelection/EventSelection_daisy_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"READ")
 
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
