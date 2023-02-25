@@ -376,18 +376,8 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     }
     else if( var == "ThetaMu")
     {
-        // 1 deg bins up to 8
-        //AddBins( binsLowEdge, 10, 1.5 );
-        AddBins( binsLowEdge, 8, 1.0);
-        // 2 deg bins up to 14,
-        //AddBins( binsLowEdge, 3, 2.0 );
-        // 3 deg bins up to 26
-        AddBins( binsLowEdge, 4, 3. );
-        //--- overflow --//
-        // 5 deg bins up to 51
-        AddBins( binsLowEdge, 5, 5. );
-        // 2 20 deg bins up to 91
-        AddBins( binsLowEdge, 2, 20. );
+     double tmpBins[]  = {0, 1, 2, 3, 5, 7, 9, 11, 14, 17}; // changed 24/07/2022
+      binsLowEdge.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     }
     else if( var == "ThetaMuX" || var == "ThetaMuY" )
     {
