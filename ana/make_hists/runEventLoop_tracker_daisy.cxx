@@ -85,8 +85,8 @@ int main(int argc, char *argv[]){
 
   // NukeCC Tuples ?
   const std::string plist_string(playlist);
-  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
-  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_short.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s_short.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
   
   const bool wants_truth = false;
@@ -163,6 +163,7 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_reco_signal.SyncCVHistos();
     for(int petal=0; petal<12; petal++){
       v->daisy_petal_mc_hists[petal].SyncCVHistos();
+      v->daisy_petal_mc_hists_signal[petal].SyncCVHistos();
       v->daisy_petal_mc_hists_bkg[petal].SyncCVHistos();
     }
   }
@@ -171,6 +172,7 @@ int main(int argc, char *argv[]){
     v->m_selected_mc_reco.SyncCVHistos();
     for(int petal=0; petal<12; petal++){
       v->daisy_petal_mc2d_hists[petal].SyncCVHistos();
+      v->daisy_petal_mc2d_hists_signal[petal].SyncCVHistos();
       v->daisy_petal_mc2d_hists_bkg[petal].SyncCVHistos();
     }
   }
@@ -401,6 +403,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               // Signal
               if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                 if(cutter->TrackerOnlyTrue(universe)){
+                  v->daisy_petal_mc2d_hists_signal[petal].univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
                   v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight());
                   if (v->GetName()=="pZmu_pTmu")  Signal2d++;
 
@@ -437,6 +440,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
               if( 1 == universe->GetInt("mc_current") &&  -14 == universe->GetInt("mc_incoming") ){
                 if(cutter->TrackerOnlyTrue(universe)){
                   if( v->GetName()!="Emu")  if(cutter->PassTrueMuEnergyCut(universe)){
+                    v->daisy_petal_mc_hists_signal[petal].univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     v->m_selected_mc_reco_signal.univHist(universe)->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     v->m_selected_mc_sb.GetComponentHist("Signal")->Fill(v->GetRecoValue(*universe, 0), universe->GetWeight());
                     if (v->GetName()=="x") Signal++;

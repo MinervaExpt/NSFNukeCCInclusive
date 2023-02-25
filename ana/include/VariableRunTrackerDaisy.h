@@ -36,6 +36,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
 
   HW daisy_petal_mc_hists[12];
   HW daisy_petal_data_hists[12];
+  HW daisy_petal_mc_hists_signal[12];
   HW daisy_petal_mc_hists_bkg[12];
 
   // HISTFOLIO
@@ -69,6 +70,9 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
       MH1D* dummy_selected_mc_reco_daisy = new MH1D(Form("selected_mc_reco_daisy_%d_%s", petal, name), name, GetNBins(), bins.data());
       daisy_petal_mc_hists[petal] = HW(dummy_selected_mc_reco_daisy, univs, clear_bands);
 
+      MH1D* dummy_selected_mc_reco_signal_daisy = new MH1D(Form("selected_mc_reco_signal_daisy_%d_%s", petal, name), name, GetNBins(), bins.data());
+      daisy_petal_mc_hists_signal[petal] = HW(dummy_selected_mc_reco_signal_daisy, univs, clear_bands);
+
       MH1D* dummy_selected_mc_reco_bkg_daisy = new MH1D(Form("selected_mc_reco_bkg_daisy_%d_%s", petal, name), name, GetNBins(), bins.data());
       daisy_petal_mc_hists_bkg[petal] = HW(dummy_selected_mc_reco_bkg_daisy, univs, clear_bands);
 
@@ -76,6 +80,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
       daisy_petal_data_hists[petal] = HW(dummy_selected_data_reco_daisy, univs, clear_bands);
 
       delete dummy_selected_mc_reco_daisy;
+      delete dummy_selected_mc_reco_signal_daisy;
       delete dummy_selected_mc_reco_bkg_daisy;
       delete dummy_selected_data_reco_daisy;
     }
@@ -111,6 +116,7 @@ class Variable : public PlotUtils::VariableBase<NUKECC_ANA::CVUniverse> {
       m_selected_mc_reco_signal.hist->Write();
       for(int petal=0; petal<12; petal++){
         daisy_petal_mc_hists[petal].hist->Write();
+        daisy_petal_mc_hists_signal[petal].hist->Write();
         daisy_petal_mc_hists_bkg[petal].hist->Write();
       }
     }
@@ -156,6 +162,8 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   HW2D daisy_petal_mc2d_hists[12];
   HW2D daisy_petal_data2d_hists[12];
   HW2D daisy_petal_mc2d_hists_bkg[12];
+  HW2D daisy_petal_mc2d_hists_signal[12];
+
 
   //// HISTFOLIO
   // PlotUtils::HistFolio<MH2D> m_selected_mc_sb;
@@ -186,6 +194,9 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
       MH2D* dummy_selected_mc_reco_daisy = new MH2D(Form("selected_mc_reco2d_daisy_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
       daisy_petal_mc2d_hists[petal] = HW2D(dummy_selected_mc_reco_daisy, univs, clear_bands);
 
+      MH2D* dummy_selected_mc_reco_signal_daisy = new MH2D(Form("selected_mc_reco2d_signal_daisy_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
+      daisy_petal_mc2d_hists_signal[petal] = HW2D(dummy_selected_mc_reco_signal_daisy, univs, clear_bands);
+
       MH2D* dummy_selected_mc_reco_bkg_daisy = new MH2D(Form("selected_mc_reco2d_bkg_daisy_%d_%s", petal, name), name, GetNBinsX(), GetBinVecX().data(), GetNBinsY(), GetBinVecY().data());
       daisy_petal_mc2d_hists_bkg[petal] = HW2D(dummy_selected_mc_reco_bkg_daisy, univs, clear_bands);
 
@@ -194,6 +205,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
 
 
       delete dummy_selected_mc_reco_daisy;
+      delete dummy_selected_mc_reco_signal_daisy;
       delete dummy_selected_mc_reco_bkg_daisy;
       delete dummy_selected_data_reco_daisy;
     }
@@ -213,6 +225,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
         m_selected_mc_reco.hist->Write();
         for(int petal=0; petal<12; petal++){
           daisy_petal_mc2d_hists[petal].hist->Write();
+          daisy_petal_mc2d_hists_signal[petal].hist->Write();
           daisy_petal_mc2d_hists_bkg[petal].hist->Write();
         }
        }
