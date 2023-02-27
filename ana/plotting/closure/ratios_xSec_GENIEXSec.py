@@ -90,8 +90,8 @@ for var in vars:
     sysError.SetMaximum(1)
     '''
     ratio.Draw("HIST SAME")
-    ratio.SetMaximum(1.01)
-    ratio.SetMinimum(0.99)
+    ratio.SetMaximum(1.1)
+    ratio.SetMinimum(0.9)
 
     gStyle.SetOptTitle(0)
 
