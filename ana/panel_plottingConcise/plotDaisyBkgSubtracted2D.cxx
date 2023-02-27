@@ -91,8 +91,8 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   double scale = DataPOT/MCPOT;
   
   if(targetID==99){
-    dataMnv->Scale(1e-4, "width");
-    mcMnv->Scale(scale*1e-4, "width");
+    dataMnv->Scale(1e-3, "width");
+    mcMnv->Scale(scale*1e-3, "width");
   }
   else{
     dataMnv->Scale(1e-3, "width");
@@ -218,7 +218,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   if(doRatio) gc->SetYTitle("Ratio bkgType/TotalBkg");
   else{
     if(targetID==99){
-      gc->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+      gc->SetYTitle("Events (x10^{3}) per (GeV/c)^{2}");
     }
     else{
       gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");

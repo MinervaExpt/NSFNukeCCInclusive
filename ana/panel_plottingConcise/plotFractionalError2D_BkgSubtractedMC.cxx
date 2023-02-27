@@ -278,11 +278,11 @@ void makePlots(bool pt, bool drawGroups, int areanorm,  string indir, string out
   gStyle->SetEndErrorSize(2);
 
   TString histFileName;
-  histFileName = Form("%s/EventSelection_%s_t%d_z%02d_sys.root", indir.c_str(), plist.c_str(), targetID, targetZ);
+  histFileName = Form("%s/BkgSubtracted_EventSelection2D_%s_t%d_z%02d_sys.root", indir.c_str(), plist.c_str(), targetID, targetZ);
  
   TFile *f = new TFile( histFileName,"read" );
 
-  MnvH2D* data=(MnvH2D*)f->Get("selected_mc_reco2d_pZmu_pTmu");
+  MnvH2D* data=(MnvH2D*)f->Get("h_bkg_subtracted_mc_pZmu_pTmu");
 
   string trueZ;
   string mat;
@@ -346,9 +346,9 @@ void makePlots(bool pt, bool drawGroups, int areanorm,  string indir, string out
       gcPT->Modified();
       leg->SetNColumns(2);
       //0.78, 0.05, 0.95, 0.32
-      leg->SetX1(0.48);
+      leg->SetX1(0.58);
       leg->SetY1(0.10);
-      leg->SetX2(0.95);
+      leg->SetX2(1.0);
       leg->SetY2(0.32);
       leg->SetTextFont(42);
       leg->Draw("SAME");

@@ -42,7 +42,6 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   MnvH2D* dataMnv=(MnvH2D*)f1->Get("h_bkg_subtracted_data_pZmu_pTmu");
   MnvH2D* mcMnv=(MnvH2D*)f1->Get("h_bkg_subtracted_mc_pZmu_pTmu");
 
-
   string trueZ;
   string mat;
 

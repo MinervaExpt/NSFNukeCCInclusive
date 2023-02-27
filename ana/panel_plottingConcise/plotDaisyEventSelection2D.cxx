@@ -92,9 +92,9 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   double scale = DataPOT/MCPOT;
   
   if(targetID==99){
-    dataMnv->Scale(1e-4, "width");
-    mcMnv->Scale(scale*1e-4, "width");
-    mcMnv_bkg->Scale(scale*1e-4, "width");
+    dataMnv->Scale(1e-3, "width");
+    mcMnv->Scale(scale*1e-3, "width");
+    mcMnv_bkg->Scale(scale*1e-3, "width");
   }
   else{
     dataMnv->Scale(1e-3, "width");
@@ -167,6 +167,13 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
 
   dataStat->SetLineColor(kBlack);
 
+  data->SetMarkerStyle(kFullCircle);
+  data->SetMarkerSize(0.5);
+  data->SetLineColor(kBlack);
+  data->SetLineWidth(2);
+
+  data->SetLineColor(kBlack);
+
 
   if(doRatio){
     //TH2 *tmpden = (TH2*)mc->Clone("tmpden");
@@ -220,7 +227,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   if(doRatio) gc->SetYTitle("Ratio bkgType/TotalBkg");
   else{
     if(targetID==99){
-      gc->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+      gc->SetYTitle("Events (x10^{3}) per (GeV/c)^{2}");
     }
     else{
       gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
@@ -246,8 +253,8 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   title->Draw();
 
 
-  TLegend* leg=new TLegend(0.35, 0.05, 0.99, 0.32);
-  leg->SetNColumns(3);
+  TLegend* leg=new TLegend(0.58, 0.1, 1.0, 0.32);
+  leg->SetNColumns(2);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);

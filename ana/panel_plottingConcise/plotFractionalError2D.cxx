@@ -346,9 +346,9 @@ void makePlots(bool pt, bool drawGroups, int areanorm,  string indir, string out
       gcPT->Modified();
       leg->SetNColumns(2);
       //0.78, 0.05, 0.95, 0.32
-      leg->SetX1(0.48);
+      leg->SetX1(0.58);
       leg->SetY1(0.10);
-      leg->SetX2(0.95);
+      leg->SetX2(1.0);
       leg->SetY2(0.32);
       leg->SetTextFont(42);
       leg->Draw("SAME");

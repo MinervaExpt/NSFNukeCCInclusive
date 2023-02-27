@@ -181,6 +181,13 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   dataStat->SetLineColor(kBlack);
 
+  data->SetMarkerStyle(kFullCircle);
+  data->SetMarkerSize(0.5);
+  data->SetLineColor(kBlack);
+  data->SetLineWidth(2);
+
+  data->SetLineColor(kBlack);
+
 
   if(doRatio){
     //TH2 *tmpden = (TH2*)mc->Clone("tmpden");
@@ -259,8 +266,8 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   title->Draw();
 
 
-  TLegend* leg=new TLegend(0.34, 0.1, 0.99, 0.32);
-  leg->SetNColumns(3);
+  TLegend* leg=new TLegend(0.58, 0.1, 1.0, 0.32);
+  leg->SetNColumns(2);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
