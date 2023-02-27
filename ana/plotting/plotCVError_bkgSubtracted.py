@@ -42,7 +42,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 for var in vars:
 
@@ -69,16 +69,23 @@ for var in vars:
     if var == "pTmu":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
-        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c")
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         if targetZ != "99":
-            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c") 
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)") 
 
-    if var == "pZmu":
+    if var == "pZmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
-        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c")
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/)")
         if targetZ != "99":
-            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c") 
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)") 
+
+    if var == "ThetamuDeg":
+        mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        mc_hist.GetYaxis().SetTitle("Events/Deg")
+        data_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        if targetZ != "99":
+            data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)") 
 
 
     '''
@@ -215,6 +222,10 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+            if var == "pTmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+            if var == "pZmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
 
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
@@ -254,6 +265,10 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+            if var == "pTmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
+            if var == "pZmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
 
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
@@ -261,12 +276,16 @@ for var in vars:
                 k.SetX2(45) #Enu
                 k.SetY1(0.25) #Enu
                 if len(sys.argv) > 4:
-                    k.SetY1(0.15) #Enu
+                    k.SetY1(0.14) #Enu
+                    if targetZ == "06":
+                        k.SetY1(0.12) #Enu
+                    if targetZ == "26":
+                        k.SetY1(0.12) #Enu
                 if targetZ == "99":
                     k.SetX2(45) #Enu
                     k.SetY1(0.05) #Enu
                     if len(sys.argv) > 4:
-                        k.SetY1(0.03) #Enu
+                        k.SetY1(0.022) #Enu
 
             if var == "x":
                 k.SetNColumns(2)
@@ -274,11 +293,15 @@ for var in vars:
                 k.SetY1(0.040) #x
                 if len(sys.argv) > 4:
                     k.SetY1(0.03) #x
+                    if targetZ == "06":
+                        k.SetY1(0.026) #x
+                    if targetZ == "26":
+                        k.SetY1(0.025) #x
                 if targetZ == "99":
                     k.SetX2(2.0) #x
                     k.SetY1(0.007) #x
                     if len(sys.argv) > 4:
-                        k.SetY1(0.005) #x
+                        k.SetY1(0.003) #x
 
 
 
@@ -305,6 +328,10 @@ for var in vars:
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
                 if var == "x":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+                if var == "pTmu":
+                    k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
+                if var == "pZmu":
+                    k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
 
             if(k.ClassName().find("Legend")!=-1):
                 if var == "Enu":

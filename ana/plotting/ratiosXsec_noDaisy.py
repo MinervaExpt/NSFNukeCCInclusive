@@ -43,7 +43,7 @@ dataPOT = tracker.Get("DataPOT").GetVal()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x", "pTmu", "pZmu"]
+vars = ["Enu","x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 for var in vars:
     if var=="Enu":
@@ -103,19 +103,23 @@ for var in vars:
     if var == "Enu":
         ratio_mc.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
         ratio_mc.GetYaxis().SetTitle("Events/GeV")
-        ratio_mc.GetXaxis().SetRangeUser(2, 20)
+        #ratio_mc.GetXaxis().SetRangeUser(2, 20)
 
     if var == "x":
         ratio_mc.GetXaxis().SetTitle("Bjorken x")
         ratio_mc.GetYaxis().SetTitle("Events (norm.)")
 
     if var == "pTmu":
-        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_mc.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
        
-    if var == "pZmu":
-        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+    if var == "pZmu1D":
+        ratio_mc.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "ThetamuDeg":
+        ratio_mc.GetXaxis().SetTitle("Muon #theta_{#mu} (Deg)")
+        ratio_mc.GetYaxis().SetTitle("Events/Deg")
 
     ratio_mc.GetXaxis().CenterTitle()
     ratio_mc.GetYaxis().CenterTitle()
@@ -184,7 +188,7 @@ for var in vars:
     gStyle.SetOptTitle(0)
     mnv.AddPOTNormBox(dataPOT,mcPOT, 0.3, 0.82)
 
-    mnv.AddHistoTitle("ME6A %s/non-daisy tracker"%material, 0.05, 1)
+    mnv.AddHistoTitle("xSec %s/non-daisy tracker"%material, 0.05, 1)
     if intType == "0":
         legend = TLegend(0.85,0.55,0.99,0.89)
         legend.SetFillStyle(0)
@@ -213,12 +217,24 @@ for var in vars:
     if var == "Enu":
         ratio_data.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
         ratio_data.GetYaxis().SetTitle("Events/GeV")
-        ratio_data.GetXaxis().SetRangeUser(2, 20)
+        #ratio_data.GetXaxis().SetRangeUser(2, 20)
 
 
     if var == "x":
         ratio_data.GetXaxis().SetTitle("Bjorken x")
         ratio_data.GetYaxis().SetTitle("Events (norm.)")
+
+    if var == "pTmu":
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_data.GetYaxis().SetTitle("Events/(GeV/c)")
+       
+    if var == "pZmu1D":
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio_data.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "ThetamuDeg":
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        ratio_data.GetYaxis().SetTitle("Events/Deg")
 
     mnv2.error_summary_group_map.clear()
     mnv2.error_summary_group_map["Muon Energy"].push_back("Muon_Energy_Resolution")
@@ -312,7 +328,7 @@ for var in vars:
                 if targetZ =="06":
                     k.SetY1(0.22) #Enu
                     if len(sys.argv) > 4:
-                        k.SetY1(0.1) #Enu
+                        k.SetY1(0.08) #Enu
                 else:
                     k.SetY1(0.15) #Enu
                     if len(sys.argv) > 4:
@@ -336,7 +352,7 @@ for var in vars:
                 if targetZ =="82":
                     k.SetY1(0.05)
                     if len(sys.argv) > 4:
-                        k.SetY1(0.04) #x
+                        k.SetY1(0.045) #x
 
     mnv2.AddHistoTitle("xSec %s/non-daisy tracker"%material, 0.04, 1)
 

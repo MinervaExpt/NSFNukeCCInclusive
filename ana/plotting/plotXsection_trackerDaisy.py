@@ -34,7 +34,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 steps = [ 'crossSection', 'crossSection_total']
 #steps = ['crossSection', 'crossSection_total']
@@ -84,8 +84,19 @@ for step in steps:
             else:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
        
-        if var == "pZmu":
+        if var == "pZmu1D":
             mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            if step == "crossSection":
+                mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
+                gStyle.SetTitleSize(0.05,"y")
+            elif step == "crossSection_total":
+                mc_hist.GetYaxis().SetTitle("#sigma (10^{-38} cm^{2}/CH)")
+                gStyle.SetTitleSize(0.05,"y")
+            else:
+                mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
+        
+        if var == "ThetamuDeg":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -111,13 +122,13 @@ for step in steps:
             data_hist_Fe.Scale(1E38)
             data_hist_Pb.Scale(1E38)
 
-        if var == "Enu":
-            mc_hist_C.GetXaxis().SetRangeUser(2, 20)
-            mc_hist_Fe.GetXaxis().SetRangeUser(2, 20)
-            mc_hist_Pb.GetXaxis().SetRangeUser(2, 20)
-            data_hist_C.GetXaxis().SetRangeUser(2, 20)
-            data_hist_Fe.GetXaxis().SetRangeUser(2, 20)
-            data_hist_Pb.GetXaxis().SetRangeUser(2, 20)
+        #if var == "Enu":
+        #    mc_hist_C.GetXaxis().SetRangeUser(2, 20)
+        #    mc_hist_Fe.GetXaxis().SetRangeUser(2, 20)
+        #    mc_hist_Pb.GetXaxis().SetRangeUser(2, 20)
+        #    data_hist_C.GetXaxis().SetRangeUser(2, 20)
+        #    data_hist_Fe.GetXaxis().SetRangeUser(2, 20)
+        #    data_hist_Pb.GetXaxis().SetRangeUser(2, 20)
 
         mc_hist_C.GetXaxis().CenterTitle()
         mc_hist_C.GetYaxis().CenterTitle()
@@ -165,7 +176,7 @@ for step in steps:
         mc_hist_stat_C.SetLineColor(46)
 
         if step == "crossSection_total":
-            mc_hist_C.GetYaxis().SetRangeUser(0,10)
+            mc_hist_C.GetYaxis().SetRangeUser(0,data_hist_Pb.GetMaximum()*1.2)
         else:
             mc_hist_C.SetMaximum(data_hist_C.GetMaximum()*1.2)
 

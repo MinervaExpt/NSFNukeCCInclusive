@@ -45,7 +45,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"]#, "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]#, "ThetamuDeg"]
 
 for var in vars:
 
@@ -61,7 +61,7 @@ for var in vars:
         mc_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         mc_hist.GetYaxis().SetTitle("Events (norm.)")
 
-    if var == "ThetamuDe":
+    if var == "ThetamuDeg":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
         mc_hist.GetYaxis().SetTitle("Events/Deg")
     
@@ -69,7 +69,7 @@ for var in vars:
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
-    if var == "pZmu":
+    if var == "pZmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
@@ -113,13 +113,16 @@ for var in vars:
     ratio = data_hist_stat.Clone()
     ratio.Divide(ratio,mc_hist_stat) # stat
     if var == "Enu":
-        ratio.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
+        ratio.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
     if var == "x":
-        ratio.GetXaxis().SetTitle("Bjorken x")
+        ratio.GetXaxis().SetTitle("Reconstructed Bjorken x")
     if var == "pTmu":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
-    if var == "pZmu":
+    if var == "pZmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+    if var == "ThetamuDeg":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        
     ratio.GetYaxis().SetTitle("Data/MC")
     ratio.GetYaxis().CenterTitle()
     ratio.GetXaxis().CenterTitle()

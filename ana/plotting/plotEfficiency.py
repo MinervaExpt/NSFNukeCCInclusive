@@ -46,7 +46,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 for var in vars:
     # numerator vs denominator
     num_hist = infile.Get("h_mc_%s"%var) # selected signal
@@ -81,12 +81,19 @@ for var in vars:
         denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
-    if var == "pZmu":
+    if var == "pZmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         denom_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
+    
+    if var == "ThetamuDeg":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        denom_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        denom_hist.GetYaxis().SetTitle("Events/Deg")
+        num_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        num_hist.GetYaxis().SetTitle("Events/Deg")
 
     ratio.GetYaxis().SetTitle("Efficiency")
     ratio.GetXaxis().CenterTitle()
@@ -318,13 +325,12 @@ for var in vars:
             if var == "Enu":
                 k.SetNColumns(2)
                 k.SetX2(45) #Enu
-                k.SetY1(0.10) #Enu
+                k.SetY1(0.09) #Enu
                 if targetZ == "99":
                     k.SetY1(0.03) #Enu
                 if targetZ == "06":
-                    k.SetY1(0.06) #Enu
+                    k.SetY1(0.05) #Enu
                 if targetZ == "26":
-                    if targetID == "5":
                         k.SetY1(0.09) #Enu
 
 
@@ -335,7 +341,7 @@ for var in vars:
                 if targetZ == "99":
                     k.SetY1(0.025) #x
                 if targetZ == "06":
-                    k.SetY1(0.055) #x
+                    k.SetY1(0.04) #x
                 if targetZ == "26":
                     if targetID == "2":
                         k.SetY1(0.09) #x
@@ -345,11 +351,11 @@ for var in vars:
                         k.SetY1(0.08) #x
                 if targetZ == "82":
                     if targetID == "2":
-                        k.SetY1(0.055) #x
+                        k.SetY1(0.05) #x
                     if targetID == "3":
-                        k.SetY1(0.05) #x
+                        k.SetY1(0.045) #x
                     if targetID == "4":
-                        k.SetY1(0.05) #x
+                        k.SetY1(0.035) #x
 
     if targetZ == "99":
         mnv2.AddHistoTitle("Efficiency %s"%(trueZ), 0.05, 1)

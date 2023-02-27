@@ -45,7 +45,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pTmu", "pZmu"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -107,8 +107,19 @@ for step in steps:
             else:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
        
-        if var == "pZmu":
+        if var == "pZmu1D":
             mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            if step == "crossSection":
+                mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
+                gStyle.SetTitleSize(0.05,"y")
+            elif step == "crossSection_total":
+                mc_hist.GetYaxis().SetTitle("#sigma (10^{-38} cm^{2}/CH)")
+                gStyle.SetTitleSize(0.05,"y")
+            else:
+                mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
+
+        if var == "ThetamuDeg":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -169,8 +180,8 @@ for step in steps:
             mc_hist_Other.Scale(1)
             mc_hist_2p2h.Scale(1)
 
-        if var == "Enu":
-            mc_hist.GetXaxis().SetRangeUser(2, 20)
+        #if var == "Enu":
+        #    mc_hist.GetXaxis().SetRangeUser(2, 20)
         
         mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
         mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
@@ -197,7 +208,7 @@ for step in steps:
         mc_hist.SetLineColor(ROOT.kRed)
         mc_hist.SetLineWidth(2)
         if step == "crossSection_total":
-            mc_hist.GetYaxis().SetRangeUser(0, 10)
+            mc_hist.GetYaxis().SetRangeUser(0, data_hist.GetMaximum()*1.2)
         else:
             mc_hist.SetMaximum(data_hist.GetMaximum()*1.5)
 
@@ -406,7 +417,7 @@ for step in steps:
         # Data fractional error
         if var == "Enu":
             data_hist.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
-            data_hist.GetXaxis().SetRangeUser(2, 20)
+            #data_hist.GetXaxis().SetRangeUser(2, 20)
 
         if var == "x":
             data_hist.GetXaxis().SetTitle("Bjorken x")
@@ -425,7 +436,7 @@ for step in steps:
             if(k.ClassName().find("Legend")!=-1):
                 if var == "Enu":
                     k.SetNColumns(2)
-                    k.SetX2(20) #Enu
+                    k.SetX2(45) #Enu
                     k.SetY1(0.15) #Enu
                     if len(sys.argv) > 4:
                         k.SetY1(0.1) #Enu
@@ -433,7 +444,7 @@ for step in steps:
                         if targetZ == "06":
                             k.SetY1(0.25) #Enu
                             if len(sys.argv) > 4:
-                                k.SetY1(0.1) #Enu
+                                k.SetY1(0.12) #Enu
                         if targetZ == "82":
                             if len(sys.argv) > 4:
                                 k.SetY1(0.07) #Enu
@@ -442,9 +453,9 @@ for step in steps:
                     if step == "crossSection_total":
                         k.SetY1(0.35) #Enu
                         if len(sys.argv) > 4:
-                            k.SetY1(0.1) #Enu
+                            k.SetY1(0.35) #Enu
                         if targetZ == "99":
-                            k.SetY1(0.08) #Enu
+                            k.SetY1(0.28) #Enu
                     if step == "crossSection":
                         if targetZ == "06":
                             k.SetY1(0.25) #Enu
@@ -465,7 +476,7 @@ for step in steps:
                     k.SetY1(0.12) #x
                     if step == "total_unfolded_effCorrected":
                         if targetZ == "06":
-                            k.SetY1(0.06) #x
+                            k.SetY1(0.052) #x
                         if targetZ == "26":
                             k.SetY1(0.11) #x
                             if len(sys.argv) > 4:
@@ -476,9 +487,9 @@ for step in steps:
                             k.SetY1(0.03) #x
                     if step == "crossSection":
                         if targetZ == "06" or "82":
-                            k.SetY1(0.08) #x
+                            k.SetY1(0.07) #x
                         if targetZ == "26":
-                            k.SetY1(0.12) #x
+                            k.SetY1(0.105) #x
                         if targetZ == "99":
                             k.SetY1(0.065) #x
         if targetZ == "99":

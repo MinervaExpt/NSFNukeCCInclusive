@@ -68,7 +68,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"] #"ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"] #"ThetamuDeg"]
 
 for var in vars:
         print("---------------------------------------")
@@ -109,12 +109,20 @@ for var in vars:
                 new.GetYaxis().SetTitle("True Muon p_{T} (GeV/c)")
                 new.SetMarkerSize(1.2)
                 
-        if var == "pZmu":
+        if var == "pZmu1D":
                 mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} bin number")
                 mc_hist.GetYaxis().SetTitle("True Muon p_{Z} bin number")
                 mc_hist.SetMarkerSize(1.5)
                 new.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
                 new.GetYaxis().SetTitle("True Muon p_{Z} (GeV/c)")
+                new.SetMarkerSize(1.2)
+
+        if var == "ThetamuDeg":
+                mc_hist.GetXaxis().SetTitle("Reconstructed Muon #theta_{#mu} bin number")
+                mc_hist.GetYaxis().SetTitle("True Muon #theta_{#mu} bin number")
+                mc_hist.SetMarkerSize(1.5)
+                new.GetXaxis().SetTitle("Reconstructed Muon #theta_{#mu} (Deg)")
+                new.GetYaxis().SetTitle("True Muon #theta_{#mu} (Deg)")
                 new.SetMarkerSize(1.2)
 
 

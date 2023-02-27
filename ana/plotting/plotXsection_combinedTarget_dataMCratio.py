@@ -46,7 +46,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -98,8 +98,19 @@ for step in steps:
             else:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
        
-        if var == "pZmu":
+        if var == "pZmu1D":
             mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            if step == "crossSection":
+                mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
+                gStyle.SetTitleSize(0.05,"y")
+            elif step == "crossSection_total":
+                mc_hist.GetYaxis().SetTitle("#sigma (10^{-38} cm^{2}/CH)")
+                gStyle.SetTitleSize(0.05,"y")
+            else:
+                mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
+
+        if var == "ThetamuDeg":
+            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -124,8 +135,8 @@ for step in steps:
         else:
             mc_hist.Scale(1)
 
-        if var == "Enu":
-            mc_hist.GetXaxis().SetRangeUser(2, 20)
+        #if var == "Enu":
+        #    mc_hist.GetXaxis().SetRangeUser(2, 20)
 
         data_hist_stat =  data_hist.GetCVHistoWithStatError() # stat error
         data_hist_total = data_hist.GetCVHistoWithError() # total error
@@ -157,9 +168,11 @@ for step in steps:
         if var == "x":
             ratio.GetXaxis().SetTitle("Bjorken x")
         if var == "pTmu":
-            ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
-        if var == "pZmu":
-            ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            ratio.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
+        if var == "pZmu1D":
+            ratio.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
+        if var == "ThetamuDeg":
+            ratio.GetXaxis().SetTitle("Muon #theta_{#mu} (Deg)")
         ratio.GetYaxis().SetTitle("Data/MC")
         ratio.GetYaxis().CenterTitle()
         ratio.GetXaxis().CenterTitle()

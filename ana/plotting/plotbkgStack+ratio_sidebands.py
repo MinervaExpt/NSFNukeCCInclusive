@@ -53,6 +53,12 @@ def plotStackRatio(mnvPlotter, mcArray, data, mcScale, tuning, sideband, var):#,
         stack.GetYaxis().SetTitle("Events (norm.)")
     if var == "planeDNN":
         stack.GetYaxis().SetTitle("Events (norm.)")
+    if var == "pTmu":
+        ratio.GetXaxis().SetTitle("Events/(GeV/c)")
+    if var == "pZmu1D":
+        ratio.GetXaxis().SetTitle("Events/(GeV/c)")
+    if var == "ThetamuDeg":
+        ratio.GetXaxis().SetTitle("Events/Deg")
 
     stack.GetYaxis().CenterTitle()
     stack.GetYaxis().SetTitleOffset(0.9)
@@ -149,12 +155,18 @@ def plotStackRatio(mnvPlotter, mcArray, data, mcScale, tuning, sideband, var):#,
     ratio.Draw("X0 SAME")
 
     if var == "Enu":
-        ratio.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
+        ratio.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
 
     if var == "x":
         ratio.GetXaxis().SetTitle("Reconstructed Bjorken x")
     if var == "planeDNN":
         ratio.GetXaxis().SetTitle("Plane Number")
+    if var == "pTmu":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+    if var == "pZmu1D":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+    if var == "ThetamuDeg":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
 
     
     # ratio equivalent to this:
@@ -206,7 +218,7 @@ if targetZ == "06":
     trueZ = "Carbon"
     mat = "C"
 
-vars = ["Enu", "x", "planeDNN"]
+vars = ["Enu", "x", "planeDNN", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 for var in vars:
     # ----------------------------------------------------------------------------

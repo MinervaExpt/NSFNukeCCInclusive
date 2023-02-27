@@ -44,7 +44,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pTmu", "pZmu"]#, "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]#, "ThetamuDeg"]
 
 for var in vars:
 
@@ -60,7 +60,7 @@ for var in vars:
         mc_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         mc_hist.GetYaxis().SetTitle("Events (norm.)")
 
-    if var == "ThetamuDe":
+    if var == "ThetamuDeg":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
         mc_hist.GetYaxis().SetTitle("Events/Deg")
     
@@ -68,7 +68,7 @@ for var in vars:
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
-    if var == "pZmu":
+    if var == "pZmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
@@ -95,7 +95,7 @@ for var in vars:
     #mnv.ApplyStyle(1)
     mnv.DrawDataMCWithErrorBand(data_hist, mc_hist, mcScale, "TR", False, None, None, False, True, False)
 
-    mnv.AddChi2Label(data_hist, mc_hist, mcScale, "TL", 0.035, 0.0, True, False)
+    #mnv.AddChi2Label(data_hist, mc_hist, mcScale, "TL", 0.035, 0.0, True, False)
 
     '''
     Chi2DataMC( dataHist, mcHist, ndf, mcScale, useDataErrorMatrix, useOnlyShapeErrors)
@@ -116,7 +116,7 @@ for var in vars:
     # Event selection with simulated background
 
     mnv.DrawDataMCWithErrorBand(data_hist, mc_hist, mcScale, "TR", False, bkg_mc, None, False, True, False)
-    mnv.AddChi2Label(data_hist, mc_hist, mcScale, "TL", 0.035, 0.0, True, False)
+    #mnv.AddChi2Label(data_hist, mc_hist, mcScale, "TL", 0.035, 0.0, True, False)
     if targetZ == "99":
         mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
     else:
@@ -224,10 +224,18 @@ for var in vars:
                 k.SetX2(2.0) #x
                 k.SetY1(0.16) #x
 
-            if var == "ThetamuDe":
+            if var == "ThetamuDeg":
                 k.SetNColumns(2)
                 k.SetX2(2.0) #theta
                 k.SetY1(0.16) #theta
+
+            if var == "pTmu":
+                k.SetNColumns(2)
+
+            if var == "pZmu1D":
+                k.SetNColumns(2)
+                k.SetX2(45)
+
 
     if targetZ == "99":
         mnv2.AddHistoTitle("%s"%(trueZ), 0.05, 1)
