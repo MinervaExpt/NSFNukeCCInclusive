@@ -296,7 +296,7 @@ int main(int argc, char * argv[]){
   vars.push_back("x");
   vars.push_back("pTmu");
   vars.push_back("pZmu1D");
-  vars.push_back("ThetamuDeg");
+  //vars.push_back("ThetamuDeg");
   
   //string var = "Enu";
 
@@ -356,13 +356,13 @@ int main(int argc, char * argv[]){
       simEventRate_Other->Clone()->Write(Form("simEventRate_Other_daisy_%d_%s", petal, var.c_str() ));
       simEventRate_2p2h->Clone()->Write(Form("simEventRate_2p2h_daisy_%d_%s", petal, var.c_str() ));
 
-      effNum->Clone()->Write(Form("efficiency_numerator_daisy_%d_%s", petal, var.c_str() ));
+      //effNum->Clone()->Write(Form("efficiency_numerator_daisy_%d_%s", petal, var.c_str() ));
 
       // EFFICIENCY
       auto efficiency = effNum->Clone();
       efficiency->Divide(efficiency, effDenom, 1.0, 1.0, "B"); //Only the 2 parameter version of MnvH1D::Divide() //handles systematics correctly.
       //Plot(*effNum, "efficiency", prefix);
-      efficiency->Clone()->Write(Form("efficiency_daisy_%d_%s", petal, var.c_str() )); 
+      //efficiency->Clone()->Write(Form("efficiency_daisy_%d_%s", petal, var.c_str() )); 
 
       // Var and prefix specific ingredients
       for(const auto& prefix: prefixes){
@@ -380,7 +380,7 @@ int main(int argc, char * argv[]){
         auto unfolded = UnfoldHist(bkgSubtracted, migration, nIterations);
         if(!unfolded) throw std::runtime_error(std::string("Failed to unfold ") + bkgSubtracted->GetName() + " using " + migration->GetName());
         //Plot(*unfolded_mc, "unfolded", prefix);
-        unfolded->Clone()->Write(Form("unfolded_%s_daisy_%d_%s", prefix.c_str(), petal, var.c_str() ));
+        //unfolded->Clone()->Write(Form("unfolded_%s_daisy_%d_%s", prefix.c_str(), petal, var.c_str() ));
         // histogram unfolded data stores the diagonals, "unfoldinCov" contains the covariant values
         // in unfoldingCov, the diagonals are zero, but there should be off-diagonal content
 
@@ -393,7 +393,7 @@ int main(int argc, char * argv[]){
           isMC = true;
         }
 
-        WriteCovAndCorrMatrices(var, unfolded, fUnfold, prefix);
+        //WriteCovAndCorrMatrices(var, unfolded, fUnfold, prefix);
         std::cout << "Wrote covariance and correlation matrices.\n" << std::flush;
 
         // CROSS-SECTION EXTRACTION
@@ -401,7 +401,9 @@ int main(int argc, char * argv[]){
         // Unfolded efficiency corrected
         unfolded->Divide(unfolded, efficiency);
         //Plot(*unfolded_data, "efficiencyCorrected", prefix);
-        unfolded->Clone()->Write(Form("unfolded_effCorrected_%s_daisy_%d_%s", prefix.c_str(), petal, var.c_str() )); 
+        if (prefix=="data"){
+          unfolded->Clone()->Write(Form("unfolded_effCorrected_%s_daisy_%d_%s", prefix.c_str(), petal, var.c_str() )); 
+        }
         std::cout << "Efficiency corrected.\n" << std::flush;
       }
     }
@@ -466,6 +468,13 @@ int main(int argc, char * argv[]){
           daisy_petal_hists_DIS[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_DIS_daisy_%d_%s", petal, var.c_str() )));
           daisy_petal_hists_Other[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_Other_daisy_%d_%s", petal, var.c_str() )));
           daisy_petal_hists_2p2h[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get(Form("simEventRate_2p2h_daisy_%d_%s", petal, var.c_str() )));
+
+          fUnfold->Delete(Form("simEventRate_daisy_%d_%s;1", petal, var.c_str() ));
+          fUnfold->Delete(Form("simEventRate_QE_daisy_%d_%s;1", petal, var.c_str() ));
+          fUnfold->Delete(Form("simEventRate_RES_daisy_%d_%s;1", petal, var.c_str() ));
+          fUnfold->Delete(Form("simEventRate_DIS_daisy_%d_%s;1", petal, var.c_str() ));
+          fUnfold->Delete(Form("simEventRate_Other_daisy_%d_%s;1", petal, var.c_str() ));
+          fUnfold->Delete(Form("simEventRate_2p2h_daisy_%d_%s;1", petal, var.c_str() ));
         }
         // Efficiency corrected distribution to targets
         //Carbon
@@ -494,6 +503,8 @@ int main(int argc, char * argv[]){
       else{
         for (int petal=0; petal<12; petal++){
           daisy_petal_hists[petal] = dynamic_cast<MnvH1D*>(fUnfold->Get( Form("unfolded_effCorrected_%s_daisy_%d_%s", prefix.c_str(), petal, var.c_str() )));
+
+          fUnfold->Delete( Form("unfolded_effCorrected_%s_daisy_%d_%s;1", prefix.c_str(), petal, var.c_str() ));
         }
         // Efficiency corrected distribution to targets
         h_eff_corr_tracker_to_carbon = frw.GetReweightedDaisySum(nu_pdg, "carbon", daisy_petal_hists, project_dir );
@@ -509,6 +520,7 @@ int main(int argc, char * argv[]){
       // Write efficiency corrected distributions to targets to the file
       fUnfold->cd();
       // carbon
+      /*
       h_eff_corr_tracker_to_carbon->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_carbon_QE->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_QE_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_carbon_RES->Clone()->Write(Form("h_eff_corr_tracker_to_carbon_RES_%s_%s", prefix.c_str(),var.c_str() ));
@@ -529,7 +541,7 @@ int main(int argc, char * argv[]){
       h_eff_corr_tracker_to_lead_DIS->Clone()->Write(Form("h_eff_corr_tracker_to_lead_DIS_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_Other->Clone()->Write(Form("h_eff_corr_tracker_to_lead_Other_%s_%s", prefix.c_str(),var.c_str() ));
       h_eff_corr_tracker_to_lead_2p2h->Clone()->Write(Form("h_eff_corr_tracker_to_lead_2p2h_%s_%s", prefix.c_str(),var.c_str() ));
-
+      */
 
       std::map<int, MnvH1D*> h_eff_corr_tracker_to_material;
       h_eff_corr_tracker_to_material[0] = h_eff_corr_tracker_to_carbon;
@@ -565,6 +577,8 @@ int main(int argc, char * argv[]){
           flux->Clone()->Write(Form("flux_%s_%s", mat.c_str(), var.c_str()));
           fluxIntegral->Clone()->Write(Form("flux_integral_%s_%s", mat.c_str(), var.c_str()));
           fluxRebinned->Clone()->Write(Form("fluxRebinned_%s_%s", mat.c_str(), var.c_str()));
+          fluxIntegral->Clear();
+          fluxRebinned->Clear();
         }
       
 
@@ -596,6 +610,7 @@ int main(int argc, char * argv[]){
             simEventRate_cross_total = normalizeTotal(simEventRate_cross_total, fluxRebinned, nNucleons, pot);
             fUnfold->cd();
             simEventRate_cross_total->Clone()->Write(Form("simEventRate_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_cross_total->Clear();
 
             if(mat=="carbon"){
               // QE
@@ -603,26 +618,31 @@ int main(int argc, char * argv[]){
               simEventRate_QE_cross_total = normalizeTotal(simEventRate_QE_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_QE_cross_total->Clone()->Write(Form("simEventRate_QE_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_QE_cross_total->Clear();
               // RES
               auto simEventRate_RES_cross_total = h_eff_corr_tracker_to_carbon_RES->Clone();
               simEventRate_RES_cross_total = normalizeTotal(simEventRate_RES_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_RES_cross_total->Clone()->Write(Form("simEventRate_RES_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_RES_cross_total->Clear();
               // DIS
               auto simEventRate_DIS_cross_total = h_eff_corr_tracker_to_carbon_DIS->Clone();
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_DIS_cross_total->Clear();
               // Other
               auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_carbon_Other->Clone();
               simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_Other_cross_total->Clear();
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_carbon_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_2p2h_cross_total->Clone()->Write(Form("simEventRate_2p2h_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_2p2h_cross_total->Clear();
             }
             if(mat=="iron"){
               // QE
@@ -630,26 +650,31 @@ int main(int argc, char * argv[]){
               simEventRate_QE_cross_total = normalizeTotal(simEventRate_QE_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_QE_cross_total->Clone()->Write(Form("simEventRate_QE_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_QE_cross_total->Clear();
               // RES
               auto simEventRate_RES_cross_total = h_eff_corr_tracker_to_iron_RES->Clone();
               simEventRate_RES_cross_total = normalizeTotal(simEventRate_RES_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_RES_cross_total->Clone()->Write(Form("simEventRate_RES_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_RES_cross_total->Clear();
               // DIS
               auto simEventRate_DIS_cross_total = h_eff_corr_tracker_to_iron_DIS->Clone();
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_DIS_cross_total->Clear();
               // Other
               auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_iron_Other->Clone();
               simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_Other_cross_total->Clear();
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_iron_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_2p2h_cross_total->Clone()->Write(Form("simEventRate_2p2h_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_2p2h_cross_total->Clear();
 
 
             }
@@ -658,26 +683,31 @@ int main(int argc, char * argv[]){
               simEventRate_QE_cross_total = normalizeTotal(simEventRate_QE_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_QE_cross_total->Clone()->Write(Form("simEventRate_QE_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_QE_cross_total->Clear();
               // RES
               auto simEventRate_RES_cross_total = h_eff_corr_tracker_to_lead_RES->Clone();
               simEventRate_RES_cross_total = normalizeTotal(simEventRate_RES_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_RES_cross_total->Clone()->Write(Form("simEventRate_RES_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_RES_cross_total->Clear();
               // DIS
               auto simEventRate_DIS_cross_total = h_eff_corr_tracker_to_lead_DIS->Clone();
               simEventRate_DIS_cross_total = normalizeTotal(simEventRate_DIS_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_DIS_cross_total->Clone()->Write(Form("simEventRate_DIS_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_DIS_cross_total->Clear();
               // Other
               auto simEventRate_Other_cross_total = h_eff_corr_tracker_to_lead_Other->Clone();
               simEventRate_Other_cross_total = normalizeTotal(simEventRate_Other_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_Other_cross_total->Clone()->Write(Form("simEventRate_Other_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_Other_cross_total->Clear();
               // 2p2h
               auto simEventRate_2p2h_cross_total = h_eff_corr_tracker_to_lead_2p2h->Clone();
               simEventRate_2p2h_cross_total = normalizeTotal(simEventRate_2p2h_cross_total, fluxRebinned, nNucleons, pot);
               fUnfold->cd();
               simEventRate_2p2h_cross_total->Clone()->Write(Form("simEventRate_2p2h_crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+              simEventRate_2p2h_cross_total->Clear();
 
             }
 
@@ -691,6 +721,7 @@ int main(int argc, char * argv[]){
           simEventRate_cross = normalize(simEventRate_cross , fluxIntegral, nNucleons, pot);
           fUnfold->cd();
           simEventRate_cross->Clone()->Write(Form("simEventRate_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+          simEventRate_cross->Clear();
 
           if(mat=="carbon"){
             // QE
@@ -698,26 +729,31 @@ int main(int argc, char * argv[]){
             simEventRate_QE_cross = normalize(simEventRate_QE_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_QE_cross->Clone()->Write(Form("simEventRate_QE_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_QE_cross->Clear();
             // RES
             auto simEventRate_RES_cross = h_eff_corr_tracker_to_carbon_RES->Clone();
             simEventRate_RES_cross = normalize(simEventRate_RES_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_RES_cross->Clone()->Write(Form("simEventRate_RES_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_RES_cross->Clear();
             // DIS
             auto simEventRate_DIS_cross = h_eff_corr_tracker_to_carbon_DIS->Clone();
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_DIS_cross->Clear();
             // Other
             auto simEventRate_Other_cross = h_eff_corr_tracker_to_carbon_Other->Clone();
             simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_Other_cross->Clear();
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_carbon_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_2p2h_cross->Clone()->Write(Form("simEventRate_2p2h_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_2p2h_cross->Clear();
           }
           if(mat=="iron"){
             // QE
@@ -725,26 +761,31 @@ int main(int argc, char * argv[]){
             simEventRate_QE_cross = normalize(simEventRate_QE_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_QE_cross->Clone()->Write(Form("simEventRate_QE_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_QE_cross->Clear();
             // RES
             auto simEventRate_RES_cross = h_eff_corr_tracker_to_iron_RES->Clone();
             simEventRate_RES_cross = normalize(simEventRate_RES_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_RES_cross->Clone()->Write(Form("simEventRate_RES_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_RES_cross->Clear();
             // DIS
             auto simEventRate_DIS_cross = h_eff_corr_tracker_to_iron_DIS->Clone();
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_DIS_cross->Clear();
             // Other
             auto simEventRate_Other_cross = h_eff_corr_tracker_to_iron_Other->Clone();
             simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_Other_cross->Clear();
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_iron_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_2p2h_cross->Clone()->Write(Form("simEventRate_2p2h_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_2p2h_cross->Clear();
 
           }
           if(mat=="lead"){
@@ -753,26 +794,31 @@ int main(int argc, char * argv[]){
             simEventRate_QE_cross = normalize(simEventRate_QE_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_QE_cross->Clone()->Write(Form("simEventRate_QE_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_QE_cross->Clear();
             // RES
             auto simEventRate_RES_cross = h_eff_corr_tracker_to_lead_RES->Clone();
             simEventRate_RES_cross = normalize(simEventRate_RES_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_RES_cross->Clone()->Write(Form("simEventRate_RES_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_RES_cross->Clear();
             // DIS
             auto simEventRate_DIS_cross = h_eff_corr_tracker_to_lead_DIS->Clone();
             simEventRate_DIS_cross = normalize(simEventRate_DIS_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_DIS_cross->Clone()->Write(Form("simEventRate_DIS_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_DIS_cross->Clear();
             // Other
             auto simEventRate_Other_cross = h_eff_corr_tracker_to_lead_Other->Clone();
             simEventRate_Other_cross = normalize(simEventRate_Other_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_Other_cross->Clone()->Write(Form("simEventRate_Other_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_Other_cross->Clear();
             // 2p2h
             auto simEventRate_2p2h_cross = h_eff_corr_tracker_to_lead_2p2h->Clone();
             simEventRate_2p2h_cross = normalize(simEventRate_2p2h_cross , fluxIntegral, nNucleons, pot);
             fUnfold->cd();
             simEventRate_2p2h_cross->Clone()->Write(Form("simEventRate_2p2h_crossSection_%s_%s_%s",mat.c_str(), prefix.c_str(), var.c_str() ));
+            simEventRate_2p2h_cross->Clear();
 
           }
           //auto crossSection_mc = effNum->Clone();
@@ -790,6 +836,7 @@ int main(int argc, char * argv[]){
             //Plot(*crossSection_mc, "crossSection_mc", prefix);
             fUnfold->cd();
             crossSection_total->Clone()->Write(Form("crossSection_total_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
+            crossSection_total->Clear();
             
             std::cout << "Data total cross-section  DONE.\n" << std::flush;
           }
@@ -798,7 +845,8 @@ int main(int argc, char * argv[]){
           //Plot(*crossSection_mc, "crossSection_mc", prefix);
           fUnfold->cd();
           crossSection->Clone()->Write(Form("crossSection_%s_%s_%s", mat.c_str(), prefix.c_str(), var.c_str() ));
-          
+          crossSection->Clear();
+
           std::cout << "Data differential cross-section  DONE.\n" << std::flush;
           //WriteCovAndCorrMatrices(var, crossSection, fUnfold, prefix);
           //std::cout << "Wrote covariance and correlation matrices.\n" << std::flush;
