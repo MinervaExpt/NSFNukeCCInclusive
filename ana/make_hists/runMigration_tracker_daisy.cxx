@@ -199,7 +199,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    
    std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
    std::vector<double> x09bin, xfinebin;
-   std::vector<double> pTbin, pZbin, pZbin1D;
+   std::vector<double> pTbin, pZbin, pZbin1D, pTbin1D;
 
    if (doDIS){
      Enubin  = binsDef->GetDISBins("Enu"); 
@@ -227,6 +227,8 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      pZbin = binsDef->GetEnergyBins("muonPz"); 
      ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
      pZbin1D = binsDef->GetEnergyBins("muonPz1D"); 
+     pTbin1D = binsDef->GetEnergyBins("muonPt1D");
+
 
    }
   
@@ -247,10 +249,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
    Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
    Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
+   Var* pTmu1D = new Var("pTmu1D", "pTmu1D", pTbin1D, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
    Var* pZmu1D = new Var("pZmu1D", "pZmu1D", pZbin1D, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
 
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu, emu, thetaMu, pTmu, pZmu1D};//{enu,ehad}; 
+   variables = {x, enu, emu, thetaMu, pTmu1D, pZmu1D};//{enu,ehad}; 
   
    for (auto v : variables) v->InitializeAllHistograms(error_bands);
 

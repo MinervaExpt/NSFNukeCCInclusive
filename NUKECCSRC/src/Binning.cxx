@@ -426,13 +426,18 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
        binsLowEdge.assign(tmpBins,tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     } 
 
+    else if(var == "muonPt1D"){
+       double tmpBins[] = { 0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 3.0}; // 01/03/2023 pT1D
+       binsLowEdge.assign(tmpBins,tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
+    } 
+
     else if(var == "muonPz"){
        double tmpBins[] = {1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20, 40, 60};
        binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
    }
 
    else if(var == "muonPz1D"){
-       double tmpBins[] = {1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20}; //, 40, 60}; // Changed on 22/02/2023
+       double tmpBins[] = {2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 15, 20}; //, 40, 60}; // Changed on 22/02/2023
        binsLowEdge.assign(tmpBins, tmpBins+sizeof(tmpBins) / sizeof(tmpBins[0]));
    }
 
