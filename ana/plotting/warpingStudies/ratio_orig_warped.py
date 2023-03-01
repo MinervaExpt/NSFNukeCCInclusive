@@ -6,14 +6,36 @@ from ROOT import TGaxis
 from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F, TColor, TLegend
 from ROOT import PlotUtils
 
-#targetID = sys.argv[1] 
-#targetZ = sys.argv[2]
+newPWD = sys.argv[1] 
+origPWD = sys.argv[2] 
+targetID = sys.argv[3] 
+targetZ = sys.argv[4]
+plist = sys.argv[5]
+warp = sys.argv[6]
 
-new = ROOT.TFile("Hists_EventSelectionTracker_ML_ME6A_nosys_DeuteriumGeniePiTune_t99_z99_AntiNu.root")
-orig = ROOT.TFile("Hists_EventSelectionTracker_ML_ME6A_nosys_t99_z99_AntiNu.root")
+new = ROOT.TFile(str(newPWD)+"/EventSelection/EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
+orig = ROOT.TFile(str(origPWD)+"/EventSelection/EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
+mat = None
+trueZ = None
+
+if targetZ == "26":
+    trueZ = "Iron"
+    mat = "Fe"
+
+if targetZ == "82":
+    trueZ = "Lead"
+    mat = "Pb"
+
+if targetZ == "06":
+    trueZ = "Carbon"
+    mat = "C"
+
+if targetZ == "99":
+    trueZ = "Tracker"
+    mat = "CH"
 
 ROOT.TH1.AddDirectory(False)
 
@@ -25,8 +47,10 @@ for var in vars:
     new_hist= new.Get("selected_mc_reco_%s"%var) # selected signal
     orig_hist = orig.Get("selected_mc_reco_%s"%var) 
 
-    ratio = new_hist.Clone()
-    ratio.Divide(new_hist,orig_hist)#, 1.0, 1.0, "B") # binomial because numerator is the subset of the denominator, to make the stat error correct
+    new_hist_stat = new_hist.GetCVHistoWithStatError()
+    orig_hist_stat = orig_hist.GetCVHistoWithStatError()
+    ratio = new_hist_stat.Clone()
+    ratio.Divide(ratio,orig_hist_stat)#, 1.0, 1.0, "B") # binomial because numerator is the subset of the denominator, to make the stat error correct
     sysError = ratio.Clone()
     ratio.SetLineColor(ROOT.kRed)
 
@@ -48,7 +72,7 @@ for var in vars:
     # ----------------------------------------------------------------------------
     # Ratio
 
-    ratio.GetYaxis().SetTitle("Warped/Orig Ratio ")
+    ratio.GetYaxis().SetTitle("Warped/CV Ratio")
     ratio.GetXaxis().CenterTitle()
     ratio.GetYaxis().CenterTitle()
     ratio.Draw("HIST")
@@ -61,18 +85,21 @@ for var in vars:
     sysError.SetMaximum(1)
     '''
     ratio.Draw("HIST SAME")
-    ratio.SetMaximum(1.2)
-    ratio.SetMinimum(0.8)
+    ratio.SetMaximum(1.5)
+    ratio.SetMinimum(0.5)
 
     gStyle.SetOptTitle(0)
 
-    mnv.AddHistoTitle("ME6A Tracker", 0.05, 1)
+    if targetZ == "99":
+        mnv.AddHistoTitle("%s Warp: %s"%(warp, trueZ), 0.05, 1)
+    else:
+        mnv.AddHistoTitle("%s Warp: Target %s %s"%(warp, targetID, trueZ), 0.05, 1)
     mnv.AddPlotLabel("Integral Numerator: "+ str(new_hist.Integral()), 0.40, 0.87, 0.033, 12, 42)
     mnv.AddPlotLabel("Integral Denominator: "+ str(orig_hist.Integral()), 0.414, 0.82, 0.033, 12, 42)
 
     canvas1.Modified()
     canvas1.Update()
-    canvas1.Print("ME6A_Warped_Orig_ratio_%s.png"%var)
+    canvas1.Print("%sWarpCVRatio_t%s_z%02s_%s_%s.png"%(warp, targetID, targetZ, var, plist))
 
 
-raw_input("Done")
+print("DONE %s %s %s %02s"%(warp, plist, targetID, targetZ))
