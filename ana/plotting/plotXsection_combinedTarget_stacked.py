@@ -97,7 +97,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
         if var == "pTmu":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -108,7 +108,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
        
         if var == "pZmu1D":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -119,7 +119,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
         if var == "ThetamuDeg":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+            mc_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -208,9 +208,22 @@ for step in steps:
         mc_hist.SetLineColor(ROOT.kRed)
         mc_hist.SetLineWidth(2)
         if step == "crossSection_total":
-            mc_hist.GetYaxis().SetRangeUser(0, data_hist.GetMaximum()*1.2)
+            mc_hist.GetYaxis().SetRangeUser(0, data_hist.GetMaximum()*1.3)
+        elif step == "total_unfolded_effCorrected":
+            mc_hist.SetMaximum(data_hist.GetMaximum()*1.6)
+            if var == "x":
+                mc_hist.SetMaximum(data_hist.GetMaximum()*2.0)
+                if targetZ == "82":
+                    mc_hist.SetMaximum(data_hist.GetMaximum()*2.2)    
         else:
-            mc_hist.SetMaximum(data_hist.GetMaximum()*1.5)
+        elif var == "x":
+            mc_hist.SetMaximum(data_hist.GetMaximum()*1.3)
+            if step == "total_unfolded_effCorrected":
+                mc_hist.SetMaximum(data_hist.GetMaximum()*2.0)
+                if targetZ == "82":
+                    mc_hist.SetMaximum(data_hist.GetMaximum()*2.2)
+        else:
+            mc_hist.SetMaximum(data_hist.GetMaximum()*1.4)
 
         # Int channels
         mc_hist_QE.SetLineWidth(3)
@@ -248,6 +261,7 @@ for step in steps:
         data_hist.Draw("SAME E1 X0")
         #data_hist_stat.Draw("E2 SAME")
         data_hist_total.Draw("E1 SAME X0")
+
 
         ''' void MnvPlotter::DrawDataMCWithErrorBand(
         const MnvH1D* dataHist,
@@ -294,8 +308,11 @@ for step in steps:
 
         if step == "crossSection_total":
             legend = TLegend(0.20,0.45,0.50,0.89)
+        elif var == "x" or "ThetamuDeg":
+            legend = TLegend(0.70,0.55,0.85,0.89)
         else:
             legend = TLegend(0.55,0.55,0.80,0.89)
+        
         legend.SetFillStyle(0)
         legend.SetBorderSize(0)
         legend.SetTextSize(0.035)
@@ -310,6 +327,9 @@ for step in steps:
         legend.Draw()
         canvas1.RedrawAxis()
 
+        canvas1.SetLogx(False)
+        if var == "x":
+            canvas1.SetLogx()
         canvas1.Modified()
         if targetZ == "99":
             canvas1.Print("Stacked_%s_t%s_z%02s_%s_%s.png"%(step, targetID, targetZ, var, plist))

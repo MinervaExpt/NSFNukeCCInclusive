@@ -219,7 +219,10 @@ for step in steps:
 
 
         mc_hist.GetYaxis().SetTitleOffset(0.96)
-
+        
+        canvas1.SetLogx(False)
+        if var == "x":
+            canvas1.SetLogx()
         canvas1.Modified()
         if targetZ == "99":
             canvas1.Print("DataMCratio_%s_t%s_z%02s_%s_%s.png"%(step, targetID, targetZ, var, plist))

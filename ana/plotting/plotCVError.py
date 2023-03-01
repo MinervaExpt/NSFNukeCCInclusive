@@ -108,6 +108,9 @@ for var in vars:
         mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
     mnv.AddPOTNormBox(dataPOT,mcPOT, 0.3, 0.82)
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("EventSelection_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 
@@ -212,29 +215,59 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+            if var == "pTmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+            if var == "pZmu1D":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum()* 1.05)
+            if var == "ThetamuDeg":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
 
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
                 k.SetNColumns(2)
-                k.SetX2(45) #Enu
-                k.SetY1(0.2) #Enu
+                k.SetX2(20) #Enu
+                k.SetY1(0.15) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.14) #Enu
 
             if var == "x":
                 k.SetNColumns(2)
-                k.SetX2(2.0) #x
+                k.SetX2(0.5) #x
                 k.SetY1(0.16) #x
-
-            if var == "ThetamuDeg":
-                k.SetNColumns(2)
-                k.SetX2(2.0) #theta
-                k.SetY1(0.16) #theta
+                if targetZ == "99":
+                    k.SetY1(0.18) #Enu
 
             if var == "pTmu":
                 k.SetNColumns(2)
+                k.SetX2(4.5) 
+                k.SetY1(0.17) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.16) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.18) #Enu
+                    if targetID == "3":
+                       k.SetY1(0.24) #Enu 
+                    if targetID == "5":
+                        k.SetY1(0.22) #Enu 
+                if targetZ == "06":
+                    k.SetY1(0.18) #Enu
 
             if var == "pZmu1D":
                 k.SetNColumns(2)
-                k.SetX2(45)
+                k.SetX2(20)
+                if targetZ == "99":
+                    k.SetY1(0.15) #Enu
+        
+            if var == "ThetamuDeg":
+                k.SetNColumns(2)
+                k.SetX2(17) 
+                k.SetY1(0.16)
+                if targetZ == "99":
+                    k.SetY1(0.14) #Enu
+                if targetZ == "06":
+                    k.SetY1(0.15) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.15)
 
 
     if targetZ == "99":

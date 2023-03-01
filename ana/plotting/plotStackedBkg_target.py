@@ -163,6 +163,7 @@ for var in vars:
     if var == "x":
         data_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         data_hist.GetYaxis().SetTitle("Events (norm.)")
+        data_hist.SetMaximum(data_hist.GetMaximum()*1.2)
     
     if var == "pTmu":
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
@@ -191,15 +192,29 @@ for var in vars:
 
     data_hist.GetXaxis().CenterTitle()
     data_hist.GetYaxis().CenterTitle()
+    data_hist.GetYaxis().SetTitleOffset(0.8)
+    data_hist.GetXaxis().SetTitleOffset(1.2)
+
+    if var == "ThetamuDeg":
+        data_hist.SetMaximum(data_hist.GetMaximum()*1.2)
+    if var == "x":
+        data_hist.SetMaximum(data_hist.GetMaximum()*1.1)
+
 
     data_hist.Draw("SAME HIST p E1 X0") # for error bars, suppressed error bars along X
 
     mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-
+    
     legend = TLegend(0.40,0.60,0.80,0.89)
+    legend.SetTextSize(0.035)
+    if var == "ThetamuDeg":
+        legend = TLegend(0.45,0.62,0.68,0.89)
+    if var == "x":
+        legend = TLegend(0.17,0.7,0.82,0.89)
+        legend.SetNColumns(2)
+        legend.SetTextSize(0.028)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
-    legend.SetTextSize(0.035)
     legend.AddEntry(data_hist, " Data", "ep")
     legend.AddEntry(signal, " Signal ("+ str(signal_per) +"%)", "f")
     legend.AddEntry(US_hist, " Upstream plastic ("+ str(US_hist_per) +"%)", "fl")
@@ -214,8 +229,9 @@ for var in vars:
     legend.SetTextFont(42)
     legend.Draw()
 
-    #canvas1.SetLogy()
-    canvas1.SetLogy(False)
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("EventSelection_Bkg_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 

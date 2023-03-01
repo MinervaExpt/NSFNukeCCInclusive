@@ -15,7 +15,7 @@ targetID = 99
 targetZ = 99
 
 
-infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
+infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s_angle.root"%(targetID, targetZ, plist))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 material = 'tracker_daisy'
@@ -34,7 +34,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu"]
+vars = ["ThetamuDeg"]
 
 steps = [ 'crossSection', 'crossSection_total']
 #steps = ['crossSection', 'crossSection_total']
@@ -263,10 +263,6 @@ for step in steps:
         mnv.AddHistoTitle("%s %s"%(material,step), 0.05, 1)
         if step == "crossSection_total":
             mnv.AddPOTNormBox(dataPOT,mcPOT, 0.7, 0.82)
-        elif var == "x":
-            mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
-        elif var == "ThetamuDeg":
-            mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
         else:
             mnv.AddPOTNormBox(dataPOT,mcPOT, 0.7, 0.45)
 

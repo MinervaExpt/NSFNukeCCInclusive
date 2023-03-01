@@ -175,6 +175,9 @@ for var in vars:
         mnv.AddHistoTitle("Target %s %s: Bkg Subtracted"%(targetID, trueZ), 0.05, 1)
     mnv.AddPOTNormBox(dataPOT,mcPOT, 0.7, 0.32)
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("DataMCratio_BkgSubtracted_EventSelection_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 

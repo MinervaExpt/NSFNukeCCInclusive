@@ -69,6 +69,12 @@ for var in vars:
         mc_hist.GetYaxis().CenterTitle()
         if var == "Enu":
             mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
+        elif var == "pZmu1D":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
+        elif var == "pTmu":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
+        elif var == "ThetamuDeg":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
         else:
             mc_hist.SetMaximum(mc_hist.GetMaximum()*1.2)
 
@@ -91,7 +97,12 @@ for var in vars:
 
 
     mnv.AddHistoTitle("Daisy Tracker: Bkg Subtracted", 0.04, 1)
-    mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
+    if var == "x":
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
+    elif var == "ThetamuDeg":
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
+    else:
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
     gStyle.SetErrorX(0)
 
     legend = TLegend(0.65,0.50,0.85,0.87)
@@ -102,7 +113,10 @@ for var in vars:
         legend.AddEntry(mc_histos[petal], " Petal " + str(petal), "l")
     legend.SetTextFont(42)
     legend.Draw()
-
+    
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("BkgSubtracted_EventSelection_daisy_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 

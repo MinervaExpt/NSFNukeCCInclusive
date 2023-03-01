@@ -76,23 +76,23 @@ for var in vars:
         num_hist.GetXaxis().SetTitle("Bjorken x")
         num_hist.GetYaxis().SetTitle("Events (norm.)")
     if var == "pTmu":
-        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
-        denom_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
+        denom_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
-        num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        num_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
     if var == "pZmu1D":
-        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
-        denom_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
+        denom_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
         denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
-        num_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        num_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
         num_hist.GetYaxis().SetTitle("Events/(GeV/c)")
     
     if var == "ThetamuDeg":
-        ratio.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
-        denom_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        ratio.GetXaxis().SetTitle("Muon Angle (Deg)")
+        denom_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
         denom_hist.GetYaxis().SetTitle("Events/Deg")
-        num_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        num_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
         num_hist.GetYaxis().SetTitle("Events/Deg")
 
     ratio.GetYaxis().SetTitle("Efficiency")
@@ -111,7 +111,11 @@ for var in vars:
 
     gStyle.SetOptTitle(0)
 
-    legend = TLegend(0.56,0.70,0.80,0.89)
+    if var == "x":
+        legend = TLegend(0.2,0.80,0.80,0.89)
+        legend.SetNColumns(2)
+    else:
+        legend = TLegend(0.56,0.70,0.80,0.89)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
 
@@ -120,6 +124,9 @@ for var in vars:
     else:
         mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Update()
     canvas1.Print("Efficiency_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
@@ -155,7 +162,12 @@ for var in vars:
     denom_hist.GetXaxis().CenterTitle()
     denom_hist.GetYaxis().CenterTitle()
 
+    denom_hist.SetMaximum(denom_hist.GetMaximum()*1.2)
+
     legend = TLegend(0.56,0.70,0.80,0.89)
+    if var == "x":
+        legend = TLegend(0.2,0.80,0.80,0.89)
+        legend.SetNColumns(2)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
     #legend.AddEntry(reco, " Simulation", "l")
@@ -168,6 +180,9 @@ for var in vars:
     else:
         mnv.AddHistoTitle("Efficiency: Target %s %s"%(targetID, trueZ), 0.05, 1)
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Update()
     canvas1.Print("Efficiency_t%s_z%02s_%s_%s_NumDenom.png"%(targetID, targetZ, var, plist))
@@ -258,17 +273,41 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+            if var == "pTmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+            if var == "pZmu1D":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+            if var == "ThetamuDeg":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
 
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
                 k.SetNColumns(2)
-                k.SetX2(45) #Enu
-                k.SetY1(0.25) #Enu
+                k.SetX2(20) #Enu
+                k.SetY1(0.15) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.13) #Enu
 
             if var == "x":
                 k.SetNColumns(2)
-                k.SetX2(2.0) #x
+                k.SetX2(0.5) #x
                 k.SetY1(0.23) #x
+
+            if var == "pTmu":
+                k.SetNColumns(2)
+                k.SetX2(4.5) #Enu
+                k.SetY1(0.27) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.2) #Enu
+            if var == "pZmu1D":
+                k.SetNColumns(2)
+                k.SetX2(20) #Enu
+                k.SetY1(0.24) #Enu
+            if var == "ThetamuDeg":
+                k.SetNColumns(2)
+                k.SetX2(17) #Enu
+                k.SetY1(0.16) #Enu
+
 
     if targetZ == "99":
         mnv2.AddHistoTitle("Efficiency Numerator: %s"%(trueZ), 0.05, 1)
@@ -293,13 +332,28 @@ for var in vars:
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
                 k.SetNColumns(2)
-                k.SetX2(45) #Enu
-                k.SetY1(0.24) #Enu
+                k.SetX2(20) #Enu
+                k.SetY1(0.14) #Enu
 
             if var == "x":
                 k.SetNColumns(2)
-                k.SetX2(2.0) #x
+                k.SetX2(0.5) #x
                 k.SetY1(0.23) #x
+            
+            if var == "pTmu":
+                k.SetNColumns(2)
+                k.SetX2(4.5) #Enu
+                k.SetY1(0.2) #Enu
+            
+            if var == "pZmu1D":
+                k.SetNColumns(2)
+                k.SetX2(20) #Enu
+                k.SetY1(0.13) #Enu
+
+            if var == "ThetamuDeg":
+                k.SetNColumns(2)
+                k.SetX2(17) #Enu
+                k.SetY1(0.16) #Enu
     
     if targetZ == "99":
         mnv2.AddHistoTitle("Efficiency Denominator: %s"%(trueZ), 0.05, 1)
@@ -324,19 +378,27 @@ for var in vars:
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
                 k.SetNColumns(2)
-                k.SetX2(45) #Enu
+                k.SetX2(20) #Enu
                 k.SetY1(0.09) #Enu
                 if targetZ == "99":
                     k.SetY1(0.03) #Enu
                 if targetZ == "06":
                     k.SetY1(0.05) #Enu
                 if targetZ == "26":
-                        k.SetY1(0.09) #Enu
+                    k.SetY1(0.09) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.05) #Enu
+                    if targetID == "3":
+                        k.SetY1(0.058) #Enu
+                    if targetID == "4":
+                        k.SetY1(0.045) #Enu
+                    if targetID == "4":
+                        k.SetY1(0.08) #Enu
 
 
             if var == "x":
                 k.SetNColumns(2)
-                k.SetX2(2.0) #x
+                k.SetX2(0.5) #x
                 k.SetY1(0.06) #x
                 if targetZ == "99":
                     k.SetY1(0.025) #x
@@ -356,6 +418,34 @@ for var in vars:
                         k.SetY1(0.045) #x
                     if targetID == "4":
                         k.SetY1(0.035) #x
+            
+            if var == "pTmu":
+                k.SetNColumns(2)
+                k.SetX2(4.5) #Enu
+                k.SetY1(0.18) #Enu
+
+            if var == "pZmu1D":
+                k.SetNColumns(2)
+                k.SetX2(20) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.035) #Enu
+
+            if var == "ThetamuDeg":
+                k.SetNColumns(2)
+                k.SetX2(17) #Enu
+                k.SetY1(0.065) #Enu
+                if targetZ == "06":
+                    k.SetY1(0.038) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.05) #x
+                    if targetID == "2":
+                        k.SetY1(0.055) #x
+                    if targetID == "3":
+                        k.SetY1(0.055) #x
+                    if targetID == "4":
+                        k.SetY1(0.04) #x
+                if targetZ == "99":
+                    k.SetY1(0.016) #Enu
 
     if targetZ == "99":
         mnv2.AddHistoTitle("Efficiency %s"%(trueZ), 0.05, 1)

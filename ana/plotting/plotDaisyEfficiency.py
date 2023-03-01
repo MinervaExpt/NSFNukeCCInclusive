@@ -52,13 +52,13 @@ for var in vars:
             mc_hist.GetXaxis().SetTitle("Vertex X (cm)")
             mc_hist.GetYaxis().SetTitle("Vertex Y (cm)")
         elif var == "pTmu":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         elif var == "pZmu1D":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
             mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         elif var == "ThetamuDeg":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+            mc_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
             mc_hist.GetYaxis().SetTitle("Events/Deg")
 
         mc_hist.GetXaxis().CenterTitle()
@@ -94,26 +94,29 @@ for var in vars:
     #mnv.AddPOTNormBox(deomPOT, mcPOT, 0.5, 0.85)
     gStyle.SetErrorX(0)
 
-    legend = TLegend(0.30,0.50,0.50,0.87)
+    legend = TLegend(0.50,0.50,0.60,0.87)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
     for petal in range(0,12):
-        legend.AddEntry(mc_histos[petal], " Petal Numerator " + str(petal), "l")
+        legend.AddEntry(mc_histos[petal], " Num. " + str(petal), "l")
     legend.SetTextFont(42)
     legend.SetTextSize(0.03)
     legend.Draw()
 
-    legend2 = TLegend(0.55,0.50,0.75,0.87)
+    legend2 = TLegend(0.65,0.50,0.85,0.87)
     legend2.SetFillStyle(0)
     legend2.SetBorderSize(0)
     legend2.SetTextSize(0.035)
     for petal in range(0,12):
-        legend2.AddEntry(denom_histos[petal], " Petal Denominator " + str(petal), "l")
+        legend2.AddEntry(denom_histos[petal], " Denom. " + str(petal), "l")
     legend2.SetTextFont(42)
     legend2.SetTextSize(0.03)
     legend2.Draw()
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("Efficiency_daisy_t99_z99_%s_%s_NumDenom.png"%(var, plist))
 
@@ -138,6 +141,10 @@ for var in vars:
     gStyle.SetErrorX(0)
 
     legend = TLegend(0.55,0.20,0.85,0.50)
+    if var == "pTmu":
+        legend = TLegend(0.55,0.60,0.85,0.90)
+    if var == "ThetamuDeg":
+        legend = TLegend(0.55,0.60,0.85,0.90)
     legend.SetNColumns(2)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
@@ -149,6 +156,9 @@ for var in vars:
     legend.Draw()
 
     #canvas2.SetLogy()
+    canvas2.SetLogx(False)
+    if var == "x":
+        canvas2.SetLogx()
     canvas2.Modified()
     canvas2.Print("Efficiency_daisy_t99_z99_%s_%s.png"%(var, plist))
     

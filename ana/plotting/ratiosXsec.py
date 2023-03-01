@@ -30,7 +30,7 @@ if targetZ == "06":
   targetID = "3"
 
 
-target = infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
+target = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
 tracker = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t99_z99_%s.root"%(plist))
 
 print("CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
@@ -43,7 +43,7 @@ dataPOT = tracker.Get("DataPOT").GetVal()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu","x", "pZmu1D", "pTmu"]
 
 for var in vars:
     if var=="Enu":
@@ -69,7 +69,7 @@ for var in vars:
         target_simEventRate_hist_RES = target.Get("simEventRate_RES_crossSection_mc_%s"%var)
         target_simEventRate_hist_DIS = target.Get("simEventRate_DIS_crossSection_mc_%s"%var)
         target_simEventRate_hist_Other = target.Get("simEventRate_Other_crossSection_mc_%s"%var)
-        target_simEventRate_2p2h_hist = target.Get("simEventRate_2p2h_crossSection_mc_%s"%var)
+        target_simEventRate_hist_2p2h = target.Get("simEventRate_2p2h_crossSection_mc_%s"%var)
         tracker_data_hist = tracker.Get("crossSection_%s_data_%s"%(material,var))
         tracker_simEventRate_hist = tracker.Get("simEventRate_crossSection_%s_mc_%s"%(material,var))
         tracker_simEventRate_hist_QE = tracker.Get("simEventRate_QE_crossSection_%s_mc_%s"%(material,var))
@@ -110,15 +110,15 @@ for var in vars:
         ratio_mc.GetYaxis().SetTitle("Events (norm.)")
 
     if var == "pTmu":
-        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio_mc.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
        
     if var == "pZmu1D":
-        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio_mc.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
 
     if var == "ThetamuDeg":
-        ratio_mc.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        ratio_mc.GetXaxis().SetTitle("Muon Angle (Deg)")
         ratio_mc.GetYaxis().SetTitle("Events/Deg")
 
     ratio_mc.GetXaxis().CenterTitle()
@@ -202,6 +202,9 @@ for var in vars:
         legend.SetTextFont(42)
         legend.Draw()
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Update()
     if intType == "0":
@@ -319,6 +322,12 @@ for var in vars:
                 k.GetMaximum()*1.0000001 # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.005)
+            if var == "pTmu":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+            if var == "pZmu1D":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+            if var == "ThetamuDeg":
+                k.GetYaxis().SetRangeUser(0,k.GetMaximum())
 
         if(k.ClassName().find("Legend")!=-1):
             if var == "Enu":
@@ -339,7 +348,7 @@ for var in vars:
 
             if var == "x":
                 k.SetNColumns(2)
-                k.SetX2(2.0) #x
+                k.SetX2(0.5) #x
                 k.SetY1(0.035) #x
                 if targetZ =="06":
                     k.SetY1(0.055) #x
@@ -353,6 +362,29 @@ for var in vars:
                     k.SetY1(0.05)
                     if len(sys.argv) > 4:
                         k.SetY1(0.045) #x
+
+            if var == "pTmu":
+                k.SetNColumns(2)
+                k.SetX2(4.5) #Enu
+                if targetZ =="06":
+                    k.SetY1(0.45) #x
+                if targetZ =="26":
+                    k.SetY1(0.3) #x
+                if targetZ =="82":
+                    k.SetY1(0.25) #x
+            if var == "pZmu1D":
+                k.SetNColumns(2)
+                k.SetX2(20) #Enu
+            if var == "ThetamuDeg":
+                k.SetNColumns(2)
+                k.SetX2(17) #Enu
+                if targetZ =="06":
+                    k.SetY1(0.08) #x
+                if targetZ =="26":
+                    k.SetY1(0.06) #x
+                if targetZ =="82":
+                    k.SetY1(0.062) #x
+
 
     mnv2.AddHistoTitle("xSec %s/tracker"%material, 0.04, 1)
 

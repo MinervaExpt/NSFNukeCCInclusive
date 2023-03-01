@@ -69,6 +69,12 @@ for var in vars:
         mc_hist.SetMaximum(mc_hist.GetMaximum()*1.2)
         if var == "Enu":
             mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
+        if var == "ThetamuDeg":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.25)
+        if var == "pZmu1D":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.2)
+        if var == "pTmu":
+            mc_hist.SetMaximum(mc_hist.GetMaximum()*1.2)
 
 
         mc_hist.SetLineColor(mcColors[petal])
@@ -90,7 +96,12 @@ for var in vars:
 
 
     mnv.AddHistoTitle("Daisy Tracker", 0.04, 1)
-    mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
+    if var == "x":
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
+    elif var == "ThetamuDeg":
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.4, 0.3)
+    else:
+        mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
     gStyle.SetErrorX(0)
 
     legend = TLegend(0.65,0.50,0.85,0.87)
@@ -102,6 +113,9 @@ for var in vars:
     legend.SetTextFont(42)
     legend.Draw()
 
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
     canvas1.Print("EventSelection_daisy_t99_z99_%s_%s.png"%(var, plist))
 
@@ -144,8 +158,8 @@ for petal in range(1,12):
 mnv.AddPlotLabel("Daisy Tracker (MC)", 0.25, 0.87, 0.033, 12, 42)
 
 '''
-mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
-gStyle.SetErrorX(0)
+#mnv.AddPOTNormBox(dataPOT, mcPOT, 0.5, 0.85)
+#gStyle.SetErrorX(0)
 '''
 legend = TLegend(0.15,0.9,0.9,1.01)
 legend.SetFillStyle(0)

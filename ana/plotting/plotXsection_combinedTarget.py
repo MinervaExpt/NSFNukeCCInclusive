@@ -45,7 +45,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -97,7 +97,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
         if var == "pTmu":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -108,7 +108,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
        
         if var == "pZmu1D":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+            mc_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -119,7 +119,7 @@ for step in steps:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
         if var == "ThetamuDeg":
-            mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+            mc_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
                 gStyle.SetTitleSize(0.05,"y")
@@ -209,8 +209,10 @@ for step in steps:
         mc_hist.SetLineWidth(2)
         if step == "crossSection_total":
             mc_hist.GetYaxis().SetRangeUser(0, data_hist.GetMaximum()*1.2)
-        else:
+        elif var == "x":
             mc_hist.SetMaximum(data_hist.GetMaximum()*1.5)
+        else:
+            mc_hist.SetMaximum(data_hist.GetMaximum()*1.3)
 
         # Int channels
         mc_hist_QE.SetLineWidth(3)
@@ -282,6 +284,11 @@ for step in steps:
             legend = TLegend(0.20,0.45,0.50,0.89)
         else:
             legend = TLegend(0.55,0.55,0.80,0.89)
+        if var == "x":
+            legend = TLegend(0.60,0.55,0.8,0.89)
+            if step == "total_unfolded_effCorrected":
+                legend = TLegend(0.45,0.7,0.8,0.89)
+                legend.SetNColumns(2)
         legend.SetFillStyle(0)
         legend.SetBorderSize(0)
         legend.SetTextSize(0.035)
@@ -295,6 +302,9 @@ for step in steps:
         #legend.SetTextFont(42)
         legend.Draw()
 
+        canvas1.SetLogx(False)
+        if var == "x":
+            canvas1.SetLogx()
         canvas1.Modified()
         if targetZ == "99":
             canvas1.Print("%s_t%s_z%02s_%s_%s.png"%(step, targetID, targetZ, var, plist))
@@ -422,6 +432,16 @@ for step in steps:
         if var == "x":
             data_hist.GetXaxis().SetTitle("Bjorken x")
 
+        if var == "pZmu1D":
+            data_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
+            #data_hist.GetXaxis().SetRangeUser(2, 20)
+
+        if var == "pTmu":
+            data_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
+
+        if var == "pTmu":
+            data_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
+
         mnv2.DrawErrorSummary(data_hist, "TL", True, True, 0.0, False, "",True);
         # last boolean decides whether frac or not
 
@@ -432,11 +452,17 @@ for step in steps:
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.03) # to 0.35 for Enu
                 if var == "x":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
+                if var == "pTmu":
+                    k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+                if var == "pZmu1D":
+                    k.GetYaxis().SetRangeUser(0,k.GetMaximum())
+                if var == "ThetamuDeg":
+                    k.GetYaxis().SetRangeUser(0,k.GetMaximum())
 
             if(k.ClassName().find("Legend")!=-1):
                 if var == "Enu":
                     k.SetNColumns(2)
-                    k.SetX2(45) #Enu
+                    k.SetX2(20) #Enu
                     k.SetY1(0.15) #Enu
                     if len(sys.argv) > 4:
                         k.SetY1(0.1) #Enu
@@ -444,18 +470,22 @@ for step in steps:
                         if targetZ == "06":
                             k.SetY1(0.25) #Enu
                             if len(sys.argv) > 4:
-                                k.SetY1(0.12) #Enu
+                                k.SetY1(0.08) #Enu
                         if targetZ == "82":
                             if len(sys.argv) > 4:
-                                k.SetY1(0.07) #Enu
+                                k.SetY1(0.06) #Enu
                         if targetZ == "99":
                             k.SetY1(0.04) #Enu
                     if step == "crossSection_total":
                         k.SetY1(0.35) #Enu
-                        if len(sys.argv) > 4:
-                            k.SetY1(0.35) #Enu
+                        if targetZ == "06":
+                            k.SetY1(0.1) #Enu
+                        if targetZ == "26":
+                            k.SetY1(0.12) #Enu
+                        if targetZ == "82":
+                            k.SetY1(0.1) #Enu
                         if targetZ == "99":
-                            k.SetY1(0.28) #Enu
+                            k.SetY1(0.08) #Enu
                     if step == "crossSection":
                         if targetZ == "06":
                             k.SetY1(0.25) #Enu
@@ -472,7 +502,7 @@ for step in steps:
 
                 if var == "x":
                     k.SetNColumns(2)
-                    k.SetX2(2.0) #x
+                    k.SetX2(0.5) #x
                     k.SetY1(0.12) #x
                     if step == "total_unfolded_effCorrected":
                         if targetZ == "06":
@@ -484,7 +514,7 @@ for step in steps:
                         if targetZ == "82":
                             k.SetY1(0.05) #x
                         if targetZ == "99":
-                            k.SetY1(0.03) #x
+                            k.SetY1(0.027) #x
                     if step == "crossSection":
                         if targetZ == "06" or "82":
                             k.SetY1(0.07) #x
@@ -492,6 +522,43 @@ for step in steps:
                             k.SetY1(0.105) #x
                         if targetZ == "99":
                             k.SetY1(0.065) #x
+
+                if var == "pTmu":
+                    k.SetNColumns(2)
+                    k.SetX2(4.5) #x
+                    if targetZ == "06":
+                        k.SetY1(0.45) #x
+                    if targetZ == "26":
+                        k.SetY1(0.3) #x
+                    if targetZ == "82":
+                        k.SetY1(0.25) #x
+                    if targetZ == "99":
+                        k.SetY1(0.065) #x
+                if var == "pZmu1D":
+                    k.SetNColumns(2)
+                    k.SetX2(20) #x
+                if var == "ThetamuDeg":
+                    k.SetNColumns(2)
+                    k.SetX2(17) #x
+                    if step == "total_unfolded_effCorrected":
+                        if targetZ == "06":
+                            k.SetY1(0.08) #x
+                        if targetZ == "26":
+                            k.SetY1(0.065) #x
+                        if targetZ == "82":
+                            k.SetY1(0.06) #x
+                        if targetZ == "99":
+                            k.SetY1(0.017) #x
+                    if step == "crossSection":
+                        if targetZ == "06":
+                            k.SetY1(0.1) #x
+                        if targetZ == "26":
+                            k.SetY1(0.085) #x
+                        if targetZ == "82":
+                            k.SetY1(0.085) #x
+                        if targetZ == "99":
+                            k.SetY1(0.06) #x
+
         if targetZ == "99":
             mnv2.AddHistoTitle("%s"%(trueZ), 0.05, 1)
         else:
@@ -506,9 +573,45 @@ for step in steps:
         if var == "x":
             #mnv2.WritePreliminary(0.37, 0.53, 0.035, True)
             if step == "total_unfolded_effCorrected":
+                if targetZ == "06":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+                if targetZ == "26":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+                if targetZ == "82":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+                if targetZ == "99":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+
+            else:
+                if targetZ == "06":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.62, 0.033, 12, 42)
+                if targetZ == "26":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+                if targetZ == "82":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.63, 0.033, 12, 42)
+                if targetZ == "99":
+                    mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.63, 0.033, 12, 42)
+        
+        if var == "pTmu":
+            #mnv2.WritePreliminary(0.37, 0.53, 0.035, True)
+            if step == "total_unfolded_effCorrected":
                 mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.62, 0.033, 12, 42)
             else:
-                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.65, 0.033, 12, 42)
+                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.30, 0.65, 0.033, 12, 42)
+        
+        if var == "pZmu1D":
+            #mnv2.WritePreliminary(0.37, 0.53, 0.035, True)
+            if step == "total_unfolded_effCorrected":
+                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.35, 0.033, 12, 42)
+            else:
+                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.35, 0.033, 12, 42)
+        
+        if var == "ThetamuDeg":
+            #mnv2.WritePreliminary(0.37, 0.53, 0.035, True)
+            if step == "total_unfolded_effCorrected":
+                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.40, 0.62, 0.033, 12, 42)
+            else:
+                mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.35, 0.65, 0.033, 12, 42)
 
 
         canvas1.Modified()

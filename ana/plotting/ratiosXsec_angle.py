@@ -30,8 +30,8 @@ if targetZ == "06":
   targetID = "3"
 
 
-target = infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
-tracker = ROOT.TFile(str(dirpwd)+"/CrossSection_t99_z99_%s.root"%(plist))
+target = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
+tracker = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t99_z99_%s_angle.root"%(plist))
 
 print("CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
 
@@ -43,40 +43,25 @@ dataPOT = tracker.Get("DataPOT").GetVal()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["ThetamuDeg"]
 
 for var in vars:
-    if var=="Enu":
-        target_data_hist = target.Get("crossSection_total_data_%s"%var)
-        target_simEventRate_hist = target.Get("simEventRate_crossSection_total_mc_%s"%var) # total signal
-        target_simEventRate_hist_QE = target.Get("simEventRate_QE_crossSection_total_mc_%s"%var) # QE
-        target_simEventRate_hist_RES = target.Get("simEventRate_RES_crossSection_total_mc_%s"%var)
-        target_simEventRate_hist_DIS = target.Get("simEventRate_DIS_crossSection_total_mc_%s"%var) 
-        target_simEventRate_hist_Other = target.Get("simEventRate_Other_crossSection_total_mc_%s"%var)
-        target_simEventRate_hist_2p2h = target.Get("simEventRate_2p2h_crossSection_total_mc_%s"%var) 
-        tracker_data_hist = tracker.Get("crossSection_total_data_%s"%(var))
-        tracker_simEventRate_hist = tracker.Get("simEventRate_crossSection_total_mc_%s"%(var))
-        tracker_simEventRate_hist_QE = tracker.Get("simEventRate_QE_crossSection_total_mc_%s"%var) # QE
-        tracker_simEventRate_hist_RES = tracker.Get("simEventRate_RES_crossSection_total_mc_%s"%var)
-        tracker_simEventRate_hist_DIS = tracker.Get("simEventRate_DIS_crossSection_total_mc_%s"%var) 
-        tracker_simEventRate_hist_Other = tracker.Get("simEventRate_Other_crossSection_total_mc_%s"%var)
-        tracker_simEventRate_hist_2p2h = tracker.Get("simEventRate_2p2h_crossSection_total_mc_%s"%var) 
+  
+    target_data_hist = target.Get("crossSection_data_%s"%var)
+    target_simEventRate_hist = target.Get("simEventRate_crossSection_mc_%s"%var) # total signal
+    target_simEventRate_hist_QE = target.Get("simEventRate_QE_crossSection_mc_%s"%var)
+    target_simEventRate_hist_RES = target.Get("simEventRate_RES_crossSection_mc_%s"%var)
+    target_simEventRate_hist_DIS = target.Get("simEventRate_DIS_crossSection_mc_%s"%var)
+    target_simEventRate_hist_Other = target.Get("simEventRate_Other_crossSection_mc_%s"%var)
+    target_simEventRate_hist_2p2h = target.Get("simEventRate_2p2h_crossSection_mc_%s"%var)
 
-    else: 
-        target_data_hist = target.Get("crossSection_data_%s"%var)
-        target_simEventRate_hist = target.Get("simEventRate_crossSection_mc_%s"%var) # total signal
-        target_simEventRate_hist_QE = target.Get("simEventRate_QE_crossSection_mc_%s"%var)
-        target_simEventRate_hist_RES = target.Get("simEventRate_RES_crossSection_mc_%s"%var)
-        target_simEventRate_hist_DIS = target.Get("simEventRate_DIS_crossSection_mc_%s"%var)
-        target_simEventRate_hist_Other = target.Get("simEventRate_Other_crossSection_mc_%s"%var)
-        target_simEventRate_2p2h_hist = target.Get("simEventRate_2p2h_crossSection_mc_%s"%var)
-        tracker_data_hist = tracker.Get("crossSection_data_%s"%(var))
-        tracker_simEventRate_hist = tracker.Get("simEventRate_crossSection_mc_%s"%(var))
-        tracker_simEventRate_hist_QE = tracker.Get("simEventRate_QE_crossSection_mc_%s"%(var))
-        tracker_simEventRate_hist_RES = tracker.Get("simEventRate_RES_crossSection_mc_%s"%(var))
-        tracker_simEventRate_hist_DIS = tracker.Get("simEventRate_DIS_crossSection_mc_%s"%(var))
-        tracker_simEventRate_hist_Other = tracker.Get("simEventRate_Other_crossSection_mc_%s"%(var))
-        tracker_simEventRate_hist_2p2h = tracker.Get("simEventRate_2p2h_crossSection_mc_%s"%(var))
+    tracker_data_hist = tracker.Get("crossSection_%s_data_%s"%(material,var))
+    tracker_simEventRate_hist = tracker.Get("simEventRate_crossSection_%s_mc_%s"%(material,var))
+    tracker_simEventRate_hist_QE = tracker.Get("simEventRate_QE_crossSection_%s_mc_%s"%(material,var))
+    tracker_simEventRate_hist_RES = tracker.Get("simEventRate_RES_crossSection_%s_mc_%s"%(material,var))
+    tracker_simEventRate_hist_DIS = tracker.Get("simEventRate_DIS_crossSection_%s_mc_%s"%(material,var))
+    tracker_simEventRate_hist_Other = tracker.Get("simEventRate_Other_crossSection_%s_mc_%s"%(material,var))
+    tracker_simEventRate_hist_2p2h = tracker.Get("simEventRate_2p2h_crossSection_%s_mc_%s"%(material,var))
 
 
     ratio_data = target_data_hist.Clone()
@@ -118,7 +103,7 @@ for var in vars:
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
 
     if var == "ThetamuDeg":
-        ratio_mc.GetXaxis().SetTitle("Muon #theta_{#mu} (Deg)")
+        ratio_mc.GetXaxis().SetTitle("Muon Angle (Deg)")
         ratio_mc.GetYaxis().SetTitle("Events/Deg")
 
     ratio_mc.GetXaxis().CenterTitle()
@@ -188,7 +173,7 @@ for var in vars:
     gStyle.SetOptTitle(0)
     mnv.AddPOTNormBox(dataPOT,mcPOT, 0.3, 0.82)
 
-    mnv.AddHistoTitle("xSec %s/non-daisy tracker"%material, 0.05, 1)
+    mnv.AddHistoTitle("xSec %s/tracker"%material, 0.05, 1)
     if intType == "0":
         legend = TLegend(0.85,0.55,0.99,0.89)
         legend.SetFillStyle(0)
@@ -201,16 +186,13 @@ for var in vars:
         legend.AddEntry(ratio_mc_Other, " Other", "l")
         legend.SetTextFont(42)
         legend.Draw()
-    
-    canvas1.SetLogx(False)
-    if var == "x":
-        canvas1.SetLogx()
+
     canvas1.Modified()
     canvas1.Update()
     if intType == "0":
-        canvas1.Print("xSec_ratio_t%s_z%02s_%s_%s_intType.png"%(targetID, targetZ, var, plist))
+        canvas1.Print("xSec_ratio_Daisy_t%s_z%02s_%s_%s_intType.png"%(targetID, targetZ, var, plist))
     else:
-        canvas1.Print("xSec_ratio_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
+        canvas1.Print("xSec_ratio_Daisy_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 
  # ----------------------------------------------------------------------------
     # Fractional Error Groups
@@ -228,15 +210,15 @@ for var in vars:
         ratio_data.GetYaxis().SetTitle("Events (norm.)")
 
     if var == "pTmu":
-        ratio_data.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         ratio_data.GetYaxis().SetTitle("Events/(GeV/c)")
        
     if var == "pZmu1D":
-        ratio_data.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
         ratio_data.GetYaxis().SetTitle("Events/(GeV/c)")
 
     if var == "ThetamuDeg":
-        ratio_data.GetXaxis().SetTitle("Muon Angle (Deg)")
+        ratio_data.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
         ratio_data.GetYaxis().SetTitle("Events/Deg")
 
     mnv2.error_summary_group_map.clear()
@@ -362,7 +344,7 @@ for var in vars:
                     k.SetY1(0.05)
                     if len(sys.argv) > 4:
                         k.SetY1(0.045) #x
-            
+
             if var == "pTmu":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
@@ -385,10 +367,13 @@ for var in vars:
                 if targetZ =="82":
                     k.SetY1(0.062) #x
 
-    mnv2.AddHistoTitle("xSec %s/non-daisy tracker"%material, 0.04, 1)
 
+    mnv2.AddHistoTitle("xSec %s/tracker"%material, 0.04, 1)
+    canvas1.SetLogx(False)
+    if var == "x":
+        canvas1.SetLogx()
     canvas1.Modified()
-    canvas1.Print("xSec_ratio_FracErr_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
+    canvas1.Print("xSec_ratio_Daisy_FracErr_t%s_z%02s_%s_%s.png"%(targetID, targetZ, var, plist))
 
 
 print("DONE %s %s %02s"%(plist, targetID, targetZ))
