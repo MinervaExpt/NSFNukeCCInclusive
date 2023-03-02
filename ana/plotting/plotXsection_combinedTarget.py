@@ -45,7 +45,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu"]
+vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -182,14 +182,14 @@ for step in steps:
 
         #if var == "Enu":
         #    mc_hist.GetXaxis().SetRangeUser(2, 20)
-        
-        mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
-        mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
-        mc_hist_RES.Scale(mc_hist_RES.GetNormBinWidth(), "width")
-        mc_hist_DIS.Scale(mc_hist_DIS.GetNormBinWidth(), "width")
-        mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
-        mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
-        data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+        if step == "crossSection_total":
+            mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+            mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
+            mc_hist_RES.Scale(mc_hist_RES.GetNormBinWidth(), "width")
+            mc_hist_DIS.Scale(mc_hist_DIS.GetNormBinWidth(), "width")
+            mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
+            mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
+            data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
         data_hist_stat =  data_hist.GetCVHistoWithStatError() # stat error
         data_hist_total = data_hist.GetCVHistoWithError() # total error
         data_hist_sys = data_hist.GetCVHistoWithError(False) # sys error (bool is include stat)
@@ -280,15 +280,16 @@ for step in steps:
 
         mc_hist.GetYaxis().SetTitleOffset(0.96)
 
+        legend = TLegend(0.55,0.55,0.80,0.89)
         if step == "crossSection_total":
             legend = TLegend(0.20,0.45,0.50,0.89)
-        else:
-            legend = TLegend(0.55,0.55,0.80,0.89)
+        if var == "ThetamuDeg":
+            #legend = TLegend(0.65,0.55,0.85,0.89)
+            legend = TLegend(0.52,0.7,0.85,0.89)
+            legend.SetNColumns(2)
         if var == "x":
-            legend = TLegend(0.60,0.55,0.8,0.89)
-            if step == "total_unfolded_effCorrected":
-                legend = TLegend(0.45,0.7,0.8,0.89)
-                legend.SetNColumns(2)
+            legend = TLegend(0.49,0.7,0.84,0.89)
+            legend.SetNColumns(2)
         legend.SetFillStyle(0)
         legend.SetBorderSize(0)
         legend.SetTextSize(0.035)

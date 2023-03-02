@@ -182,14 +182,14 @@ for step in steps:
 
         #if var == "Enu":
         #    mc_hist.GetXaxis().SetRangeUser(2, 20)
-        
-        mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
-        mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
-        mc_hist_RES.Scale(mc_hist_RES.GetNormBinWidth(), "width")
-        mc_hist_DIS.Scale(mc_hist_DIS.GetNormBinWidth(), "width")
-        mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
-        mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
-        data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+        if step == "crossSection_total":
+            mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+            mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
+            mc_hist_RES.Scale(mc_hist_RES.GetNormBinWidth(), "width")
+            mc_hist_DIS.Scale(mc_hist_DIS.GetNormBinWidth(), "width")
+            mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
+            mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
+            data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
         data_hist_stat =  data_hist.GetCVHistoWithStatError() # stat error
         data_hist_total = data_hist.GetCVHistoWithError() # total error
         data_hist_sys = data_hist.GetCVHistoWithError(False) # sys error (bool is include stat)
@@ -216,14 +216,7 @@ for step in steps:
                 if targetZ == "82":
                     mc_hist.SetMaximum(data_hist.GetMaximum()*2.2)    
         else:
-        elif var == "x":
             mc_hist.SetMaximum(data_hist.GetMaximum()*1.3)
-            if step == "total_unfolded_effCorrected":
-                mc_hist.SetMaximum(data_hist.GetMaximum()*2.0)
-                if targetZ == "82":
-                    mc_hist.SetMaximum(data_hist.GetMaximum()*2.2)
-        else:
-            mc_hist.SetMaximum(data_hist.GetMaximum()*1.4)
 
         # Int channels
         mc_hist_QE.SetLineWidth(3)
@@ -251,7 +244,7 @@ for step in steps:
         stack.Add(mc_hist_2p2h)
         stack.Add(mc_hist_DIS)
         stack.Add(mc_hist_Other)
-        stack.Draw("SAME HIST")
+        stack.Draw("HIST SAME")
 
         #mc_hist_QE.Draw("HIST SAME")
         #mc_hist_RES.Draw("HIST SAME")

@@ -137,14 +137,14 @@ for step in steps:
         #mc_hist.GetXaxis().SetRangeUser(66,173)
 
         #mnv.ApplyStyle(1)
-  
-        mc_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
-        mc_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
-        mc_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
+        if step == "crossSection_total":
+            mc_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
+            mc_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
+            mc_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
 
-        data_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
-        data_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
-        data_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
+            data_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
+            data_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
+            data_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
 
         data_hist_stat_C =  data_hist_C.GetCVHistoWithStatError() # stat error
         data_hist_total_C = data_hist_C.GetCVHistoWithError() # total error
@@ -178,7 +178,7 @@ for step in steps:
         if step == "crossSection_total":
             mc_hist_C.GetYaxis().SetRangeUser(0,data_hist_Pb.GetMaximum()*1.2)
         else:
-            mc_hist_C.SetMaximum(data_hist_C.GetMaximum()*1.2)
+            mc_hist_C.SetMaximum(data_hist_C.GetMaximum()*1.3)
 
         mc_hist_stat_Fe.SetFillColor(ROOT.kBlue-10)
         mc_hist_stat_Fe.SetFillStyle(1001)
@@ -272,22 +272,32 @@ for step in steps:
 
         mc_hist_C.GetYaxis().SetTitleOffset(0.96)
 
+        legend = TLegend(0.55,0.5,0.80,0.89)
         if step == "crossSection_total":
             legend = TLegend(0.20,0.45,0.50,0.89)
-        else:
-            legend = TLegend(0.55,0.5,0.80,0.89)
         if var == "x":
-            legend = TLegend(0.60,0.55,0.8,0.89)
+            legend = TLegend(0.18,0.75,0.55,0.89)
+            legend.SetNColumns(2)
+        if var == "ThetamuDeg":
+            legend = TLegend(0.60,0.55,0.85,0.89)
         legend.SetFillStyle(0)
         legend.SetBorderSize(0)
         legend.SetTextSize(0.035)
-        legend.AddEntry(mc_hist_stat_C, " Simulation C", "fl")
-        legend.AddEntry(mc_hist_stat_Fe, " Simulation Fe", "fl")
-        legend.AddEntry(mc_hist_stat_Pb, " Simulation Pb", "fl")
+        if var == "x":
+            legend.AddEntry(mc_hist_stat_C, " Simulation C", "fl")
+            legend.AddEntry(data_hist_C, " Data C", "lep")
+            legend.AddEntry(mc_hist_stat_Fe, " Simulation Fe", "fl")
+            legend.AddEntry(data_hist_Fe, " Data Fe", "lep")
+            legend.AddEntry(mc_hist_stat_Pb, " Simulation Pb", "fl")
+            legend.AddEntry(data_hist_Pb, " Data Pb", "lep")
+        else:
+            legend.AddEntry(mc_hist_stat_C, " Simulation C", "fl")
+            legend.AddEntry(mc_hist_stat_Fe, " Simulation Fe", "fl")
+            legend.AddEntry(mc_hist_stat_Pb, " Simulation Pb", "fl")
+            legend.AddEntry(data_hist_C, " Data C", "lep")
+            legend.AddEntry(data_hist_Fe, " Data Fe", "lep")
+            legend.AddEntry(data_hist_Pb, " Data Pb", "lep")
 
-        legend.AddEntry(data_hist_C, " Data C", "lep")
-        legend.AddEntry(data_hist_Fe, " Data Fe", "lep")
-        legend.AddEntry(data_hist_Pb, " Data Pb", "lep")
         legend.SetTextFont(42)
         legend.Draw()
 
