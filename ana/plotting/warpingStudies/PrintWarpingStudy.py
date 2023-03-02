@@ -89,7 +89,14 @@ leg.Draw()
 
 
 if var == "Enu":
-    mnv.AddHistoTitle("Fake Data == %s Warp Antineutrino Energy"%(warp), 0.04, 1)
+    mnv.AddHistoTitle("Fake Data == %s Warp E_{#bar{#nu}}"%(warp), 0.04, 1)
 if var == "x":
     mnv.AddHistoTitle("Fake Data == %s Warp Bjorken x" %(warp), 0.04, 1)
+if var == "pTmu1D":
+    mnv.AddHistoTitle("Fake Data == %s Warp p_{T}" %(warp), 0.04, 1)
+if var == "pZmu1D":
+    mnv.AddHistoTitle("Fake Data == %s Warp p_{T}" %(warp), 0.04, 1)
+if var == "ThetamuDeg":
+    mnv.AddHistoTitle("Fake Data == %s Warp #theta_{#mu}" %(warp), 0.04, 1)
+
 can.Print(fileName + ".png")

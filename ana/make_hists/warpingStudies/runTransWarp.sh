@@ -10,7 +10,7 @@ plistTag=$6 # What tag
 warp=$7
 
 
-for VARIABLE in Enu x #pTmu pZmu
+for VARIABLE in Enu x pTmu1D pZmu1D ThetamuDeg
 do
 
     #VARIABLE=Enu

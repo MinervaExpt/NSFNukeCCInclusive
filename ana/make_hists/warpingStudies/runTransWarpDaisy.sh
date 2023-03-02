@@ -11,7 +11,7 @@ warp=$7
 
 # h_bkg_subtracted_mc_daisy_9_x
 
-for VARIABLE in Enu x #pTmu pZmu
+for VARIABLE in Enu x pTmu1D pZmu1D ThetamuDeg
 do
     echo For petal ${VARIABLE} start:
     for PETAL in 0 1 2 3 4 5 6 7 8 9 10 11

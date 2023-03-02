@@ -39,7 +39,7 @@ if targetZ == "99":
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu", "x"]
+vars = ["Enu", "x", "pTmu1D", "pZmu1D", "ThetamuDeg"]
 
 for var in vars:
 
