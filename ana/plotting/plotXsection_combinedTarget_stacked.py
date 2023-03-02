@@ -45,7 +45,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -96,7 +96,7 @@ for step in steps:
             else:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
-        if var == "pTmu":
+        if var == "pTmu1D":
             mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")

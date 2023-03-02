@@ -44,7 +44,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]#, "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]#, "ThetamuDeg"]
 
 for var in vars:
 
@@ -64,7 +64,7 @@ for var in vars:
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
         mc_hist.GetYaxis().SetTitle("Events/Deg")
     
-    if var == "pTmu":
+    if var == "pTmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
@@ -215,7 +215,7 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
             if var == "pZmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()* 1.05)
@@ -237,7 +237,7 @@ for var in vars:
                 if targetZ == "99":
                     k.SetY1(0.18) #Enu
 
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) 
                 k.SetY1(0.17) #Enu

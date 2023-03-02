@@ -40,7 +40,7 @@ if targetZ == "06":
     trueZ = "Carbon"
     mat = "C"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
     total = infile.Get("selected_mc_reco_%s"%var)
@@ -165,7 +165,7 @@ for var in vars:
         data_hist.GetYaxis().SetTitle("Events (norm.)")
         data_hist.SetMaximum(data_hist.GetMaximum()*1.2)
     
-    if var == "pTmu":
+    if var == "pTmu1D":
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         data_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 
@@ -179,7 +179,7 @@ for var in vars:
 
 
     '''
-    if var == "pTmu":
+    if var == "pTmu1D":
         stack.GetXaxis().SetTitle("Reconstructed Muon p_{T}[GeV/c] ")
         stack.GetYaxis().SetTitle("Events/(GeV/c)")
         stack.SetMaximum(600)

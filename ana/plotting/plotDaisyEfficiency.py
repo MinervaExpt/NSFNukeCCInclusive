@@ -27,7 +27,7 @@ if scale == "1":
 
 mcColors = ROOT.MnvColors.GetColors(ROOT.MnvColors.kGlasbeyPalette)
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 
 for var in vars:
@@ -51,7 +51,7 @@ for var in vars:
         elif var == "vtxx_vtxy":
             mc_hist.GetXaxis().SetTitle("Vertex X (cm)")
             mc_hist.GetYaxis().SetTitle("Vertex Y (cm)")
-        elif var == "pTmu":
+        elif var == "pTmu1D":
             mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         elif var == "pZmu1D":
@@ -141,7 +141,7 @@ for var in vars:
     gStyle.SetErrorX(0)
 
     legend = TLegend(0.55,0.20,0.85,0.50)
-    if var == "pTmu":
+    if var == "pTmu1D":
         legend = TLegend(0.55,0.60,0.85,0.90)
     if var == "ThetamuDeg":
         legend = TLegend(0.55,0.60,0.85,0.90)

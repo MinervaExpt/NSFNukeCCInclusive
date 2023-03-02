@@ -45,7 +45,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']
@@ -96,7 +96,7 @@ for step in steps:
             else:
                 mc_hist.GetYaxis().SetTitle("Events #times 10^{3} (norm.)")
 
-        if var == "pTmu":
+        if var == "pTmu1D":
             mc_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             if step == "crossSection":
                 mc_hist.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")
@@ -437,10 +437,10 @@ for step in steps:
             data_hist.GetXaxis().SetTitle("Muon p_{Z} (GeV/c)")
             #data_hist.GetXaxis().SetRangeUser(2, 20)
 
-        if var == "pTmu":
+        if var == "pTmu1D":
             data_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
 
-        if var == "pTmu":
+        if var == "ThetamuDeg":
             data_hist.GetXaxis().SetTitle("Muon Angle (Deg)")
 
         mnv2.DrawErrorSummary(data_hist, "TL", True, True, 0.0, False, "",True);
@@ -453,7 +453,7 @@ for step in steps:
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.03) # to 0.35 for Enu
                 if var == "x":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-                if var == "pTmu":
+                if var == "pTmu1D":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum())
                 if var == "pZmu1D":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum())
@@ -524,7 +524,7 @@ for step in steps:
                         if targetZ == "99":
                             k.SetY1(0.065) #x
 
-                if var == "pTmu":
+                if var == "pTmu1D":
                     k.SetNColumns(2)
                     k.SetX2(4.5) #x
                     if targetZ == "06":
@@ -593,7 +593,7 @@ for step in steps:
                 if targetZ == "99":
                     mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.63, 0.033, 12, 42)
         
-        if var == "pTmu":
+        if var == "pTmu1D":
             #mnv2.WritePreliminary(0.37, 0.53, 0.035, True)
             if step == "total_unfolded_effCorrected":
                 mnv2.AddPlotLabel("Data POT "+ "{:.2e}".format(dataPOT), 0.70, 0.62, 0.033, 12, 42)

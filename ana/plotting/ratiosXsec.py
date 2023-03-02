@@ -43,7 +43,7 @@ dataPOT = tracker.Get("DataPOT").GetVal()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x", "pZmu1D", "pTmu"]
+vars = ["Enu","x", "pZmu1D", "pTmu1D"]
 
 for var in vars:
     if var=="Enu":
@@ -109,7 +109,7 @@ for var in vars:
         ratio_mc.GetXaxis().SetTitle("Bjorken x")
         ratio_mc.GetYaxis().SetTitle("Events (norm.)")
 
-    if var == "pTmu":
+    if var == "pTmu1D":
         ratio_mc.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         ratio_mc.GetYaxis().SetTitle("Events/(GeV/c)")
        
@@ -227,7 +227,7 @@ for var in vars:
         ratio_data.GetXaxis().SetTitle("Bjorken x")
         ratio_data.GetYaxis().SetTitle("Events (norm.)")
 
-    if var == "pTmu":
+    if var == "pTmu1D":
         ratio_data.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         ratio_data.GetYaxis().SetTitle("Events/(GeV/c)")
        
@@ -322,7 +322,7 @@ for var in vars:
                 k.GetMaximum()*1.0000001 # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.005)
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
             if var == "pZmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
@@ -363,7 +363,7 @@ for var in vars:
                     if len(sys.argv) > 4:
                         k.SetY1(0.045) #x
 
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 if targetZ =="06":

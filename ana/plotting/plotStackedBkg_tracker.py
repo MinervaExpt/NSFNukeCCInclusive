@@ -25,7 +25,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
     total = infile.Get("selected_mc_reco_%s"%var)
@@ -107,7 +107,7 @@ for var in vars:
         data_hist.GetXaxis().SetTitle("Reconstructed Bjorken x")
         data_hist.GetYaxis().SetTitle("Events (norm.)")
     
-    if var == "pTmu":
+    if var == "pTmu1D":
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         data_hist.GetYaxis().SetTitle("Events/(GeV/c)")
 

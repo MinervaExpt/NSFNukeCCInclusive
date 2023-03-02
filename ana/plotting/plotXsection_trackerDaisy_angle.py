@@ -73,7 +73,7 @@ for step in steps:
             else:
                 mc_hist_C.GetYaxis().SetTitle("Events (norm.)")
 
-        if var == "pTmu":
+        if var == "pTmu1D":
             mc_hist_C.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
             if step == "crossSection":
                 mc_hist_C.GetYaxis().SetTitle("d#sigma/dx_{#bar{#nu}} (10^{-39} cm^{2}/x/nucleon)")

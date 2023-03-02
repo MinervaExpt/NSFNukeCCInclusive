@@ -42,7 +42,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
 
@@ -66,7 +66,7 @@ for var in vars:
         if targetZ != "99":
             data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Bjorken x") 
 
-    if var == "pTmu":
+    if var == "pTmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
@@ -225,7 +225,7 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
             if var == "pZmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
@@ -261,7 +261,7 @@ for var in vars:
                     k.SetX2(2.0) #x
                     k.SetY1(0.17) #x
 
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.2) #Enu
@@ -323,7 +323,7 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
             if var == "pZmu":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
@@ -377,7 +377,7 @@ for var in vars:
                     if len(sys.argv) > 4:
                         k.SetY1(0.003) #x
             
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.25) #Enu
@@ -449,7 +449,7 @@ for var in vars:
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
                 if var == "x":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-                if var == "pTmu":
+                if var == "pTmu1D":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
                 if var == "pZmu":
                     k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02)
@@ -494,7 +494,7 @@ for var in vars:
                                 k.SetY1(0.035) #x
                     
 
-                if var == "pTmu":
+                if var == "pTmu1D":
                     k.SetNColumns(2)
                     k.SetX2(4.5) #Enu
                     k.SetY1(0.25) #Enu

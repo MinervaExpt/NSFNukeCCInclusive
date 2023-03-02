@@ -46,7 +46,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 for var in vars:
     # numerator vs denominator
     num_hist = infile.Get("h_mc_%s"%var) # selected signal
@@ -75,7 +75,7 @@ for var in vars:
         denom_hist.GetYaxis().SetTitle("Events (norm.)")
         num_hist.GetXaxis().SetTitle("Bjorken x")
         num_hist.GetYaxis().SetTitle("Events (norm.)")
-    if var == "pTmu":
+    if var == "pTmu1D":
         ratio.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         denom_hist.GetXaxis().SetTitle("Muon p_{T} (GeV/c)")
         denom_hist.GetYaxis().SetTitle("Events/(GeV/c)")
@@ -273,7 +273,7 @@ for var in vars:
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.02) # to 0.35 for Enu
             if var == "x":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum()*1.05)
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
             if var == "pZmu1D":
                 k.GetYaxis().SetRangeUser(0,k.GetMaximum())
@@ -293,7 +293,7 @@ for var in vars:
                 k.SetX2(0.5) #x
                 k.SetY1(0.23) #x
 
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.27) #Enu
@@ -340,7 +340,7 @@ for var in vars:
                 k.SetX2(0.5) #x
                 k.SetY1(0.23) #x
             
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.2) #Enu
@@ -419,7 +419,7 @@ for var in vars:
                     if targetID == "4":
                         k.SetY1(0.035) #x
             
-            if var == "pTmu":
+            if var == "pTmu1D":
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.18) #Enu

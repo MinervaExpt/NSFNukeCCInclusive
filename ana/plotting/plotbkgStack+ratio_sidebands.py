@@ -53,7 +53,7 @@ def plotStackRatio(mnvPlotter, mcArray, data, mcScale, tuning, sideband, var):#,
         stack.GetYaxis().SetTitle("Events (norm.)")
     if var == "planeDNN":
         stack.GetYaxis().SetTitle("Events (norm.)")
-    if var == "pTmu":
+    if var == "pTmu1D":
         stack.GetXaxis().SetTitle("Events/(GeV/c)")
     if var == "pZmu1D":
         stack.GetXaxis().SetTitle("Events/(GeV/c)")

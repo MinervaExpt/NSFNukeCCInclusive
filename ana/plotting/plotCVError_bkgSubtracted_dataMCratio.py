@@ -43,7 +43,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
 
@@ -67,7 +67,7 @@ for var in vars:
         if targetZ != "99":
             data_hist_notConstrained.GetXaxis().SetTitle("Reconstructed Bjorken x") 
 
-    if var == "pTmu":
+    if var == "pTmu1D":
         mc_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
         mc_hist.GetYaxis().SetTitle("Events/(GeV/c)")
         data_hist.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
@@ -134,7 +134,7 @@ for var in vars:
         ratio.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
     if var == "x":
         ratio.GetXaxis().SetTitle("Reconstructed Bjorken x")
-    if var == "pTmu":
+    if var == "pTmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
     if var == "pZmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
