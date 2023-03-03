@@ -392,7 +392,7 @@ for var in vars:
                         k.SetY1(0.058) #Enu
                     if targetID == "4":
                         k.SetY1(0.045) #Enu
-                    if targetID == "4":
+                    if targetID == "5":
                         k.SetY1(0.08) #Enu
 
 
@@ -423,6 +423,8 @@ for var in vars:
                 k.SetNColumns(2)
                 k.SetX2(4.5) #Enu
                 k.SetY1(0.18) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.035) #Enu
 
             if var == "pZmu1D":
                 k.SetNColumns(2)

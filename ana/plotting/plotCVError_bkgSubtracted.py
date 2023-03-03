@@ -351,7 +351,7 @@ for var in vars:
                     if targetID == "5":
                         k.SetY1(0.06) #x
                 if targetZ == "99":
-                    k.SetY1(0.14) #Enu
+                    k.SetY1(0.014) #Enu
 
             if var == "x":
                 k.SetNColumns(2)
@@ -372,10 +372,10 @@ for var in vars:
                         if targetID == "5":
                             k.SetY1(0.035) #x
                 if targetZ == "99":
-                    k.SetX2(2.0) #x
+                    k.SetX2(0.5) #x
                     k.SetY1(0.007) #x
                     if len(sys.argv) > 4:
-                        k.SetY1(0.003) #x
+                        k.SetY1(0.004) #x
             
             if var == "pTmu1D":
                 k.SetNColumns(2)
