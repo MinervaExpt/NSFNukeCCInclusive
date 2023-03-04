@@ -54,7 +54,7 @@ mcScale =  dataPOT/mcPOT
 # files to write results in
 out1 = ROOT.TFile("BkgSubtracted_EventSelection_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"RECREATE")
 
-vars = ["Enu", "x", "pTmu", "pZmu1D", "ThetamuDeg"]
+vars = ["Enu", "x", "pTmu1D", "pZmu1D", "ThetamuDeg"]
 
 for var in vars:
   # read in needed histograms
