@@ -161,7 +161,7 @@ def plotStackRatio(mnvPlotter, mcArray, data, mcScale, tuning, sideband, var):#,
         ratio.GetXaxis().SetTitle("Reconstructed Bjorken x")
     if var == "planeDNN":
         ratio.GetXaxis().SetTitle("Plane Number")
-    if var == "pTmu":
+    if var == "pTmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
     if var == "pZmu1D":
         ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
@@ -218,7 +218,7 @@ if targetZ == "06":
     trueZ = "Carbon"
     mat = "C"
 
-vars = ["Enu", "x", "planeDNN", "pZmu1D", "pTmu", "ThetamuDeg"]
+vars = ["Enu", "x", "planeDNN", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
     # ----------------------------------------------------------------------------
