@@ -260,6 +260,7 @@ int main(int argc, char * argv[]){
   int targetID = atoi(argv[2]);
   int targetZ = atoi(argv[3]);
   const string playlist= argv[4];
+  const string var= argv[5];
   const std::string plist_string(playlist);
 
   PlotUtils::MinervaUniverse::SetNuEConstraint(true);
@@ -292,10 +293,10 @@ int main(int argc, char * argv[]){
 
   // to iterate over variables
   std::vector<string> vars;
-  vars.push_back("Enu");
-  vars.push_back("x");
-  vars.push_back("pTmu1D");
-  vars.push_back("pZmu1D");
+  vars.push_back(var);
+  //vars.push_back("x");
+  //vars.push_back("pTmu1D");
+  //vars.push_back("pZmu1D");
   //vars.push_back("ThetamuDeg");
   
   //string var = "Enu";
@@ -306,7 +307,7 @@ int main(int argc, char * argv[]){
   prefixes.push_back("data");
   
   // output file
-  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%02d_z%02d_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str() ), "recreate" );
+  TFile *fUnfold = new TFile( Form("%s/CrossSection_Daisy_t%02d_z%02d_%s_%s.root", outdir.c_str(), targetID, targetZ, plist_string.c_str(), var.c_str() ), "recreate" );
    std::cout<<"Hi"<<std::endl;
 
   // read in the POT information
