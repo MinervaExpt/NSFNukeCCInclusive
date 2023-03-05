@@ -12,6 +12,7 @@ dirpwd = sys.argv[1]
 targetZ = sys.argv[2]
 plist = sys.argv[3]
 intType = sys.argv[4]
+var = sys.argv[5]
 #material = 'iron t235'
 
 if targetZ == "26":
@@ -31,7 +32,7 @@ if targetZ == "06":
 
 
 target = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
-tracker = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t99_z99_%s.root"%(plist))
+tracker = ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t99_z99_%s_%s.root"%(plist, var))
 
 print("CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
 
@@ -43,7 +44,7 @@ dataPOT = tracker.Get("DataPOT").GetVal()
 
 ROOT.TH1.AddDirectory(False)
 
-vars = ["Enu","x", "pZmu1D", "pTmu1D"]
+vars = [var]
 
 for var in vars:
     if var=="Enu":
@@ -365,7 +366,7 @@ for var in vars:
 
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(4.5) #Enu
+                k.SetX2(3) #Enu
                 if targetZ =="06":
                     k.SetY1(0.45) #x
                 if targetZ =="26":

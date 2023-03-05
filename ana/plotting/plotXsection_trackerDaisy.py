@@ -10,12 +10,13 @@ ROOT.gROOT.SetBatch(True)
 dirpwd = sys.argv[1]
 plist = sys.argv[2]
 scale = sys.argv[3]
+var = sys.argv[4]
 
 targetID = 99 
 targetZ = 99
 
 
-infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s.root"%(targetID, targetZ, plist))
+infile= ROOT.TFile(str(dirpwd)+"/CrossSection_Daisy_t%s_z%02s_%s_%s.root"%(targetID, targetZ, plist, var))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 material = 'tracker_daisy'
@@ -34,7 +35,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["Enu", "x", "pZmu1D", "pTmu1D"]
+vars = [var]
 
 steps = [ 'crossSection', 'crossSection_total']
 #steps = ['crossSection', 'crossSection_total']
@@ -313,4 +314,4 @@ for step in steps:
 
         
 
-raw_input("Done")
+print("DONE %s %s %02s %s"%(plist, targetID, targetZ, var))
