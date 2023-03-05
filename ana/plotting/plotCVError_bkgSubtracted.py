@@ -258,12 +258,12 @@ for var in vars:
                 k.SetX2(0.5) #x
                 k.SetY1(0.16) #x
                 if targetZ == "99":
-                    k.SetX2(2.0) #x
+                    k.SetX2(0.5) #x
                     k.SetY1(0.17) #x
 
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(4.5) #Enu
+                k.SetX2(3) #Enu
                 k.SetY1(0.2) #Enu
                 if targetZ == "06":
                     k.SetY1(0.22) #Enu
@@ -282,9 +282,27 @@ for var in vars:
                     k.SetY1(0.23) #x
                     if targetID == "5":
                         k.SetY1(0.22) #Enu
+                    if targetID == "3":
+                        k.SetY1(0.3) #Enu
             if var == "pZmu1D":
                 k.SetNColumns(2)
                 k.SetX2(20) #Enu
+                if targetZ == "06":
+                    k.SetY1(0.15) #x
+                if targetZ == "26":
+                    k.SetY1(0.18) #x
+                    if targetID == "3":
+                        k.SetY1(0.16) #En
+                if targetZ == "82":
+                    k.SetY1(0.16) #x
+                    if targetID == "3":
+                        k.SetY1(0.14) #En
+                    if targetID == "4":
+                        k.SetY1(0.15) #En
+                    if targetID == "5":
+                        k.SetY1(0.15) #En
+                if targetZ == "99":
+                    k.SetY1(0.14) #x
             if var == "ThetamuDeg":
                 k.SetNColumns(2)
                 k.SetX2(17) #Enu
@@ -293,7 +311,7 @@ for var in vars:
                     if targetID == "3":
                         k.SetY1(0.17) #x
                     if targetID == "5":
-                        k.SetY1(0.18) #x
+                        k.SetY1(0.16) #x
                 if targetZ == "26":
                     if targetID == "3":
                         k.SetY1(0.16) #Enu
@@ -363,10 +381,14 @@ for var in vars:
                         k.SetY1(0.028) #x
                     if targetZ == "26":
                         k.SetY1(0.025) #x
+                        if targetID == "3":
+                            k.SetY1(0.03) #x
                         if targetID == "5":
                             k.SetY1(0.035) #x
                     if targetZ == "82":
                         k.SetY1(0.025) #x
+                        if targetID == "3":
+                            k.SetY1(0.035) #x
                         if targetID == "4":
                             k.SetY1(0.043) #x
                         if targetID == "5":
@@ -379,7 +401,7 @@ for var in vars:
             
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(4.5) #Enu
+                k.SetX2(3) #Enu
                 k.SetY1(0.25) #Enu
                 if targetZ == "82":
                     k.SetY1(0.23) #Enu
@@ -402,6 +424,24 @@ for var in vars:
             if var == "pZmu1D":
                 k.SetNColumns(2)
                 k.SetX2(20) #Enu
+                if targetZ == "26":
+                    k.SetY1(0.045) #Enu
+                    if targetID == "3":
+                        k.SetY1(0.055) #Enu
+                    if targetID == "5":
+                        k.SetY1(0.05) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.045) #Enu
+                    if targetID == "3":
+                        k.SetY1(0.060) #x
+                    if targetID == "4":
+                        k.SetY1(0.055) #x
+                    if targetID == "5":
+                        k.SetY1(0.055) #x
+                if targetZ == "06":
+                    k.SetY1(0.05) #Enu
+                if targetZ == "99":
+                    k.SetY1(0.035) #Enu
             if var == "ThetamuDeg":
                 k.SetNColumns(2)
                 k.SetX2(17) #Enu
@@ -490,13 +530,15 @@ for var in vars:
                         if targetZ == "06":
                             k.SetY1(0.03) #x
                         if targetZ == "26":
+                            if targetID == "3":
+                                k.SetY1(0.03) #x
                             if targetID == "5":
                                 k.SetY1(0.035) #x
                     
 
                 if var == "pTmu1D":
                     k.SetNColumns(2)
-                    k.SetX2(4.5) #Enu
+                    k.SetX2(3) #Enu
                     k.SetY1(0.25) #Enu
                     if targetZ == "82":
                         k.SetY1(0.23) #Enu
@@ -511,12 +553,28 @@ for var in vars:
                     if targetZ == "26":
                         k.SetY1(0.3) #Enu
                         if targetID == "3":
-                            k.SetY1(0.6) #Enu
-                        if targetID == "3":
+                            k.SetY1(0.8) #Enu
+                        if targetID == "5":
                             k.SetY1(0.24) #Enu
                 if var == "pZmu1D":
                     k.SetNColumns(2)
                     k.SetX2(20) #Enu
+                    if targetZ == "26":
+                        k.SetY1(0.07) #Enu
+                        if targetID == "3":
+                            k.SetY1(0.08) #Enu
+                        if targetID == "5":
+                            k.SetY1(0.075) #Enu
+                    if targetZ == "82":
+                        k.SetY1(0.06) #Enu
+                        if targetID == "3":
+                            k.SetY1(0.08) #Enu
+                        if targetID == "4":
+                            k.SetY1(0.08) #Enu
+                        if targetID == "5":
+                            k.SetY1(0.08) #Enu
+                    if targetZ == "06":
+                        k.SetY1(0.075) #Enu
                 if var == "ThetamuDeg":
                     k.SetNColumns(2)
                     k.SetX2(17) #Enu
@@ -534,7 +592,7 @@ for var in vars:
                         if targetID == "3":
                             k.SetY1(0.08) #Enu
                         if targetID == "5":
-                            k.SetY1(0.08) #Enu
+                            k.SetY1(0.07) #Enu
 
         mnv2.AddHistoTitle("Target %s %s: Bkg Subtracted (Data, not constr.)"%(targetID, trueZ), 0.03, 1)
 

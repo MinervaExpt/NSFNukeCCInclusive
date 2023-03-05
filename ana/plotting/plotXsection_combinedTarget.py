@@ -519,6 +519,10 @@ for step in steps:
                     if step == "crossSection":
                         if targetZ == "06" or "82":
                             k.SetY1(0.07) #x
+                            if targetID == "4":
+                                k.SetY1(0.082) #x
+                            if targetID == "5":
+                                k.SetY1(0.082) #x
                         if targetZ == "26":
                             k.SetY1(0.105) #x
                         if targetZ == "99":
@@ -526,7 +530,7 @@ for step in steps:
 
                 if var == "pTmu1D":
                     k.SetNColumns(2)
-                    k.SetX2(4.5) #x
+                    k.SetX2(3) #x
                     if targetZ == "06":
                         k.SetY1(0.45) #x
                     if targetZ == "26":
@@ -538,6 +542,41 @@ for step in steps:
                 if var == "pZmu1D":
                     k.SetNColumns(2)
                     k.SetX2(20) #x
+                    if step == "total_unfolded_effCorrected":
+                        if targetZ == "06":
+                            k.SetY1(0.06) #x
+                        if targetZ == "26":
+                            k.SetY1(0.078) #x
+                            if targetID == "5":
+                                k.SetY1(0.07) 
+                            if targetID == "235":
+                                k.SetY1(0.062) #x
+                        if targetZ == "82":
+                            k.SetY1(0.06) #x
+                            if targetID == "3":
+                                k.SetY1(0.078) 
+                            if targetID == "3":
+                                k.SetY1(0.07) 
+                            if targetID == "2345":
+                                k.SetY1(0.045) #x
+                        if targetZ == "99":
+                            k.SetY1(0.065) #x
+                    
+                    if step == "crossSection":
+                        if targetZ == "06":
+                            k.SetY1(0.082) #x
+                        if targetZ == "26":
+                            k.SetY1(0.1) #x
+                            if targetID == "5":
+                                k.SetY1(0.09) 
+                            if targetID == "235":
+                                k.SetY1(0.082) #x
+                        if targetZ == "82":
+                            k.SetY1(0.085) #x
+                            if targetID == "2345":
+                                k.SetY1(0.07) #x
+                        if targetZ == "99":
+                            k.SetY1(0.065) #x
                 if var == "ThetamuDeg":
                     k.SetNColumns(2)
                     k.SetX2(17) #x
