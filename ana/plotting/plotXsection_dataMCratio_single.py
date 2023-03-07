@@ -44,7 +44,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["x"] #, "pZmu1D", "pTmu1D", "ThetamuDeg"]
+vars = ["x", "ThetamuDeg"] #, "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['crossSection']
@@ -187,6 +187,9 @@ for step in steps:
   
         ratio2.SetMaximum(1.5)
         ratio2.SetMinimum(0.5)
+        if var == "ThetamuDeg":
+            ratio2.SetMaximum(1.8)
+            ratio2.SetMinimum(0.5)
         ratio2.GetYaxis().SetNdivisions(505) #5 minor divisions between 5 major divisions
         # Copied from MINERvA-101-Cross-Section/backgroundStack.py
         # same as in void MnvPlotter::DrawDataMCRatio() in MnvPlotter
