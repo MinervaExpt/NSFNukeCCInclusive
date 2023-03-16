@@ -73,7 +73,7 @@ for key in _file0.GetListOfKeys():
         #print _name
         temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
         outkeys[_name] = temp_key
-    if temp_key.ClassName() in add_type and 'Migration' in _name:
+    elif temp_key.ClassName() in add_type and 'Migration' in _name:
         #print temp_key.ClassName()
         #print _name
         temp_key.Scale(dataPOT/mcPOT) # scale using MC scale
