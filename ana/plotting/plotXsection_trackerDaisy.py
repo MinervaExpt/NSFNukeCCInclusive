@@ -146,6 +146,15 @@ for step in steps:
             data_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
             data_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
             data_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
+        
+        if step == "total_unfolded_effCorrected":
+            mc_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
+            mc_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
+            mc_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
+
+            data_hist_C.Scale(mc_hist_C.GetNormBinWidth(), "width")
+            data_hist_Fe.Scale(mc_hist_Fe.GetNormBinWidth(), "width")
+            data_hist_Pb.Scale(mc_hist_Pb.GetNormBinWidth(), "width")
 
         data_hist_stat_C =  data_hist_C.GetCVHistoWithStatError() # stat error
         data_hist_total_C = data_hist_C.GetCVHistoWithError() # total error

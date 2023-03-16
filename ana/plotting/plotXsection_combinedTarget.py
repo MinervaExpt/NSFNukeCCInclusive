@@ -190,6 +190,16 @@ for step in steps:
             mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
             mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
             data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+        
+        if step == "total_unfolded_effCorrected":
+            mc_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+            mc_hist_QE.Scale(mc_hist_QE.GetNormBinWidth(), "width")
+            mc_hist_RES.Scale(mc_hist_RES.GetNormBinWidth(), "width")
+            mc_hist_DIS.Scale(mc_hist_DIS.GetNormBinWidth(), "width")
+            mc_hist_Other.Scale(mc_hist_Other.GetNormBinWidth(), "width")
+            mc_hist_2p2h.Scale(mc_hist_2p2h.GetNormBinWidth(), "width")
+            data_hist.Scale(mc_hist.GetNormBinWidth(), "width")
+        
         data_hist_stat =  data_hist.GetCVHistoWithStatError() # stat error
         data_hist_total = data_hist.GetCVHistoWithError() # total error
         data_hist_sys = data_hist.GetCVHistoWithError(False) # sys error (bool is include stat)
