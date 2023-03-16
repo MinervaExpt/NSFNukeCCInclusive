@@ -25,7 +25,7 @@
 using namespace PlotUtils;
 using namespace std;
 
-void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist)
+void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist, int combined)
 {
   myPlotStyle();
   TH1::AddDirectory(false);
@@ -90,13 +90,27 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
 
   double scale = DataPOT/MCPOT;
   
-  if(targetID==99){
-    dataMnv->Scale(1e-3, "width");
-    mcMnv->Scale(scale*1e-3, "width");
+  if (combined == 1){
+    if(targetID==99){
+      dataMnv->Scale(1e-5, "width");
+      mcMnv->Scale(1e-5, "width");
+    }
+    else{
+      dataMnv->Scale(1e-4, "width");
+      mcMnv->Scale(1e-4, "width");
+
+    }
   }
   else{
-    dataMnv->Scale(1e-3, "width");
-    mcMnv->Scale(scale*1e-3, "width");
+    if(targetID==99){
+      dataMnv->Scale(1e-3, "width");
+      mcMnv->Scale(scale*1e-3, "width");
+    }
+    else{
+      dataMnv->Scale(1e-3, "width");
+      mcMnv->Scale(scale*1e-3, "width");
+
+    }
 
   }
 
@@ -217,12 +231,23 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   else  gc->SetYLimits(0, 4.59);
   if(doRatio) gc->SetYTitle("Ratio bkgType/TotalBkg");
   else{
-    if(targetID==99){
-      gc->SetYTitle("Events (x10^{3}) per (GeV/c)^{2}");
+    if (combined == 1){
+      if(targetID==99){
+        gc->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+      }
+      else{
+        gc->SetYTitle("Events per (x10^{4}) (GeV/c)^{2}");
+      }  
     }
     else{
-      gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
-    }  
+      if(targetID==99){
+        gc->SetYTitle("Events (x10^{3}) per (GeV/c)^{2}");
+      }
+      else{
+        gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
+      } 
+
+    }
   }
 
   gc->Modified();
@@ -250,7 +275,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v1", "l");
+  leg->AddEntry(mc, "MINERvA Tune v1.4", "l");
   //leg->AddEntry(mc_res,"Resonant","l");
   //leg->AddEntry(mc_dis_dis,"True DIS","l");
   //leg->AddEntry(mc_dis_sis,"Soft DIS","l");
@@ -263,7 +288,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mc, "MINERvA Tune v1", "l");
+  leg2->AddEntry(mc, "MINERvA Tune v1.4", "l");
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);
@@ -314,12 +339,23 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   else  gc2->SetYLimits(0, 2.49);
   if(doRatio) gc2->SetYTitle("Ratio data/MINERvA Tune v1");
   else{
-    if(targetID==99){
-      gc2->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+    if (combined == 1){
+      if(targetID==99){
+        gc2->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+      }
+      else{
+        gc2->SetYTitle("Events per (x10^{4}) (GeV/c)^{2}");
+      }  
     }
     else{
-      gc2->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
-    }  
+      if(targetID==99){
+        gc2->SetYTitle("Events (x10^{3}) per (GeV/c)^{2}");
+      }
+      else{
+        gc2->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
+      } 
+
+    }
   }
 
   // Adding title!
@@ -359,10 +395,12 @@ int main(int argc, char* argv[])
   int targetID = 99;
   int targetZ = 99;
   const string playlist= argv[3];
+  int combined = atoi(argv[4]);
+
 
   const std::string plist(playlist);
   for(int petal=0; petal<12; petal++){
-    makePlots(petal, true,false, indir, outdir, targetID, targetZ, plist);
+    makePlots(petal, true,false, indir, outdir, targetID, targetZ, plist, combined);
   }
   // do multipliers, do ratios
 

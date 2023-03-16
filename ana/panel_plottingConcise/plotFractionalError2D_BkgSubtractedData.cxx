@@ -411,7 +411,7 @@ void makePlots(bool pt, bool drawGroups, int areanorm,  string indir, string out
         GridCanvas* gcPT=plotXAxis1DRebinPz(histsPT2D, "P_{||} (GeV/c)", "P_{t}", 4,4,800,500,NULL);
         gcPT->SetYTitle("Fractional uncertainty");
         //gcPT->SetYLimits(0, 0.25);
-        gcPT->SetYLimits(0, 0.5);
+        gcPT->SetYLimits(0, 0.2);
         leg2->Draw("SAME");
 
         // Adding title!

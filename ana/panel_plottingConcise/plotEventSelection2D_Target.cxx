@@ -25,7 +25,7 @@
 using namespace PlotUtils;
 using namespace std;
 
-void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist)
+void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist, int combined)
 {
   myPlotStyle();
   TH1::AddDirectory(false);
@@ -95,20 +95,40 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   cout << "Data POT: " << DataPOT << endl;
 
   double scale = DataPOT/MCPOT;
-  
-  if(targetID==99){
+
+  if (combined == 1){
+    if(targetID==99){
+    dataMnv->Scale(1e-5, "width");
+    mcMnv->Scale(1e-5, "width");
+  }
+  else{
+    dataMnv->Scale(1e-4, "width");
+    mcMnv->Scale(1e-4/2, "width");
+    mcMnv_USplastic->Scale(1e-4, "width");
+    mcMnv_DSplastic->Scale(1e-4, "width");
+    mcMnv_other->Scale(1e-4, "width");
+    mcMnv_WrongSign->Scale(1e-4, "width");
+    mcMnv_NC->Scale(1e-4, "width");
+  }
+
+  }
+  else{
+    if(targetID==99){
     dataMnv->Scale(1e-4, "width");
     mcMnv->Scale(scale*1e-4, "width");
   }
-  else{
-    dataMnv->Scale(1e-3, "width");
-    mcMnv->Scale(scale*1e-3, "width");
-    mcMnv_USplastic->Scale(scale*1e-3, "width");
-    mcMnv_DSplastic->Scale(scale*1e-3, "width");
-    mcMnv_other->Scale(scale*1e-3, "width");
-    mcMnv_WrongSign->Scale(scale*1e-3, "width");
-    mcMnv_NC->Scale(scale*1e-3, "width");
+    else{
+      dataMnv->Scale(1e-3, "width");
+      mcMnv->Scale(scale*1e-3, "width");
+      mcMnv_USplastic->Scale(scale*1e-3, "width");
+      mcMnv_DSplastic->Scale(scale*1e-3, "width");
+      mcMnv_other->Scale(scale*1e-3, "width");
+      mcMnv_WrongSign->Scale(scale*1e-3, "width");
+      mcMnv_NC->Scale(scale*1e-3, "width");
+    }
+
   }
+  
 
   //mcMnv_qe->Scale(scale*1e-5,"width");
   //mcMnv_res->Scale(scale*1e-5,"width");
@@ -239,12 +259,23 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   else  gc->SetYLimits(0, 4.59);
   if(doRatio) gc->SetYTitle("Ratio bkgType/TotalBkg");
   else{
-    if(targetID==99){
+     if (combined == 1){
+      if(targetID==99){
+      gc->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+      }
+      else{
+        gc->SetYTitle("Events per (x10^{4}) (GeV/c)^{2}");
+      } 
+     }
+     else{
+      if(targetID==99){
       gc->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
-    }
-    else{
-      gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
-    }  
+      }
+      else{
+        gc->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
+      } 
+
+     } 
   }
 
   gc->Modified();
@@ -272,7 +303,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v1", "fl");
+  leg->AddEntry(mc, "MINERvA Tune v4", "fl");
   leg->AddEntry(mc_USplastic,"Upstream plastic","l");
   leg->AddEntry(mc_DSplastic,"Downstream plastic","l");
   leg->AddEntry(mc_other,"Other","l");
@@ -285,7 +316,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mc, "MINERvA Tune v1", "l");
+  leg2->AddEntry(mc, "MINERvA Tune v4", "l");
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);
@@ -336,13 +367,24 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   else  gc2->SetYLimits(0, 2.49);
   if(doRatio) gc2->SetYTitle("Ratio data/MINERvA Tune v1");
   else{
+    if (combined == 1){
+    if(targetID==99){
+      gc2->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+    }
+    else{
+      gc2->SetYTitle("Events per (x10^{4}) (GeV/c)^{2}");
+    } 
+    }
+    else{
     if(targetID==99){
       gc2->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
     }
     else{
       gc2->SetYTitle("Events per (x10^{3}) (GeV/c)^{2}");
-    }  
-  }
+    } 
+
+    } 
+}
 
   // Adding title!
   TLegend* title2 = new TLegend(0.05, 0.95, 0.95, 1);
@@ -381,10 +423,11 @@ int main(int argc, char* argv[])
   int targetID = atoi(argv[3]);
   int targetZ = atoi(argv[4]);
   const string playlist= argv[5];
+  int combined = atoi(argv[6]);
 
   const std::string plist(playlist);
 
-  makePlots(true,false, indir, outdir, targetID, targetZ, plist);
+  makePlots(true,false, indir, outdir, targetID, targetZ, plist, combined);
   // do multipliers, do ratios
 
   return 0;

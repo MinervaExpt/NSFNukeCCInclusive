@@ -25,7 +25,7 @@
 using namespace PlotUtils;
 using namespace std;
 
-void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist)
+void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist, int combined)
 {
   myPlotStyle();
   TH1::AddDirectory(false);
@@ -89,9 +89,14 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   cout << "Data POT: " << DataPOT << endl;
 
   //double scale = DataPOT/MCPOT;
-
-  numerator->Scale(1e-4, "width");
-  denominator->Scale(1e-4, "width");
+  if (combined == 1){
+    numerator->Scale(1e-5, "width");
+    denominator->Scale(1e-5, "width");
+  }
+  else{
+    numerator->Scale(1e-4, "width");
+    denominator->Scale(1e-4, "width");
+  }
 
 
   // Get the data histogram with stat error and with total error
@@ -159,7 +164,14 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   if(doRatio) gc->SetYLimits(0,1.0);
   else  gc->SetYLimits(0, 4.59);
   if(doRatio) gc->SetYTitle("Efficiency");
-  else gc->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+  else {
+    if (combined == 1){
+      gc->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+    }
+    else{
+      gc->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+    }
+  }
 
   gc->Modified();
   // Example of adding a legend. The co-ordinate system is NDC on the
@@ -233,7 +245,14 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   if(doRatio) gc2->SetYLimits(0,1.99);
   else  gc2->SetYLimits(0, 2.49);
   if(doRatio) gc2->SetYTitle("Efficiency");
-  else gc2->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+  else {
+    if (combined == 1){
+      gc2->SetYTitle("Events (x10^{5}) per (GeV/c)^{2}");
+    }
+    else{
+      gc2->SetYTitle("Events (x10^{4}) per (GeV/c)^{2}");
+    }
+  }
 
   // Adding title!
   TLegend* title2 = new TLegend(0.05, 0.95, 0.95, 1);
@@ -273,10 +292,12 @@ int main(int argc, char* argv[])
   int targetID = atoi(argv[3]);
   int targetZ = atoi(argv[4]);
   const string playlist= argv[5];
+  int combined = atoi(argv[6]);
+
 
   const std::string plist(playlist);
 
-  makePlots(true,false, indir, outdir, targetID, targetZ, plist); //NumDenom
+  makePlots(true,false, indir, outdir, targetID, targetZ, plist, combined); //NumDenom
   // do multipliers, do ratios
 
   return 0;
