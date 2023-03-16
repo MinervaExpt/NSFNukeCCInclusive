@@ -427,7 +427,7 @@ std::vector<double> NukeCC_Binning::GetEnergyBins( const std::string& var, bool 
     } 
 
     else if(var == "muonPt1D"){
-       double tmpBins[] = { 0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 3.0}; // 01/03/2023 pT1D
+       double tmpBins[] = { 0.0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5}; // 16/03/2023 pT1D
        binsLowEdge.assign(tmpBins,tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
     } 
 
