@@ -299,7 +299,6 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
     f.cd();
        if(isMC) {
         m_selected_mc_reco.hist->Write();
-        m_selected_mc_reco.hist->Write();
         m_selected_mc_reco_QE.hist->Write();
         m_selected_mc_reco_RES.hist->Write();
         m_selected_mc_reco_DIS.hist->Write();
