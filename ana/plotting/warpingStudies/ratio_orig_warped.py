@@ -55,12 +55,24 @@ for var in vars:
     ratio.SetLineColor(ROOT.kRed)
 
     if var == "Enu":
-        ratio.GetXaxis().SetTitle("Antineutrino Energy (GeV)")
+        ratio.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
         ratio.GetYaxis().SetTitle("Events/GeV")
 
     if var == "x":
-        ratio.GetXaxis().SetTitle("Bjorken x")
+        ratio.GetXaxis().SetTitle("Reconstructed Bjorken x")
         ratio.GetYaxis().SetTitle("Events (norm.)")
+    
+    if var == "ThetamuDeg":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon Angle (Deg)")
+        ratio.GetYaxis().SetTitle("Events/Deg")
+    
+    if var == "pTmu1D":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{T} (GeV/c)")
+        ratio.GetYaxis().SetTitle("Events/(GeV/c)")
+
+    if var == "pZmu1D":
+        ratio.GetXaxis().SetTitle("Reconstructed Muon p_{Z} (GeV/c)")
+        ratio.GetYaxis().SetTitle("Events/(GeV/c)")
 
     ratio.GetXaxis().CenterTitle()
     ratio.GetYaxis().CenterTitle()
