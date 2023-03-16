@@ -249,7 +249,7 @@ void GetBins( XSec::EVariable var, std::vector<double>& bins, bool fine = false,
 //        if( inel )
             if( true )
         {
-            double tmpBins[]  = { 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20., 25.0, 30., 40., 50. };//, 60., 70.,80.,90.,100.,110.,120. };
+            double tmpBins[]  = { 2.0, 3.0, 4.0, 5.0, 6.25, 7.5, 8.75, 10., 12.5, 15., 20.}; //, 25.0, 30., 40., 50. };//, 60., 70.,80.,90.,100.,110.,120. };
 //            double tmpBins[]  = { 5000., 7500., 10000., 12500, 15000., 20000., 30000., 40000., 50000. };
         bins.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
          /*AddBins( bins, 6, 1. );
@@ -338,18 +338,8 @@ void GetBins( XSec::EVariable var, std::vector<double>& bins, bool fine = false,
       }
       else
       {
-       // 1 deg bins up to 8
-       //AddBins( binsLowEdge, 10, 1.5 );
-       AddBins( bins, 8, 1.0);
-       // 2 deg bins up to 14, 
-       //AddBins( binsLowEdge, 3, 2.0 );
-       // 3 deg bins up to 26
-       AddBins( bins, 4, 3. );
-       //--- overflow --//
-       // 5 deg bins up to 51
-       AddBins( bins, 5, 5. );
-       // 2 20 deg bins up to 91
-       AddBins( bins, 2, 20. );
+        double tmpBins[]  = {0, 1, 2, 3, 5, 7, 9, 11, 14, 17}; // changed 24/07/2022
+        bins.assign( tmpBins, tmpBins + sizeof(tmpBins) / sizeof(tmpBins[0]) );
       }
       /*{
         double tmpBins[]  = { 0, 2., 3., 4., 5., 6., 8., 10., 13., 16., 20., 25., 35., 50 };

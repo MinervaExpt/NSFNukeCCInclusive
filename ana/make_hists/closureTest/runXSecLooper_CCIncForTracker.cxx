@@ -137,6 +137,7 @@ int runXSecLooper(const bool antinu, const double Emin, const double Emax, const
   vector<XSec::EVariable> vars;
   vars.push_back( XSec::kENu );
   vars.push_back( XSec::kxExp );
+  vars.push_back( XSec::kThetaLep );
 
   for( vector<XSec::EVariable>::iterator var = vars.begin(); var != vars.end(); ++var ){
                 
@@ -148,6 +149,9 @@ int runXSecLooper(const bool antinu, const double Emin, const double Emax, const
             break;
         case XSec::kENu:
             varName = "Enu";
+            break;
+        case XSec::kThetaLep:
+            varName = "ThetamuDeg";
             break;
     }
 
