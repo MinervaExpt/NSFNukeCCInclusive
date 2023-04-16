@@ -447,79 +447,63 @@ double CVUniverse::GetWeighty() const {
 
 
 double CVUniverse::GetWeight() const {
-   //const bool do_warping = true;
-   double wgt_flux=1., wgt_2p2h=1.;
-   double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
-   double wgt_genie=1., wgt_mueff=1.;
-   double wgt_target_mass = 1.;
-   double wgt_geant = 1.;
-   //double wgt_anisodd=1.;
- 
-   // genie
-    wgt_genie = GetGenieWeight();
-   // flux
-   double Enu  = GetDouble("mc_incomingE")*1e-3;
-   int nu_type = GetInt("mc_incoming");
-   wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
-   // 2p2h
-   wgt_2p2h = GetLowRecoil2p2hWeight();
-   // rpa
-   wgt_rpa = GetRPAWeight();
+    //const bool do_warping = true;
+    double wgt_flux=1., wgt_2p2h=1.;
+    double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
+    double wgt_genie=1., wgt_mueff=1.;
+    double wgt_target_mass = 1.;
+    double wgt_geant = 1.;
 
-   wgt_mueff = GetMinosEfficiencyWeight(); 
-   wgt_target_mass = GetTargetMassWeight();
-   wgt_geant = GetGeantHadronWeight();
-   // non-res pi
-   //wgt_nrp = GetNonResPiWeight();
-   //if (do_warping)
-   //  wgt_nrp = GetNonResPiWarpWeight();
-   // MINOS efficiency
-   //  if (!m_is_truth && GetBool("isMinosMatchTrack"))
-   //  wgt_mueff = GetMinosEfficiencyWeight(GetDouble("NukeCC_minos_trk_p")/1000., 
-   //                                     GetThetamuDeg());
+    double Enu  = GetDouble("mc_incomingE")*1e-3;
+    int nu_type = GetInt("mc_incoming");
  
-   //if (do_warping) {
-   //  double q2 = GetQ2True();
-   //  q2 = q2/1000000.; // pass to function as GeV^2
-   //  wgt_lowq2 = GetLowQ2PiWarpWeight(q2, CCNuPionIncShifts::kLowQ2PiChannel); 
-   //}
+    // genie
+    wgt_genie = GetGenieWeight();
+    // flux
+    wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
+    // 2p2h
+    wgt_2p2h = GetLowRecoil2p2hWeight();
+    // rpa
+    wgt_rpa = GetRPAWeight();
+    // MINOS efficiency
+    wgt_mueff = GetMinosEfficiencyWeight(); 
+    // target mass systermatics
+    wgt_target_mass = GetTargetMassWeight();
+    // GEANT hadron weight
+    wgt_geant = GetGeantHadronWeight();
+    //Aaron's LowQ2 weights
+    wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
  
-   //h_RPA_wgts->Fill(wgt_rpa);
- 
-   // aniso delta decay weight -- currently being used for warping
-   //if (do_warping)
-    // wgt_anisodd = GetVecElem("truth_genie_wgt_Theta_Delta2Npi",4);
- 
-   return wgt_flux*wgt_genie*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_mueff*wgt_2p2h*wgt_target_mass*wgt_geant ;
-   // return 1.0;
+    return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_mueff*wgt_target_mass*wgt_geant*wgt_lowq2;
 
 }
 
 double CVUniverse::GetTruthWeight()const{
      
-   double wgt_flux=1., wgt_2p2h=1.;
-   double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
-   double wgt_genie=1., wgt_mueff=1.;
-   double wgt_target_mass = 1;
-   //double wgt_anisodd=1.;
+    double wgt_flux=1., wgt_2p2h=1.;
+    double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
+    double wgt_genie=1., wgt_mueff=1.;
+    double wgt_target_mass = 1;
  
-   //There need to be flags added to this to turn on and off different tunes. Same goes for GetWeight().  -- ANF 2020-3-18
+    //There need to be flags added to this to turn on and off different tunes. Same goes for GetWeight().  -- ANF 2020-3-18
     double Enu  = GetDouble("mc_incomingE")*1e-3;
     int nu_type = GetInt("mc_incoming");
-
     // genie
-   wgt_genie = GetGenieWeight();
-   // flux
-   wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
-   // 2p2h
-   wgt_2p2h = GetLowRecoil2p2hWeight();
-   // rpa
-   wgt_rpa = GetRPAWeight();
+    wgt_genie = GetGenieWeight();
+    // flux
+    wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
+    // 2p2h
+    wgt_2p2h = GetLowRecoil2p2hWeight();
+    // rpa
+    wgt_rpa = GetRPAWeight();
+    // target mass systematics
+    wgt_target_mass = GetTargetMassWeight();
+    // Aaron's lowQ2 weight
+    wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
 
-   wgt_target_mass = GetTargetMassWeight();
-     
-   return wgt_genie*wgt_flux*wgt_rpa*wgt_nrp*wgt_lowq2*wgt_2p2h*wgt_target_mass;
-}
+   // Note: truth weight has no GEANT hadron and MINOS weight      
+   return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_target_mass*wgt_lowq2;
+   }
 
 double CVUniverse::GetTruthWeightFlux()const{
      
