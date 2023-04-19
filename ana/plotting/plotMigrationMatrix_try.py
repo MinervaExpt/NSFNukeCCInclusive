@@ -45,7 +45,7 @@ targetID = sys.argv[2]
 targetZ = sys.argv[3]
 plist = sys.argv[4]
 
-infile= ROOT.TFile(str(dirpwd)+"/Migration_%s_t%s_z%02s_sys_p4_NukeCC_AntiNu_Tgt5_Fe_MCTuning.root"%(plist, targetID, targetZ))
+infile= ROOT.TFile(str(dirpwd)+"/Migration_%s_t%s_z%02s_sys_p4_correctSpline.root"%(plist, targetID, targetZ))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
@@ -69,6 +69,10 @@ if targetZ == "99":
     mat = "CH"
 
 vars = [ "Ehad"] #"ThetamuDeg"]
+
+hist = infile.Get("h_mc_Ehad")
+print("Events")
+print(hist.GetEntries())
 
 for var in vars:
         print("---------------------------------------")
@@ -222,7 +226,7 @@ for var in vars:
         mnv.SetRedHeatPalette()
         #mnv.SetROOT6Palette(109)
         mc_hist.GetZaxis().SetTitle("Event Rate")
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_Occupancy_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_Occupancy_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
         new.Draw("COLZ")
         if targetZ == "99":
@@ -230,7 +234,7 @@ for var in vars:
         else:
                 mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
         new.GetZaxis().SetTitle("Event Rate")
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_Occupancy_Binned_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_Occupancy_Binned_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
         # COLUMN NORMALIZED
         mc_hist.GetZaxis().SetRangeUser(0,100)
@@ -241,7 +245,7 @@ for var in vars:
                 mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
         else:
                 mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_ColumnNorm_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_ColumnNorm_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
 
         new.GetZaxis().SetRangeUser(0,100)
@@ -252,7 +256,7 @@ for var in vars:
                 mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
         else:
                 mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_ColumnNorm_Binned_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_ColumnNorm_Binned_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
         # ROW NORMALIZED
         mc_hist.GetZaxis().SetTitle("Row Normalized Event Rate (%)")
@@ -262,7 +266,7 @@ for var in vars:
                 mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
         else:
                 mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_RowNorm_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_RowNorm_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
         new.GetZaxis().SetTitle("Row Normalized Event Rate (%)")
         rownorm_hist_new = rowNormalize(new)
@@ -271,7 +275,7 @@ for var in vars:
                 mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
         else:
                 mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-        canvas1.Print("Migration_%s_t%s_z%02s_%s_RowNorm_Binned_p4_AntiNu_Tgt5_Fe_MCTuning.png"%(plist, targetID, targetZ, var))
+        canvas1.Print("Migration_%s_t%s_z%02s_%s_RowNorm_Binned_p4_correctSpline.png"%(plist, targetID, targetZ, var))
 
 #mnv.DrawNormalizedMigrationHistogram(mc_hist, True, False, True, False)
 '''
