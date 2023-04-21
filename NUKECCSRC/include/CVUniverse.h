@@ -25,7 +25,7 @@
 #include "PlotUtils/TargetUtils.h"
 #include "PlotUtils/GeantHadronSystematics.h"
 #include <iostream>
-#include "PlotUtils/CaloCorrection.h"
+//#include "PlotUtils/CaloCorrection.h"
 //#include "CCQENuUtilsNSF.h"
 //using namespace globalV;
 
@@ -82,6 +82,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     
     virtual double GetCalRecoilEnergy() const;
     virtual double GetNonCalRecoilEnergy() const;
+    virtual double ApplyCaloTuning(double calRecoilE) const;
 
     /////////////////////////////////////////////////////////////////////////////////
     // MC initial momentum of the struck nucleons 
