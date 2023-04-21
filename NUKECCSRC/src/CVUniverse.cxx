@@ -14,8 +14,6 @@
 //using namespace globalV;
 using namespace NUKECC_ANA;
 
-util::CaloCorrection fCaloSpline("/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt","NukeCC_AntiNu_Tgt5_Fe");
-
 //again the constructor.....
 CVUniverse::CVUniverse(PlotUtils::ChainWrapper *chw,double nsigma):PlotUtils::MinervaUniverse(chw,nsigma){
   //just go with 2 universe world
@@ -140,10 +138,16 @@ double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_ANN
 * 
 * GetRecoilEnergy() comes from RecoilEnergyFunctions.h in MAT-MINERvA/calculators by adding the above up
 */
+//std::string caloTune = "NukeCC_AntiNu_Tgt5_Fe";
+
+double CVUniverse::ApplyCaloTuning(double calRecoilE) const{
+    CaloCorrection fCaloSpline("/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt", GetRecoilChannel());
+    return fCaloSpline.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+}
 
 
 double CVUniverse::GetCalRecoilEnergy() const {
-    return fCaloSpline.eCorrection(GetDouble("part_response_total_recoil_passive_id")/1000 + GetDouble("part_response_total_recoil_passive_od")/1000)*1000; // in MeV
+    return GetDouble("part_response_total_recoil_passive_id")+ GetDouble("part_response_total_recoil_passive_od"); // in MeV
     //return GetDouble((GetAnaToolName() + "_ANN_recoil_E").c_str());  // [MeV]
     // usual inclusive recoil energy should just be calorimetric energy
     // instead of Gonzalo's return GetDouble("Recoil_Ecalo") / 1000.0;  // [GeV]
