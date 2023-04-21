@@ -45,7 +45,7 @@ targetID = sys.argv[2]
 targetZ = sys.argv[3]
 plist = sys.argv[4]
 
-infile= ROOT.TFile(str(dirpwd)+"/Migration_%s_t%s_z%02s_sys_p4_correctSpline.root"%(plist, targetID, targetZ))
+infile= ROOT.TFile(str(dirpwd)+"/Migration_%s_t%s_z%02s_nosys.root"%(plist, targetID, targetZ))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 
