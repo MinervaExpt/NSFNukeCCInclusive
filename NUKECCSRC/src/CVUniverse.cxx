@@ -445,6 +445,61 @@ double CVUniverse::GetWeighty() const {
 
 }
 
+// Functions for coherent pion reweight
+// Anezka 24/04/2023 using Mehreen's def
+
+double CVUniverse::GetTrueHighEpi() const {
+    int nFSpi = GetInt("mc_nFSPart");
+    double pionE = -1.0;
+    double pionKE = -1.0;
+    for (int i = 0; i < nFSpi; i++){
+        int pdg = GetVecElem("mc_FSPartPDG",i);
+        if(pdg != -211) continue;
+        double energy = GetVecElem("mc_FSPartE", i);
+        double mass = 139.569;
+        double tpi = energy - mass;
+        if (tpi >= pionKE){
+            pionKE = tpi;
+            pionE = energy;
+        }
+    } 
+    //std::cout << "Printing energy of pion " << pionE << std::endl;
+    return pionE; // MeV
+}
+
+double CVUniverse::thetaWRTBeam(double x, double y, double z) const{
+    double pyp = -1.0 *sin( MinervaUnits::numi_beam_angle_rad)*z + cos( MinervaUnits::numi_beam_angle_rad )*y;
+    double pzp = cos( MinervaUnits::numi_beam_angle_rad )*z + sin( MinervaUnits::numi_beam_angle_rad )*y;
+    double denom2 = pow(x,2) + pow(pyp,2) + pow(pzp,2);
+    if( 0. == denom2 ) return -9999.;
+    else return acos(pzp / sqrt(denom2) );
+}
+
+double CVUniverse::GetTrueAngleHighTpi() const {
+    int nFSpi = GetInt("mc_nFSPart");
+    double angle = -9999.; //WRTbeam and in degrees
+    double pionKE = 0.0;
+    int idk = -9999;
+    for (int i = 0; i < nFSpi; i++){
+        int pdg = GetVecElem("mc_FSPartPDG",i);
+        if(pdg != -211) continue;
+        double energy = GetVecElem("mc_FSPartE", i);
+        double mass = 139.569;
+        double tpi = energy - mass;
+        if (tpi >= pionKE) {
+            pionKE = tpi;
+            TVector3 pimomentumvec(GetVecElem("mc_FSPartPx", i), GetVecElem("mc_FSPartPz", i),GetVecElem("mc_FSPartPz", i));
+            double deg_wrtb = thetaWRTBeam(pimomentumvec.X(), pimomentumvec.Y(), pimomentumvec.Z()); //rad
+        
+            angle = deg_wrtb; //*180./M_PI;
+        }
+    }
+    //Making sure angle is only between 0 and pi
+    if (angle < 0.0) angle = -1.0*angle;
+    if (angle > PI) angle = 2.0*PI - angle; 
+    return angle*180./PI; // Degrees
+}
+
 
 double CVUniverse::GetWeight() const {
     //const bool do_warping = true;
@@ -453,6 +508,8 @@ double CVUniverse::GetWeight() const {
     double wgt_genie=1., wgt_mueff=1.;
     double wgt_target_mass = 1.;
     double wgt_geant = 1.;
+    double wgt_coh = 1.;
+    double wgt_fsi = 1.;
 
     double Enu  = GetDouble("mc_incomingE")*1e-3;
     int nu_type = GetInt("mc_incoming");
@@ -473,8 +530,22 @@ double CVUniverse::GetWeight() const {
     wgt_geant = GetGeantHadronWeight();
     //Aaron's LowQ2 weights
     wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
- 
-    return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_mueff*wgt_target_mass*wgt_geant*wgt_lowq2;
+    // coherent pion reweight
+    if(GetInt("mc_intType") == 4){
+       double angle = GetTrueAngleHighTpi();//*180./M_PI; //this is now in degrees
+       double KE = GetTrueHighEpi()/1000.; // This is supposed to be the energy of the pion!!!!
+       if (KE < 0){
+        wgt_coh = 1.;
+       }
+       else {
+	    wgt_coh = GetCoherentPiWeight(angle, KE); //Inputs are in Degrees and GeV
+        //std::cout << "Printing COHerent weight for COH event for angle: " << angle << " degrees and KE : " << KE << " GeV. And weight: " << wgt_coh << std::endl;
+       }
+    }
+    //GENIE FSI bug fix
+    wgt_fsi = GetFSIWeight(0);
+
+    return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_mueff*wgt_target_mass*wgt_geant*wgt_lowq2*wgt_coh*wgt_fsi;
 
 }
 
@@ -484,6 +555,9 @@ double CVUniverse::GetTruthWeight()const{
     double wgt_rpa=1.,   wgt_nrp=1.,  wgt_lowq2=1.;
     double wgt_genie=1., wgt_mueff=1.;
     double wgt_target_mass = 1;
+    double wgt_coh = 1.;
+    double wgt_fsi = 1.;
+
  
     //There need to be flags added to this to turn on and off different tunes. Same goes for GetWeight().  -- ANF 2020-3-18
     double Enu  = GetDouble("mc_incomingE")*1e-3;
@@ -500,9 +574,23 @@ double CVUniverse::GetTruthWeight()const{
     wgt_target_mass = GetTargetMassWeight();
     // Aaron's lowQ2 weight
     wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
+    // coherent pion reweight
+    if(GetInt("mc_intType") == 4){
+       double angle = GetTrueAngleHighTpi();//*180./M_PI; //this is now in degrees
+       double KE = GetTrueHighEpi()/1000.; // This is supposed to be the energy of the pion!!!!
+       if (KE < 0){
+        wgt_coh = 1.;
+       }
+       else {
+	    wgt_coh = GetCoherentPiWeight(angle, KE); //Inputs are in Degrees and GeV
+        //std::cout << "Printing COHerent weight for COH event for angle: " << angle << " degrees and KE : " << KE << " GeV. And weight: " << weight << std::endl;
+       }
+    }
+    //GENIE FSI bug fix
+    wgt_fsi = GetFSIWeight(0);
 
    // Note: truth weight has no GEANT hadron and MINOS weight      
-   return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_target_mass*wgt_lowq2;
+   return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_target_mass*wgt_lowq2*wgt_coh*wgt_fsi;
    }
 
 double CVUniverse::GetTruthWeightFlux()const{

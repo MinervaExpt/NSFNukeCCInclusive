@@ -53,8 +53,12 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
     // We override the various weight getting functions herein in different
     // vertical systematic universe classes.
     // ========================================================================
-  
 
+    // Functions for coherent pion weight
+    virtual double GetTrueHighEpi() const;
+    virtual double thetaWRTBeam(double x, double y, double z) const;
+    virtual double GetTrueAngleHighTpi() const;
+  
     virtual double GetWeight() const;
     virtual double GetWeightEmu() const;
     virtual double GetWeightQ2() const;
