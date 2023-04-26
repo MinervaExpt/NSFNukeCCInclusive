@@ -147,6 +147,7 @@ namespace NUKECC_ANA
   const double M_muonMeV = 105.6583755; //wiki
   const double M_muon    = .1057;
   const double M_muon2   = M_muon*M_muon;
+  const double M_pion = 139.57039; //in MeV
 
   const int PROTON_PDG = 2212;
   const int NEUTRON_PDG = 2112;
