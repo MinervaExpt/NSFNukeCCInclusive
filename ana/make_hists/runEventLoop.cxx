@@ -83,20 +83,20 @@ int main(int argc, char *argv[]){
   int targetZ = atoi(argv[3]);
   const string playlist= argv[4];
    
-  bool doDIS=false;
+  bool doDIS=false; 
 
   // MasterAnaDev tuples?
   //const std::string mc_file_list("../include/playlists/OfficialMAD_minervaME6B_MCNukeOnly_merged.txt");
   //const std::string data_file_list("../include/playlists/OfficialMAD_minervaME6B_Data_merged.txt");
   //const std::string reco_tree_name("MasterAnaDev");
-
+ 
   // NukeCC Tuples ?
   // NukeCC Tuples ?
   const std::string plist_string(playlist);
   
   const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
-  const std::string reco_tree_name("MasterAnaDev");
+  const std::string reco_tree_name("MasterAnaDev"); 
   
   const bool wants_truth = false;
   //const bool is_grid = false;
@@ -485,7 +485,10 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
                 }
                 else{ // other
                   v->m_selected_mc_reco_OtherIT.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
-                }
+                  //if(universe->GetInt("mc_intType") == 4){
+                  //  std::cout << "COHerent event." << std::endl;
+                  //} 
+                } 
 
                 // Background breakdown
                 // Signal
