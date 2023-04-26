@@ -89,6 +89,7 @@ for var in vars:
     ''' 
     mc_hist.GetXaxis().CenterTitle()
     mc_hist.GetYaxis().CenterTitle()
+    mc_hist.Scale(mcScale)
 
     data_hist_stat =  data_hist.GetCVHistoWithStatError() # stat error
     data_hist_total = data_hist.GetCVHistoWithError() # total error
