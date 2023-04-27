@@ -138,11 +138,71 @@ double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_ANN
 * 
 * GetRecoilEnergy() comes from RecoilEnergyFunctions.h in MAT-MINERvA/calculators by adding the above up
 */
-//std::string caloTune = "NukeCC_AntiNu_Tgt5_Fe";
+
+std::string pwd = "/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt";
+// Note can be default once all in MParamFiles
+
+CVUniverse::CaloCorrection AntiNu_Tgt1_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Fe");
+CVUniverse::CaloCorrection AntiNu_Tgt1_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Pb");
+CVUniverse::CaloCorrection AntiNu_Tgt2_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Fe");
+CVUniverse::CaloCorrection AntiNu_Tgt2_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Pb");
+CVUniverse::CaloCorrection AntiNu_Tgt3_C(pwd.c_str(), "NukeCC_AntiNu_Tgt3_C");
+CVUniverse::CaloCorrection AntiNu_Tgt3_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Fe");
+CVUniverse::CaloCorrection AntiNu_Tgt3_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Pb");
+CVUniverse::CaloCorrection AntiNu_Tgt4_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt4_Pb");
+CVUniverse::CaloCorrection AntiNu_Tgt5_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Fe");
+CVUniverse::CaloCorrection AntiNu_Tgt5_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Pb");
+CVUniverse::CaloCorrection AntiNu_Tracker(pwd.c_str(), "NukeCC_AntiNu_Tracker");
 
 double CVUniverse::ApplyCaloTuning(double calRecoilE) const{
-    CaloCorrection fCaloSpline("/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt", GetRecoilChannel());
-    return fCaloSpline.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+    // Note: need to handle Nu cases and if the inner if statements fails
+    int targetID = GetInt((GetAnaToolName() +"_ANN_targetID").c_str());
+    int targetZ = GetInt((GetAnaToolName() +"_ANN_targetZ").c_str());
+    //int helicity  = GetInt((GetAnaToolName() + "_nuHelicity").c_str());
+    //std::cout << helicity << std::endl;
+    if (targetID == 1){
+        if(targetZ == 26) return AntiNu_Tgt1_Fe.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else if(targetZ == 82) return AntiNu_Tgt1_Pb.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else{
+            std::cout << "No spline found for target 1." << std::endl;
+            return calRecoilE; //MeV
+        }
+    }
+    else if (targetID == 2){
+        if(targetZ == 26) return AntiNu_Tgt2_Fe.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else if(targetZ == 82) return AntiNu_Tgt2_Pb.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else{
+            std::cout << "No spline found for target 2." << std::endl;
+            return calRecoilE; //MeV
+        }
+    }
+    else if (targetID == 3){
+        if(targetZ == 6) return AntiNu_Tgt3_C.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else if(targetZ == 26) return AntiNu_Tgt3_Fe.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else if(targetZ == 82) return AntiNu_Tgt3_Pb.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else{
+            std::cout << "No spline found for target 3." << std::endl;
+            return calRecoilE; //MeV
+        }
+    }
+    else if(targetID == 4){
+        if(targetZ == 82) return AntiNu_Tgt4_Pb.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else{
+            std::cout << "No spline found for target 4." << std::endl;
+            return calRecoilE; //MeV
+        }
+    }
+    else if(targetID == 5){
+        if(targetZ == 26) return AntiNu_Tgt5_Fe.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else if(targetZ == 82) return AntiNu_Tgt5_Pb.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+        else{
+            std::cout << "No spline found for target 5." << std::endl;
+            return calRecoilE; //MeV
+        }
+    }
+    else{
+        return AntiNu_Tracker.eCorrection(calRecoilE*mev_to_gev)/mev_to_gev; //MeV
+    }
 }
 
 
