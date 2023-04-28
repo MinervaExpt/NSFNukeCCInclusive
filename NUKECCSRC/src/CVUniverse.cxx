@@ -14,6 +14,21 @@
 //using namespace globalV;
 using namespace NUKECC_ANA;
 
+std::string pwd = "/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt";
+// Note can be default once all in MParamFiles
+
+util::CaloCorrection AntiNu_Tgt1_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Fe");
+util::CaloCorrection AntiNu_Tgt1_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Pb");
+util::CaloCorrection  AntiNu_Tgt2_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Fe");
+util::CaloCorrection AntiNu_Tgt2_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Pb");
+util::CaloCorrection  AntiNu_Tgt3_C(pwd.c_str(), "NukeCC_AntiNu_Tgt3_C");
+util::CaloCorrection AntiNu_Tgt3_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Fe");
+util::CaloCorrection  AntiNu_Tgt3_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Pb");
+util::CaloCorrection  AntiNu_Tgt4_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt4_Pb");
+util::CaloCorrection AntiNu_Tgt5_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Fe");
+util::CaloCorrection AntiNu_Tgt5_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Pb");
+util::CaloCorrection AntiNu_Tracker(pwd.c_str(), "NukeCC_AntiNu_Tracker");
+
 //again the constructor.....
 CVUniverse::CVUniverse(PlotUtils::ChainWrapper *chw,double nsigma):PlotUtils::MinervaUniverse(chw,nsigma){
   //just go with 2 universe world
@@ -139,21 +154,6 @@ double CVUniverse::GetTargetID()   const{return GetInt((GetAnaToolName() + "_ANN
 * GetRecoilEnergy() comes from RecoilEnergyFunctions.h in MAT-MINERvA/calculators by adding the above up
 */
 
-std::string pwd = "/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt";
-// Note can be default once all in MParamFiles
-
-CVUniverse::CaloCorrection AntiNu_Tgt1_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Fe");
-CVUniverse::CaloCorrection AntiNu_Tgt1_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Pb");
-CVUniverse::CaloCorrection AntiNu_Tgt2_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Fe");
-CVUniverse::CaloCorrection AntiNu_Tgt2_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt2_Pb");
-CVUniverse::CaloCorrection AntiNu_Tgt3_C(pwd.c_str(), "NukeCC_AntiNu_Tgt3_C");
-CVUniverse::CaloCorrection AntiNu_Tgt3_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Fe");
-CVUniverse::CaloCorrection AntiNu_Tgt3_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt3_Pb");
-CVUniverse::CaloCorrection AntiNu_Tgt4_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt4_Pb");
-CVUniverse::CaloCorrection AntiNu_Tgt5_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Fe");
-CVUniverse::CaloCorrection AntiNu_Tgt5_Pb(pwd.c_str(), "NukeCC_AntiNu_Tgt5_Pb");
-CVUniverse::CaloCorrection AntiNu_Tracker(pwd.c_str(), "NukeCC_AntiNu_Tracker");
-
 double CVUniverse::ApplyCaloTuning(double calRecoilE) const{
     // Note: need to handle Nu cases and if the inner if statements fails
     int targetID = GetInt((GetAnaToolName() +"_ANN_targetID").c_str());
@@ -207,7 +207,7 @@ double CVUniverse::ApplyCaloTuning(double calRecoilE) const{
 
 
 double CVUniverse::GetCalRecoilEnergy() const {
-    return GetDouble("part_response_total_recoil_passive_id")+ GetDouble("part_response_total_recoil_passive_od"); // in MeV
+    return GetDouble("part_response_total_recoil_passive_allNonMuonClusters_id")+ GetDouble("part_response_total_recoil_passive_allNonMuonClusters_od"); // in MeV
     //return GetDouble((GetAnaToolName() + "_ANN_recoil_E").c_str());  // [MeV]
     // usual inclusive recoil energy should just be calorimetric energy
     // instead of Gonzalo's return GetDouble("Recoil_Ecalo") / 1000.0;  // [GeV]
