@@ -1,1 +1,3 @@
-root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/dlast/Pre_P4_DevTuples/FullDet/6B/MasterAnaDev_mc_AnaTuple_run00122278_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/dlast/Pre_P4_DevTuples/Anezka_FD_6B_04_26_2023/MasterAnaDev_mc_AnaTuple_run00122247_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/dlast/Pre_P4_DevTuples/Anezka_FD_6B_04_26_2023/MasterAnaDev_mc_AnaTuple_run00122244_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/dlast/Pre_P4_DevTuples/Anezka_FD_6B_04_26_2023/MasterAnaDev_mc_AnaTuple_run00122255_Playlist.root
