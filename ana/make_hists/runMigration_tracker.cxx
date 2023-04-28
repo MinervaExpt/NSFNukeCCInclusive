@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
 
     const std::string plist_string(playlist);    
 
-    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_Davidp4.txt", plist_string.c_str()));
     const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
     const std::string reco_tree_name("MasterAnaDev");
 
@@ -266,7 +266,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* pZmu1D = new Var("pZmu1D", "pZmu1D", pZbin1D, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
 
    //std::vector<Var*> variables = {enu,ehad}; 
-   variables = {x, enu, emu, thetaMu, pTmu1D, pZmu1D};//{enu,ehad}; 
+   variables = {x, enu, emu, thetaMu, pTmu1D, pZmu1D, ehad};//{enu,ehad}; 
    
    //For 2D variable
 
