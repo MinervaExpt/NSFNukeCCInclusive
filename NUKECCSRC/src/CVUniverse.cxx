@@ -543,7 +543,7 @@ double CVUniverse::GetWeight() const {
        }
     }
     //GENIE FSI bug fix
-    wgt_fsi = GetFSIWeight();
+    //wgt_fsi = GetFSIWeight();
 
     return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_mueff*wgt_target_mass*wgt_geant*wgt_lowq2*wgt_coh*wgt_fsi;
 
@@ -587,7 +587,7 @@ double CVUniverse::GetTruthWeight()const{
        }
     }
     //GENIE FSI bug fix
-    wgt_fsi = GetFSIWeight();
+    //wgt_fsi = GetFSIWeight();
 
    // Note: truth weight has no GEANT hadron and MINOS weight      
    return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_target_mass*wgt_lowq2*wgt_coh*wgt_fsi;
