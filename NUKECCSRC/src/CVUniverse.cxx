@@ -14,7 +14,7 @@
 //using namespace globalV;
 using namespace NUKECC_ANA;
 
-std::string pwd = "/minerva/app/users/anezkak/zdarMParamFiles/CalorimetryTunings.txt";
+std::string pwd = "$MPARAMFILESROOT/data/Calibrations/energy_calib/CalorimetryTunings.txt";
 // Note can be default once all in MParamFiles
 
 util::CaloCorrection AntiNu_Tgt1_Fe(pwd.c_str(), "NukeCC_AntiNu_Tgt1_Fe");
