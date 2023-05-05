@@ -71,7 +71,7 @@ namespace NUKECC_ANA
 
  
   //static const bool RunCodeWithSystematics = false;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
-  static const bool RunCodeWithSystematics = false;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
+  static const bool RunCodeWithSystematics = true;// This variable will turn off and on systematics. This includes making all the lat/vert error bands. You CANNOT mix with/without processings
   static const bool RunCodeWithSysFluxUniverses = false; // This variable will apply a non-cv flux to systematic universes (if available). This is done by an extra correction factor wgt given by fluxreweighter.
   //static const bool neutrinoMode = false; // Use: True = Neutrino Mode /  False = Antineutrino Mode	 
   //vertexing
