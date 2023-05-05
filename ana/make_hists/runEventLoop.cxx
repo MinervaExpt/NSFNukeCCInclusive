@@ -94,7 +94,7 @@ int main(int argc, char *argv[]){
   // NukeCC Tuples ?
   const std::string plist_string(playlist);
   
-  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str()));
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_Davidp4.txt", plist_string.c_str()));
   const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
   const std::string reco_tree_name("MasterAnaDev");
   
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
   //Tracker or nuke (what clusters are accepted for reconstruction)
-  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke");
+  PlotUtils::MinervaUniverse::SetReadoutVolume("Nuke"); 
   //Neutron CV reweight is on by default (recommended you keep this on)
   PlotUtils::MinervaUniverse::SetMHRWeightNeutronCVReweight(true);
   //Elastics are on by default (recommended you keep this on)
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
   double MCPot=  util.m_mc_pot;  
   double MCscale=DataPot/MCPot;
  
-  std::cout << "MC Scale = " << MCscale << std::endl; 
+  std::cout << "MC Scale = " << MCscale << std::endl;
   std::cout << "Data POT: " << DataPot << std::endl;
   std::cout << "MC POT: " << MCPot << std::endl;
 
@@ -204,12 +204,12 @@ int main(int argc, char *argv[]){
   }
    
   // DATA
-  std::cout << "Processing Data and filling histograms" << std::endl;
+  /*std::cout << "Processing Data and filling histograms" << std::endl;
 
   FillVariable(chainData, helicity, utils, cutter,binsDef,variablesData,variables2DData,false,targetID, targetZ, plist_string,doDIS);
   for (auto v : variablesData) v->m_selected_data_reco.SyncCVHistos();
   for (auto v : variablesData) v->m_selected_data_reco_sb.SyncCVHistos();
-  for (auto v : variables2DData) v->m_selected_data_reco.SyncCVHistos();
+  for (auto v : variables2DData) v->m_selected_data_reco.SyncCVHistos();*/
 
   // WRITE HISTOGRAMS TO FILE
 
@@ -218,9 +218,9 @@ int main(int argc, char *argv[]){
     v->WriteAllHistogramsToFile(fout, true);
   }
 
-  for (auto v : variablesData) {
+  /*for (auto v : variablesData) {
     v->WriteAllHistogramsToFile(fout, false);
-  }
+  }*/
 
   // 1D Plotting
   //for(int i=0; i < variablesMC.size();i++){
@@ -234,9 +234,9 @@ int main(int argc, char *argv[]){
     v->WriteAllHistogramsToFile(fout,true);
   }
 
-  for (auto v : variables2DData) {
+  /*for (auto v : variables2DData) {
     v->WriteAllHistogramsToFile(fout,false);
-  }
+  }*/
  
   // 2D Plotting
   //for(int i=0; i< variables2DMC.size();i++){
@@ -331,7 +331,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var *ANNPlaneProb = new Var("ANNPlaneProb", "ANNPlaneProb", ANNPlaneProbBin, &CVUniverse::GetANNPlaneProb, &CVUniverse::GetANNPlaneProb);
   Var* planeDNN = new Var("planeDNN", "planeDNN", planeDNNbin, &CVUniverse::GetplaneDNNReco, &CVUniverse::GetplaneDNNTrue);
 
-  variables = {emu, enu, x, vtxz, planeDNN, pTmu1D, pZmu1D, thetaMu}; //{enu,ehad}; 
+  variables = {pTmu1D, enu, ehad}; //, enu, x, vtxz, planeDNN, pTmu1D, pZmu1D, thetaMu}; //{enu,ehad}; 
 
   // 2D Variables 
   Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu); 
@@ -341,7 +341,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
   Var2D* x_y = new Var2D(*x, *y);  // y var
   Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
   
-  variables2d = {pZmu_pTmu };
+  variables2d = {pZmu_pTmu};
   
   for (auto v : variables2d) v->InitializeAllHistograms(error_bands);
   for (auto v : variables) v->InitializeAllHistograms(error_bands);

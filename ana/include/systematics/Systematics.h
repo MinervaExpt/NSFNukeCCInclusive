@@ -35,7 +35,7 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
   error_bands[std::string("CV")].push_back(new CVUniverse(chain));
 
   if(RunCodeWithSystematics) {
-  
+    /*
     //========================================================================
     // FLUX
     //========================================================================
@@ -99,29 +99,34 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
     // Target Mass Systematics
     SystMap targetMass_systematics = PlotUtils::GetTargetMassSystematicsMap<CVUniverse>(chain);
     error_bands.insert(targetMass_systematics.begin(), targetMass_systematics.end());
-
+    */
     //========================================================================
     // Particle Response Systematics (Detector)
     //========================================================================
 
     const bool use_neutron = false;
-    const bool use_new = true;
+    const bool use_new = false;
     const bool use_proton = true;
+    std::string name_tag = "allNonMuonClusters";
+    std::vector<std::string> subdetectors = {"tracker", "ecal","hcal", "nucl"};
     // Particle response
-    // -> 2nd argument: NEUTRON
-    // -> 3rd argument: use_new_part_response
-    // -> 4th argument: PROTON
-    SystMap response_systematics = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain, use_neutron, use_new, use_proton);
+    // -> 2nd argument: name_tag
+    // -> 3rd argument: subdetector_tag
+    // -> 4th argument: NEUTRON
+    // -> 5th argument: use_new_part_response
+    // -> 6th argument: PROTON
+    SystMap response_systematics = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain, name_tag, subdetectors, use_neutron, use_new, use_proton);
     error_bands.insert(response_systematics.begin(), response_systematics.end());
 
-
+    /*
     //========================================================================
     // GEANT hadrons with MnvHadronReweight
     //========================================================================
     SystMap geant_hadron_systematics = PlotUtils::GetGeantHadronSystematicsMap<CVUniverse>(chain);
     error_bands.insert(geant_hadron_systematics.begin(), geant_hadron_systematics.end());
-
+    */
   }
+  
 
   return error_bands;
 }
