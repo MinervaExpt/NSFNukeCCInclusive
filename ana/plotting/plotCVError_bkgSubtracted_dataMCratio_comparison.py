@@ -19,7 +19,10 @@ infile = ROOT.TFile("/minerva/data/users/anezkak/05-11-2023_v4/1D/combined/Backg
 infile_v1 = ROOT.TFile("/minerva/data/users/anezkak/05-11-2023_v1/1D/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
 infile_lowq2 = ROOT.TFile("/minerva/data/users/anezkak/04-26-2023_lowQ2sup/1D/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
 infile_v431 = ROOT.TFile("/minerva/data/users/anezkak/05-11-2023_v431/1D/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
-infile_v430 = ROOT.TFile("/minerva/data/users/anezkak/05-11-2023_v430/1D/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
+infile_v430 = ROOT.TFile("/minerva/data/users/anezkak/05-12-2023_v430/1D/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
+infile_nonres = ROOT.TFile("/minerva/data/users/anezkak/05-15-2023/nonrespiwarp_v1/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
+infile_v430_nonres = ROOT.TFile("/minerva/data/users/anezkak/05-15-2023/nonrespiwarp_v430/combined/BackgroundSubtracted/BkgSubtracted_EventSelection_minervame5A6A6B6C6D6E6F6G6H6I6J_t%s_z%02s_sys.root"%(targetID, targetZ))
+
 
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
@@ -71,6 +74,12 @@ for var in vars:
 
     mc_hist_v430 = infile_v430.Get("h_bkg_subtracted_mc_%s"%var)
     data_hist_v430 = infile_v430.Get("h_bkg_subtracted_data_%s"%var)
+
+    mc_hist_nonres = infile_nonres.Get("h_bkg_subtracted_mc_%s"%var)
+    data_hist_nonres = infile_nonres.Get("h_bkg_subtracted_data_%s"%var)
+
+    mc_hist_v430_nonres = infile_v430_nonres.Get("h_bkg_subtracted_mc_%s"%var)
+    data_hist_v430_nonres = infile_v430_nonres.Get("h_bkg_subtracted_data_%s"%var)
 
     if var == "Enu":
         mc_hist.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
@@ -126,6 +135,16 @@ for var in vars:
     data_hist_total_v430 = data_hist_v430.GetCVHistoWithError() # total error
     data_hist_sys_v430 = data_hist_v430.GetCVHistoWithError(False) # sys error (bool is include stat)
     mc_hist_stat_v430 = mc_hist_v430.GetCVHistoWithStatError() 
+
+    data_hist_stat_nonres =  data_hist_nonres.GetCVHistoWithStatError() # stat error
+    data_hist_total_nonres = data_hist_nonres.GetCVHistoWithError() # total error
+    data_hist_sys_nonres = data_hist_nonres.GetCVHistoWithError(False) # sys error (bool is include stat)
+    mc_hist_stat_nonres = mc_hist_nonres.GetCVHistoWithStatError() 
+
+    data_hist_stat_v430_nonres =  data_hist_v430_nonres.GetCVHistoWithStatError() # stat error
+    data_hist_total_v430_nonres = data_hist_v430_nonres.GetCVHistoWithError() # total error
+    data_hist_sys_v430_nonres = data_hist_v430_nonres.GetCVHistoWithError(False) # sys error (bool is include stat)
+    mc_hist_stat_v430_nonres = mc_hist_v430_nonres.GetCVHistoWithStatError() 
     
     # MC
     mc_hist.SetLineWidth(3)
@@ -242,6 +261,38 @@ for var in vars:
     ratio_v430.SetMarkerSize(1.2)
     ratio_tot_v430.SetMarkerSize(1.2)
 
+    ratio_nonres = data_hist_stat_nonres.Clone()
+    ratio_nonres.Divide(ratio_nonres,mc_hist_stat_nonres) # stat
+    ratio_tot_nonres = data_hist_total_nonres.Clone()
+    ratio_tot_nonres.Divide(ratio_tot_nonres, mc_hist_stat_nonres)
+
+    nonres_colour = 60
+    ratio_nonres.SetLineColor(nonres_colour)
+    ratio_nonres.SetMarkerColor(nonres_colour)
+    ratio_tot_nonres.SetLineColor(nonres_colour)
+    ratio_tot_nonres.SetMarkerColor(nonres_colour)
+    ratio_nonres.SetMarkerStyle(24)
+    ratio_tot_nonres.SetMarkerStyle(24)
+    ratio_nonres.SetMarkerSize(1.2)
+    ratio_tot_nonres.SetMarkerSize(1.2)
+
+    ratio_v430_nonres = data_hist_stat_v430_nonres.Clone()
+    ratio_v430_nonres.Divide(ratio_v430_nonres,mc_hist_stat_v430_nonres) # stat
+    ratio_tot_v430_nonres = data_hist_total_v430_nonres.Clone()
+    ratio_tot_v430_nonres.Divide(ratio_tot_v430_nonres, mc_hist_stat_v430_nonres)
+
+    v430_nonres_colour = 14
+    ratio_v430_nonres.SetLineColor(v430_nonres_colour)
+    ratio_v430_nonres.SetMarkerColor(v430_nonres_colour)
+    ratio_tot_v430_nonres.SetLineColor(v430_nonres_colour)
+    ratio_tot_v430_nonres.SetMarkerColor(v430_nonres_colour)
+    ratio_v430_nonres.SetMarkerStyle(25)
+    ratio_tot_v430_nonres.SetMarkerStyle(25)
+    ratio_v430_nonres.SetMarkerSize(1.2)
+    ratio_tot_v430_nonres.SetMarkerSize(1.2)
+
+    gStyle.SetErrorX(0.0001)
+
     ratio_v1.Draw("X0 SAME E1")
     ratio_tot_v1.Draw("E1 SAME")
     
@@ -254,8 +305,14 @@ for var in vars:
     ratio_v430.Draw("X0 SAME E1")
     ratio_tot_v430.Draw("E1 SAME")
 
-    legend = TLegend(0.18,0.18,0.9,0.3)
-    legend.SetNColumns(5)
+    ratio_nonres.Draw("X0 SAME E1")
+    ratio_tot_nonres.Draw("E1 SAME")
+
+    #ratio_v430_nonres.Draw("X0 SAME E1")
+    #ratio_tot_v430_nonres.Draw("E1 SAME")
+
+    legend = TLegend(0.18,0.18,0.9,0.38)
+    legend.SetNColumns(3)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.035)
@@ -264,6 +321,8 @@ for var in vars:
     legend.AddEntry(ratio_tot_v430, " v4.3.0", "lep")
     legend.AddEntry(ratio_tot_v431, " v4.3.1", "lep")
     legend.AddEntry(ratio_lowq2, " v4+lowQ2 sup.", "lep")
+    legend.AddEntry(ratio_nonres, " v1 - nonrespi", "lep")
+    #legend.AddEntry(ratio_v430_nonres, " v4.3.0 - nonrespi", "lep")
 
     legend.SetTextFont(42)
     legend.Draw()
@@ -307,6 +366,10 @@ for var in vars:
     chi2_v431 = mnv.Chi2DataMC(data_hist_v431, mc_hist_v431, mcScale, True, False, False)
     chi2_v431_perndf = chi2_v431/data_hist_v431.GetNbinsX()+1
     print("v4.3.1 histo chi2/ndf =                              " + str(chi2_v431_perndf))
+
+    chi2_nonres = mnv.Chi2DataMC(data_hist_nonres, mc_hist_nonres, mcScale, True, False, False)
+    chi2_nonres_perndf = chi2_nonres/data_hist_nonres.GetNbinsX()+1
+    print("v1 - nonrespi histo chi2/ndf =                              " + str(chi2_nonres_perndf))
 
     canvas1.SetLogx(False)
     if var == "x":
