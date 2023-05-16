@@ -105,9 +105,9 @@ int main(int argc, char *argv[]){
 	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
 	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
 	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
-	 PlotUtils::MinervaUniverse::SetNonResPiReweight(false);
+	 PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
-   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(true);
    PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
    // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
   //Tracker or nuke (what clusters are accepted for reconstruction)
@@ -140,11 +140,11 @@ int main(int argc, char *argv[]){
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName += Form("/Migration_Daisy_2D_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName += Form("/Migration2D_Daisy_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName += Form("/Migration_Daisy_2D_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName += Form("/Migration2D_Daisy_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   }  
    	   
 	TFile* fout = new TFile(dir.Append(histFileName),"RECREATE");

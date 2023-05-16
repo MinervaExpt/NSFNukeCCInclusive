@@ -75,8 +75,8 @@ int main(int argc, char *argv[]){
     //const std::string data_file_list("../include/playlists/minervame6A_data_DualVertex.txt");
     //const std::string reco_tree_name("MasterAnaDev");  
     const std::string plist_string(playlist);
-    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s.txt", plist_string.c_str())); 
-    const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_short.txt", plist_string.c_str())); 
+    const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s_short.txt",plist_string.c_str()));
 
     //const std::string mc_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/try.txt"); 
     //const std::string data_file_list("/minerva/app/users/anezkak/MAT_GitHub/NSFNukeCCInclusive/ana/include/playlists/MasterAnaDev_data_AnaTuple_run00022246_Playlist.root"); 
@@ -98,10 +98,10 @@ int main(int argc, char *argv[]){
 
 	 PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
 	 PlotUtils::MinervaUniverse::SetNuEConstraint(true);
-	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
+	 PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
 	 PlotUtils::MinervaUniverse::SetNonResPiReweight(true);
    PlotUtils::MinervaUniverse::SetPlaylist(plist_string);
-   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
+   PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(true);
    PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
    // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
    //Tracker or nuke (what clusters are accepted for reconstruction)
@@ -133,11 +133,11 @@ int main(int argc, char *argv[]){
          //TString histFileName = utils->GetHistFileName( "Migration", FileType::kAny, targetID, targetZ );
 	TString histFileName;
   if(RunCodeWithSystematics){
-    histFileName += Form("/Migration_2D_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName += Form("/Migration2D_%s_t%d_z%02d_sys.root", plist_string.c_str(), targetID, targetZ);
   }
 
   else{
-    histFileName += Form("/Migratio_2D_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
+    histFileName += Form("/Migration2D_%s_t%d_z%02d_nosys.root", plist_string.c_str(), targetID, targetZ);
   } 
   std::cout<<"Hello"<<std::endl;	   
 	TFile fout(dir.Append(histFileName),"RECREATE");	
@@ -201,23 +201,23 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 
    std::map<std::string, const int>::iterator itr_m;
    
-   std::vector<double> ThetaMuBin, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
-   std::vector<double> x09bin, xfinebin;
+   std::vector<double> ThetaMuBin ;//, Enubin,Emubin,Ehadbin,xbin,ybin,Q2bin,Wbin, xbinBrian;
+   //std::vector<double> x09bin, xfinebin;
    std::vector<double> pTbin, pZbin;
 
    if (doDIS){
-     Enubin  = binsDef->GetDISBins("Enu"); 
+     /*Enubin  = binsDef->GetDISBins("Enu"); 
      Emubin  = binsDef->GetDISBins("Emu"); 
      Ehadbin = binsDef->GetDISBins("Ehad");
      Q2bin = binsDef->GetDISBins("Q2");
      Wbin = binsDef->GetDISBins("W");
      xbin    = binsDef->GetDISBins("x");
      ybin    = binsDef->GetDISBins("y");
-     ThetaMuBin = binsDef->GetDISBins("ThetaMu");
+     ThetaMuBin = binsDef->GetDISBins("ThetaMu");*/
      }
      
    else{
-     Enubin  = binsDef->GetEnergyBins("Enu"); 
+     /*Enubin  = binsDef->GetEnergyBins("Enu"); 
      Emubin  = binsDef->GetEnergyBins("Emu"); 
      Ehadbin = binsDef->GetEnergyBins("Ehad");
      Q2bin = binsDef->GetEnergyBins("Q2");
@@ -226,7 +226,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
      x09bin = binsDef->GetEnergyBins("x09");
      xfinebin = binsDef->GetEnergyBins("xfine");
      xbinBrian    = binsDef->GetEnergyBins("xBrian");
-     ybin    = binsDef->GetEnergyBins("y");
+     ybin    = binsDef->GetEnergyBins("y");*/
      pTbin = binsDef->GetEnergyBins("muonPt"); 
      pZbin = binsDef->GetEnergyBins("muonPz"); 
      ThetaMuBin = binsDef->GetEnergyBins("ThetaMu");
@@ -238,7 +238,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    //For 1D varriable
 
    Var* thetaMu = new Var("ThetamuDeg", "ThetamuDeg", ThetaMuBin, &CVUniverse::GetThetamuDeg, &CVUniverse::GetThetamuTrueDeg);
-   Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
+   /*Var* enu = new Var("Enu", "Enu (GeV)", Enubin, &CVUniverse::GetEnuGeV, &CVUniverse::GetEnuTrueGeV);
    Var* ehad = new Var("Ehad", "Ehad (GeV)", Ehadbin, &CVUniverse::GetEhadGeV, &CVUniverse::GetEhadTrueGeV);
    Var* Q2 = new Var("Q2", "Q2 (GeV^2)", Q2bin, &CVUniverse::GetQ2RecoGeV, &CVUniverse::GetQ2TrueGeV);
    Var* W = new Var("W", "W (GeV)", Wbin, &CVUniverse::GetWRecoGeV, &CVUniverse::GetWTrueGeV);
@@ -248,6 +248,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    Var* xfine = new Var("xfine", "xfine", xfinebin, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* xBrian = new Var("xBrian", "xBrian", xbinBrian, &CVUniverse::GetxReco, &CVUniverse::GetxTrue);
    Var* y = new Var("y", "y", ybin, &CVUniverse::GetyReco, &CVUniverse::GetyTrue);
+   */
    Var* pTmu = new Var("pTmu", "pTmu", pTbin, &CVUniverse::GetMuonPt, &CVUniverse::GetlepPtTrue);
    Var* pZmu = new Var("pZmu", "pZmu", pZbin, &CVUniverse::GetMuonPz, &CVUniverse::GetlepPzTrue);
 
@@ -257,11 +258,11 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
    
    //For 2D variable
 
-    Var2D* W_Q2     = new Var2D(*W, *Q2);
-    Var2D* enu_ehad = new Var2D(*enu, *ehad);
-    Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
-    Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
-    Var2D* x_y = new Var2D(*x, *y);  // y var
+    //Var2D* W_Q2     = new Var2D(*W, *Q2);
+    //Var2D* enu_ehad = new Var2D(*enu, *ehad);
+    //Var2D* emu_ehad = new Var2D(*emu, *ehad);  // y var
+    //Var2D* x_Q2 = new Var2D(*x, *Q2);  // y var
+    //Var2D* x_y = new Var2D(*x, *y);  // y var
     Var2D* pZmu_pTmu = new Var2D(*pZmu, *pTmu);
 
     variables2d = {pZmu_pTmu };
