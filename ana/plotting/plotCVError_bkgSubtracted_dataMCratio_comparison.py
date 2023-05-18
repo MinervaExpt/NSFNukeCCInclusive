@@ -339,10 +339,10 @@ for var in vars:
     print("#######################################  Target " + str(targetID) + " " + str(targetZ) + " ###############################################" )
     print("############################### Chi2/ndf calculation " + str(var) +  " #####################################" )
 
-    chi2_v1 = mnv.Chi2DataMC(data_hist_v1, mc_hist_v1, mcScale, True, False, False)
+    #chi2_v1 = mnv.Chi2DataMC(data_hist_v1, mc_hist_v1, mcScale, True, False, False)
     # data error, no statistical error from model
-    #chi2_v1 = mnv.Chi2DataMC(data_hist_v1, mc_hist_v1, mcScale, False, False, True)
-    # mc stat error
+    chi2_v1 = mnv.Chi2DataMC(data_hist_v1, mc_hist_v1, mcScale, True, False, True)
+    # mc stat error + data err
     '''
     Chi2DataMC( dataHist, mcHist, mcScale, useDataErrorMatrix, useOnlyShapeErrors, useModelStat)
     If your data distribution has ONLY STATISTICAL uncertainties, useDataErrorMatrix should be FALSE
@@ -351,23 +351,23 @@ for var in vars:
     chi2_v1_perndf = chi2_v1/data_hist_v1.GetNbinsX()+1
     print("v1 histo chi2/ndf =                                  " + str(chi2_v1_perndf))
 
-    chi2_v4 = mnv.Chi2DataMC(data_hist, mc_hist, mcScale, True, False, False)
+    chi2_v4 = mnv.Chi2DataMC(data_hist, mc_hist, mcScale, True, False, True)
     chi2_v4_perndf = chi2_v4/data_hist.GetNbinsX()+1
     print("v4 histo chi2/ndf =                                  " + str(chi2_v4_perndf))
 
-    chi2_lowq2 = mnv.Chi2DataMC(data_hist_lowq2, mc_hist_lowq2, mcScale, True, False, False)
+    chi2_lowq2 = mnv.Chi2DataMC(data_hist_lowq2, mc_hist_lowq2, mcScale, True, False, True)
     chi2_lowq2_perndf = chi2_lowq2/data_hist_lowq2.GetNbinsX()+1
     print("v4 + lowq2 sup. histo chi2/ndf =                     " + str(chi2_lowq2_perndf))
 
-    chi2_v430 = mnv.Chi2DataMC(data_hist_v430, mc_hist_v430, mcScale, True, False, False)
+    chi2_v430 = mnv.Chi2DataMC(data_hist_v430, mc_hist_v430, mcScale, True, False, True)
     chi2_v430_perndf = chi2_v430/data_hist_v430.GetNbinsX()+1
     print("v4.3.0 histo chi2/ndf =                              " + str(chi2_v430_perndf))
 
-    chi2_v431 = mnv.Chi2DataMC(data_hist_v431, mc_hist_v431, mcScale, True, False, False)
+    chi2_v431 = mnv.Chi2DataMC(data_hist_v431, mc_hist_v431, mcScale, True, False, True)
     chi2_v431_perndf = chi2_v431/data_hist_v431.GetNbinsX()+1
     print("v4.3.1 histo chi2/ndf =                              " + str(chi2_v431_perndf))
 
-    chi2_nonres = mnv.Chi2DataMC(data_hist_nonres, mc_hist_nonres, mcScale, True, False, False)
+    chi2_nonres = mnv.Chi2DataMC(data_hist_nonres, mc_hist_nonres, mcScale, True, False, True)
     chi2_nonres_perndf = chi2_nonres/data_hist_nonres.GetNbinsX()+1
     print("v1 - nonrespi histo chi2/ndf =                              " + str(chi2_nonres_perndf))
 
