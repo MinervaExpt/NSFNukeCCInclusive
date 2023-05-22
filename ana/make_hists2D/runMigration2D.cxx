@@ -340,7 +340,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
 	    //if( v->GetNameX()!="ThetaMu" && v->GetNameY()!="ThetaMu")  if(!cutter->PassTrueThetaCut(universe)) continue;
       if( v->GetName()=="pZmu_pTmu") reco8++;
       // NO TRUE angle cut, efficiency corrected
-      v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
+      //v->m_selected_mc_reco.univHist(universe)->Fill(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe), universe->GetWeight()); 
 
       //Migration stuff
       v->FillResponse(v->GetRecoValueX(*universe), v->GetRecoValueY(*universe),v->GetTrueValueX(*universe), v->GetTrueValueY(*universe),universe->ShortName(),universe->GetWeight(),unv_count); 
@@ -356,7 +356,7 @@ void FillVariable( PlotUtils::ChainWrapper* chain, HelicityType::t_HelicityType 
  for(auto band : error_bands){
     std::vector<CVUniverse*> band_universes = band.second;
     for(unsigned int i_universe = 0; i_universe < band_universes.size(); ++i_universe)
-      delete band_universes[i_universe];
+      delete band_universes[i_universe]; 
  } 
     
  delete dataverse;

@@ -320,28 +320,6 @@ void FillVariable(TFile* fout, PlotUtils::ChainWrapper* chain, HelicityType::t_H
     Response[petal]->GetMigrationMatrix()->Write();
 	  Response[petal]->GetTruth2D()->Write();
 	  Response[petal]->GetReco2D()->Write();
-    
-    /*MnvH2D *migrationH = NULL;
-    MnvH2D *h_reco = NULL;
-    MnvH2D *h_truth = NULL;
-    bool check = Response[petal]->GetMigrationObjects( migrationH, h_reco, h_truth );
-    const bool clear_bands = false;  
-    mresp = PlotUtils::Hist2DWrapper<CVUniverse> (migrationH, error_bands, clear_bands);
-    mresp.SyncCVHistos();
-    fout->cd();
-    mresp.hist->Write();
-    h_reco->Write();
-    h_truth->Write();
-
-
-    std::cout<<"Petal " << petal <<std::endl;
-    
-    delete Response[petal];
-    delete migrationH;
-    delete h_reco;
-    delete h_truth;
-    */
-    //mresp[petal] = v->getResponseObjects(Response[petal], error_bands);
   }
  }
  
