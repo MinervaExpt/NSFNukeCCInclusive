@@ -243,8 +243,8 @@ for step in steps:
         mc_hist_DIS.Draw("HIST SAME")
         mc_hist_Other.Draw("HIST SAME")
         mc_hist_2p2h.Draw("HIST SAME")
-        data_hist.Draw("SAME E1 X0")
-        #data_hist_stat.Draw("E2 SAME")
+        #data_hist.Draw("SAME E1 X0")
+        data_hist_stat.Draw("E2 SAME X0")
         data_hist_total.Draw("E1 SAME X0")
 
         ''' void MnvPlotter::DrawDataMCWithErrorBand(
@@ -309,7 +309,7 @@ for step in steps:
         legend.AddEntry(mc_hist_2p2h, " 2p2h", "fl")
         legend.AddEntry(mc_hist_DIS, " DIS", "fl")
         legend.AddEntry(mc_hist_Other, " Other", "fl")
-        legend.AddEntry(data_hist, " Data", "lep")
+        legend.AddEntry(data_hist_stat, " Data", "lep")
         #legend.SetTextFont(42)
         legend.Draw()
 
