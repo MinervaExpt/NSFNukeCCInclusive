@@ -3,6 +3,7 @@ import os,sys
 from ROOT import PlotUtils
 from ROOT import gStyle
 from ROOT import TLine
+from ROOT import TLegend
 
 ROOT.gROOT.SetBatch(True)
 
@@ -73,6 +74,64 @@ for var in vars:
 
     mc_hist_v430_nonres = infile_v430_nonres.Get("selected_mc_reco_%s"%var)
     data_hist_v430_nonres = infile_v430_nonres.Get("selected_data_reco_%s"%var)
+
+    #############################################################################
+    ###################### Pop vertical error band ##############################
+    ###################### Pop response error band! #############################
+    #############################################################################
+
+    mc_hist.PopVertErrorBand("response_em")
+    mc_hist.PopVertErrorBand("response_high_proton")
+    mc_hist.PopVertErrorBand("response_low_proton")
+    mc_hist.PopVertErrorBand("response_meson")
+    mc_hist.PopVertErrorBand("response_mid_proton")
+    mc_hist.PopVertErrorBand("response_other")
+
+    mc_hist_v1.PopVertErrorBand("response_em")
+    mc_hist_v1.PopVertErrorBand("response_high_proton")
+    mc_hist_v1.PopVertErrorBand("response_low_proton")
+    mc_hist_v1.PopVertErrorBand("response_meson")
+    mc_hist_v1.PopVertErrorBand("response_mid_proton")
+    mc_hist_v1.PopVertErrorBand("response_other")
+
+    mc_hist_lowq2.PopVertErrorBand("response_em")
+    mc_hist_lowq2.PopVertErrorBand("response_high_proton")
+    mc_hist_lowq2.PopVertErrorBand("response_low_proton")
+    mc_hist_lowq2.PopVertErrorBand("response_meson")
+    mc_hist_lowq2.PopVertErrorBand("response_mid_proton")
+    mc_hist_lowq2.PopVertErrorBand("response_other")
+
+    mc_hist_v431.PopVertErrorBand("response_em")
+    mc_hist_v431.PopVertErrorBand("response_high_proton")
+    mc_hist_v431.PopVertErrorBand("response_low_proton")
+    mc_hist_v431.PopVertErrorBand("response_meson")
+    mc_hist_v431.PopVertErrorBand("response_mid_proton")
+    mc_hist_v431.PopVertErrorBand("response_other")
+
+    mc_hist_v430.PopVertErrorBand("response_em")
+    mc_hist_v430.PopVertErrorBand("response_high_proton")
+    mc_hist_v430.PopVertErrorBand("response_low_proton")
+    mc_hist_v430.PopVertErrorBand("response_meson")
+    mc_hist_v430.PopVertErrorBand("response_mid_proton")
+    mc_hist_v430.PopVertErrorBand("response_other")
+
+    mc_hist_nonres.PopVertErrorBand("response_em")
+    mc_hist_nonres.PopVertErrorBand("response_high_proton")
+    mc_hist_nonres.PopVertErrorBand("response_low_proton")
+    mc_hist_nonres.PopVertErrorBand("response_meson")
+    mc_hist_nonres.PopVertErrorBand("response_mid_proton")
+    mc_hist_nonres.PopVertErrorBand("response_other")
+
+    mc_hist_v430_nonres.PopVertErrorBand("response_em")
+    mc_hist_v430_nonres.PopVertErrorBand("response_high_proton")
+    mc_hist_v430_nonres.PopVertErrorBand("response_low_proton")
+    mc_hist_v430_nonres.PopVertErrorBand("response_meson")
+    mc_hist_v430_nonres.PopVertErrorBand("response_mid_proton")
+    mc_hist_v430_nonres.PopVertErrorBand("response_other")
+
+
+
+
 
     if var == "Enu":
         mc_hist.GetXaxis().SetTitle("Reconstructed Antineutrino Energy (GeV)")
@@ -181,8 +240,8 @@ for var in vars:
         ratio.SetMaximum(2.0)
         ratio.SetMinimum(0.0)
     else:
-        ratio.SetMaximum(1.5)
-        ratio.SetMinimum(0.5)
+        ratio.SetMaximum(2)
+        ratio.SetMinimum(0.0)
     ratio.GetYaxis().SetNdivisions(505) #5 minor divisions between 5 major divisions
     # Copied from MINERvA-101-Cross-Section/backgroundStack.py
     # same as in void MnvPlotter::DrawDataMCRatio() in MnvPlotter
@@ -262,12 +321,28 @@ for var in vars:
     ratio_v430.Draw("X0 SAME E1")
 
     ratio_nonres.Draw("X0 SAME E1")
+
+    legend = TLegend(0.18,0.16,0.9,0.36)
+    legend.SetNColumns(3)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.SetTextSize(0.035)
+    legend.AddEntry(ratio_v1, " v1", "lep")
+    legend.AddEntry(ratio, " v4", "lep")
+    legend.AddEntry(ratio_v430, " v4.3.0", "lep")
+    legend.AddEntry(ratio_v431, " v4.3.1", "lep")
+    legend.AddEntry(ratio_lowq2, " v4+lowQ2 sup.", "lep")
+    legend.AddEntry(ratio_nonres, " v1 - nonrespi", "lep")
+    #legend.AddEntry(ratio_v430_nonres, " v4.3.0 - nonrespi", "lep")
+
+    legend.SetTextFont(42)
+    legend.Draw()
     
     if targetZ == "99":
         mnv.AddHistoTitle("%s"%(trueZ), 0.05, 1)
     else:
         mnv.AddHistoTitle("Target %s %s"%(targetID, trueZ), 0.05, 1)
-    mnv.AddPOTNormBox(dataPOT,mcPOT, 0.7, 0.32)
+    #mnv.AddPOTNormBox(dataPOT,mcPOT, 0.7, 0.32)
 
      #################################################################################
     ########################## Chi2 calculation #####################################
