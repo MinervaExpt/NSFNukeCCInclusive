@@ -297,7 +297,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   // DECLARE NEW HISTOGRAMS
   //=======================================================================================
   // HISTWRAPPER
-  HW2D m_selected_mc_reco,m_selected_data_reco,m_selected_truth_reco,m_selected_Migration, mresp;
+  HW2D m_selected_mc_reco,m_selected_data_reco,m_selected_truth_reco,m_selected_Migration;
   HW2D m_selected_truth_reco_QE, m_selected_truth_reco_RES, m_selected_truth_reco_DIS, m_selected_truth_reco_Other, m_selected_truth_reco_2p2h;
 
   //MinervaUnfold::MnvResponse* Response;
@@ -305,6 +305,7 @@ class Variable2D : public PlotUtils::Variable2DBase<NUKECC_ANA::CVUniverse> {
   std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr;
   std::map<std::string,MinervaUnfold::MnvResponse*>::iterator mnv_itr2;
 
+  HW2D mresp;
   MnvH2D *migrationH = NULL;
   MnvH2D *h_reco = NULL;
   MnvH2D *h_truth = NULL;
@@ -457,8 +458,10 @@ void WriteAllHistogramsToFileEff(TFile& f,bool isMC) const {
 //=======================================================================================
 void WriteAllHistogramsToFileMig(TFile& f,bool isMC) const {
     f.cd();
-       if(isMC){ m_selected_mc_reco.hist->Write();
-                 mresp.hist->Write(); 
+       if(isMC){ //m_selected_mc_reco.hist->Write();
+                mresp.hist->Write(); 
+                h_reco->Write();
+                h_truth->Write();
         } 
     else {m_selected_data_reco.hist->Write();
      }
