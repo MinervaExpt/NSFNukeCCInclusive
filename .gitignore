@@ -162,3 +162,4 @@ ana/make_hists2D/extractCrossSection2D
 ana/panel_plottingConcise/plotDaisyCrossSection2D
 ana/panel_plottingConcise/plotDaisyCrossSection_ratios
 ana/panel_plottingConcise/plotFractionalError2D_CrossSectionRatio
+ana/make_hists2D/extractCrossSection2D_daisy
