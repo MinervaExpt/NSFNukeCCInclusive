@@ -25,7 +25,7 @@
 using namespace PlotUtils;
 using namespace std;
 
-void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist)
+void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int targetID, int targetZ, string plist, string reweight)
 {
   myPlotStyle();
   TH1::AddDirectory(false);
@@ -35,60 +35,24 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   gStyle->SetLabelSize(0.04);
 
   TString histFileName;
-  if (targetID == 99){
-    histFileName = Form("%s/CrossSection2D_t%d_z%02d_%s.root", indir.c_str(), targetID, targetZ, plist.c_str());
-  }
-  else{
-    histFileName = Form("%s/CrossSection2D_Daisy_t%d_z%02d_%s.root", indir.c_str(), targetID, targetZ, plist.c_str());
-  }
+  histFileName = Form("%s/CrossSection2D_Daisy_t%d_z%02d_%s.root", indir.c_str(), targetID, targetZ, plist.c_str());
  
   TFile *f1 = new TFile( histFileName,"read" );
 
-  MnvH2D* dataMnv=(MnvH2D*)f1->Get("crossSection_data_pZmu_pTmu");
-  MnvH2D* mcMnv=(MnvH2D*)f1->Get("simEventRate_crossSection_mc_pZmu_pTmu");
-  MnvH2D* mcMnv_QE=(MnvH2D*)f1->Get("simEventRate_QE_crossSection_mc_pZmu_pTmu");
-  MnvH2D* mcMnv_RES=(MnvH2D*)f1->Get("simEventRate_RES_crossSection_mc_pZmu_pTmu");
-  MnvH2D* mcMnv_DIS=(MnvH2D*)f1->Get("simEventRate_DIS_crossSection_mc_pZmu_pTmu");
-  MnvH2D* mcMnv_2p2h=(MnvH2D*)f1->Get("simEventRate_2p2h_crossSection_mc_pZmu_pTmu");
-  MnvH2D* mcMnv_Other=(MnvH2D*)f1->Get("simEventRate_Other_crossSection_mc_pZmu_pTmu");
+  MnvH2D* dataMnv_carbon=(MnvH2D*)f1->Get("crossSection_carbon_data_pZmu_pTmu");
+  MnvH2D* mcMnv_carbon=(MnvH2D*)f1->Get("simEventRate_crossSection_carbon_mc_pZmu_pTmu");
 
-  string trueZ;
-  string mat;
+  MnvH2D* dataMnv_iron=(MnvH2D*)f1->Get("crossSection_iron_data_pZmu_pTmu");
+  MnvH2D* mcMnv_iron=(MnvH2D*)f1->Get("simEventRate_crossSection_iron_mc_pZmu_pTmu");
 
-  if (targetZ == 26){
-    trueZ = "Iron";
-    mat = "Fe";
-  };
-
-  if (targetZ == 82){
-    trueZ = "Lead";
-    mat = "Pb";
-  };
-
-  if (targetZ == 6){
-    trueZ = "Carbon";
-    mat = "C";
-  };
-
-  if (targetZ == 99){
-    trueZ = "Tracker";
-    mat = "CH";
-  };
-  
-
-  dataMnv->GetXaxis()->SetLabelSize(0.04);
-  dataMnv->GetYaxis()->SetLabelSize(0.04);
+  MnvH2D* dataMnv_lead=(MnvH2D*)f1->Get("crossSection_lead_data_pZmu_pTmu");
+  MnvH2D* mcMnv_lead=(MnvH2D*)f1->Get("simEventRate_crossSection_lead_mc_pZmu_pTmu");
 
 
-  //MnvH2D* mcMnv_qe = (MnvH2D*)f1.Get("reco_QE_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_res = (MnvH2D*)f1.Get("reco_resonant_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_dis_dis = (MnvH2D*)f1.Get("reco_trueDIS_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_dis_sis = (MnvH2D*)f1.Get("reco_softDIS_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_2p2h = (MnvH2D*)f1.Get("reco_2p2h_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_oth = (MnvH2D*)f1.Get("reco_other_pZmu_pTmu");//Get from N track
-  //MnvH2D* mcMnv_bkg = (MnvH2D*)f1.Get("bkg_total_pZmu_pTmu");
+  dataMnv_carbon->GetXaxis()->SetLabelSize(0.04);
+  dataMnv_carbon->GetYaxis()->SetLabelSize(0.04);
 
-  dataMnv->GetXaxis()->SetTitle("p_{||} (GeV/c)");
+  dataMnv_carbon->GetXaxis()->SetTitle("p_{||} (GeV/c)");
 
   TParameter<double> *pot_mc = (TParameter<double>*)f1->Get("MCPOT");
   TParameter<double> *pot_data = (TParameter<double>*)f1->Get("DataPOT");
@@ -100,24 +64,14 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   double scale = DataPOT/MCPOT;
 
-  if(targetID==99){
-    dataMnv->Scale(1e39);
-    mcMnv->Scale(1e39);
-    mcMnv_QE->Scale(1e39);
-    mcMnv_RES->Scale(1e39);
-    mcMnv_DIS->Scale(1e39);
-    mcMnv_2p2h->Scale(1e39);
-    mcMnv_Other->Scale(1e39);
-  }
-  else{
-    dataMnv->Scale(1e39);
-    mcMnv->Scale(1e39);
-    mcMnv_QE->Scale(1e39);
-    mcMnv_RES->Scale(1e39);
-    mcMnv_DIS->Scale(1e39);
-    mcMnv_2p2h->Scale(1e39);
-    mcMnv_Other->Scale(1e39);
-  }
+  dataMnv_carbon->Scale(1e39);
+  mcMnv_carbon->Scale(1e39);
+
+  dataMnv_iron->Scale(1e39);
+  mcMnv_iron->Scale(1e39);
+
+  dataMnv_lead->Scale(1e39);
+  mcMnv_lead->Scale(1e39);
 
 
   //mcMnv_qe->Scale(scale*1e-5,"width");
@@ -130,77 +84,107 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   // Get the data histogram with stat error and with total error
   // separately so we can plot them both for inner and outer ticks
-  TH2* dataStat=new TH2D(dataMnv->GetCVHistoWithStatError());
-  TH2* data=new TH2D(dataMnv->GetCVHistoWithError());
-  TH2* mc=new TH2D(mcMnv->GetCVHistoWithStatError());
-  TH2* mcStat=new TH2D(mcMnv->GetCVHistoWithStatError());
+  TH2* dataStat_carbon=new TH2D(dataMnv_carbon->GetCVHistoWithStatError());
+  TH2* data_carbon=new TH2D(dataMnv_carbon->GetCVHistoWithError()); // total error
+  TH2* mc_carbon=new TH2D(mcMnv_carbon->GetCVHistoWithStatError());
+  TH2* mcStat_carbon=new TH2D(mcMnv_carbon->GetCVHistoWithStatError());
 
-  TH2* mc_qe =new TH2D(mcMnv_QE->GetCVHistoWithStatError());
-  TH2* mc_res =new TH2D(mcMnv_RES->GetCVHistoWithStatError());
-  TH2* mc_dis =new TH2D(mcMnv_DIS->GetCVHistoWithStatError());
-  TH2* mc_2p2h =new TH2D(mcMnv_2p2h->GetCVHistoWithStatError());
-  TH2* mc_other =new TH2D(mcMnv_Other->GetCVHistoWithStatError());
+  TH2* dataStat_iron=new TH2D(dataMnv_iron->GetCVHistoWithStatError());
+  TH2* data_iron=new TH2D(dataMnv_iron->GetCVHistoWithError()); // total error
+  TH2* mc_iron=new TH2D(mcMnv_iron->GetCVHistoWithStatError());
+  TH2* mcStat_iron=new TH2D(mcMnv_iron->GetCVHistoWithStatError());
 
+  TH2* dataStat_lead=new TH2D(dataMnv_lead->GetCVHistoWithStatError());
+  TH2* data_lead=new TH2D(dataMnv_lead->GetCVHistoWithError()); // total error
+  TH2* mc_lead=new TH2D(mcMnv_lead->GetCVHistoWithStatError());
+  TH2* mcStat_lead=new TH2D(mcMnv_lead->GetCVHistoWithStatError());
 
-  //TH2* mc_qe = new TH2D(mcMnv_qe->GetCVHistoWithStatError());
-  //TH2* mc_res = new TH2D(mcMnv_res->GetCVHistoWithStatError());
-  //TH2* mc_dis = new TH2D(mcMnv_dis->GetCVHistoWithStatError());
-  //TH2* mc_dis_dis = new TH2D(mcMnv_dis_dis->GetCVHistoWithStatError());
-  //TH2* mc_dis_sis = new TH2D(mcMnv_dis_sis->GetCVHistoWithStatError());
-  //TH2* mc_2p2h = new TH2D(mcMnv_2p2h->GetCVHistoWithStatError());
-  //TH2* mc_oth = new TH2D(mcMnv_oth->GetCVHistoWithStatError());
-  //TH2* mc_bkg = new TH2D(mcMnv_bkg->GetCVHistoWithStatError());
 
   // These line and marker styles will be propagated to the 1D plots
   vector<int> mycolors = MnvColors::GetColors(9);
-  mc->SetLineColor(kRed);
-  mc->SetLineWidth(2);
+  mc_carbon->SetLineColor(46);
+  mc_carbon->SetLineWidth(2);
 
-  mcStat->SetLineColor(kRed);
-  mcStat->SetLineWidth(2);
-  mcStat->SetFillColor(kRed);
-  mcStat->SetFillStyle(3002);
+  mcStat_carbon->SetLineColor(46);
+  mcStat_carbon->SetLineWidth(2);
+  mcStat_carbon->SetFillColor(kRed-10);
+  mcStat_carbon->SetFillStyle(3002);
 
-  mc_qe->SetLineColor(38);
-  mc_res->SetLineColor(30);
-  mc_dis->SetLineColor(kMagenta+2);
-  mc_2p2h->SetLineColor(41);
-  mc_other->SetLineColor(12);
+  mc_iron->SetLineColor(38);
+  mc_iron->SetLineWidth(2);
 
-  mc_qe->SetLineWidth(2);
-  mc_res->SetLineWidth(2);
-  mc_dis->SetLineWidth(2);
-  mc_2p2h->SetLineWidth(2);
-  mc_other->SetLineWidth(2);
+  mcStat_iron->SetLineColor(38);
+  mcStat_iron->SetLineWidth(2);
+  mcStat_iron->SetFillColor(kBlue-10);
+  mcStat_iron->SetFillStyle(3002);
+
+  mc_lead->SetLineColor(30);
+  mc_lead->SetLineWidth(2);
+
+  mcStat_lead->SetLineColor(30);
+  mcStat_lead->SetLineWidth(2);
+  mcStat_lead->SetFillColor(kGreen-10);
+  mcStat_lead->SetFillStyle(3002);
+
 
   // These line and marker styles will be propagated to the 1D plots
-  dataStat->SetMarkerStyle(kFullCircle);
-  dataStat->SetMarkerSize(0.4);
-  dataStat->SetLineColor(kBlack);
-  dataStat->SetLineWidth(1);
+  dataStat_carbon->SetMarkerStyle(kFullCircle);
+  dataStat_carbon->SetMarkerSize(0.4);
+  dataStat_carbon->SetLineColor(kBlack);
+  dataStat_carbon->SetLineWidth(1);
+  dataStat_carbon->SetLineColor(kBlack);
+  dataStat_carbon->SetMarkerColor(kBlack);
 
-  dataStat->SetLineColor(kBlack);
+  data_carbon->SetMarkerStyle(kFullCircle);
+  data_carbon->SetMarkerSize(0.4);
+  data_carbon->SetLineColor(kBlack);
+  data_carbon->SetLineWidth(1);
+  data_carbon->SetLineColor(kBlack);
+  data_carbon->SetMarkerColor(kBlack);
 
-  data->SetMarkerStyle(kFullCircle);
-  data->SetMarkerSize(0.4);
-  data->SetLineColor(kBlack);
-  data->SetLineWidth(1);
+  dataStat_iron->SetMarkerStyle(22);
+  dataStat_iron->SetMarkerSize(0.4);
+  dataStat_iron->SetLineColor(kBlack);
+  dataStat_iron->SetLineWidth(1);
+  dataStat_iron->SetLineColor(kBlack);
+  dataStat_iron->SetMarkerColor(kBlack);
 
-  data->SetLineColor(kBlack);
+  data_iron->SetMarkerStyle(22);
+  data_iron->SetMarkerSize(0.4);
+  data_iron->SetLineColor(kBlack);
+  data_iron->SetLineWidth(1);
+  data_iron->SetLineColor(kBlack);
+  data_iron->SetMarkerColor(kBlack);
+
+
+  dataStat_lead->SetMarkerStyle(21);
+  dataStat_lead->SetMarkerSize(0.4);
+  dataStat_lead->SetLineColor(kBlack);
+  dataStat_lead->SetLineWidth(1);
+  dataStat_lead->SetLineColor(kBlack);
+  dataStat_lead->SetMarkerColor(kBlack);
+
+  data_lead->SetMarkerStyle(21);
+  data_lead->SetMarkerSize(0.4);
+  data_lead->SetLineColor(kBlack);
+  data_lead->SetLineWidth(1);
+  data_lead->SetLineColor(kBlack);
+  data_lead->SetMarkerColor(kBlack);
+
 
 
   if(doRatio){
     //TH2 *tmpden = (TH2*)mc->Clone("tmpden");
     //tmpden->Sumw2(false);
-    data->Divide(mcStat);
-    dataStat->Divide(mcStat);
+    data_carbon->Divide(mcStat_carbon);
+    dataStat_carbon->Divide(mcStat_carbon);
     //mc_qe->Divide(mc);
     //mc_res->Divide(mc);
     //mc_dis_dis->Divide(mc);
     //mc_dis_sis->Divide(mc);
     //mc_oth->Divide(mc);
     //mc_bkg->Divide(mc);
-    mcStat->Divide(mc);
+    mcStat_carbon->Divide(mc_carbon);
   }
     
 
@@ -214,15 +198,30 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   // so don't do that. Make sure the first item doesn't have "graph"
   // in its options
   std::vector<std::pair<TH2*, const char*> > histAndOpts;
-  histAndOpts.push_back(std::make_pair(dataStat, "histpe1"));
-  histAndOpts.push_back(std::make_pair(mcStat,       "graphe3"));
-  histAndOpts.push_back(std::make_pair(mc,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(mc_qe,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(mc_res,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(mc_dis,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(mc_2p2h,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(mc_other,       "graph0LX"));
-  histAndOpts.push_back(std::make_pair(data,     "histpe1"));
+
+  if (reweight == "carbon"){
+    histAndOpts.push_back(std::make_pair(dataStat_carbon, "histpe1"));
+    histAndOpts.push_back(std::make_pair(mcStat_carbon,       "graphe3"));
+    histAndOpts.push_back(std::make_pair(mc_carbon,       "graph0LX"));
+    histAndOpts.push_back(std::make_pair(data_carbon,     "histpe1"));
+  }
+  else if (reweight == "iron"){
+    histAndOpts.push_back(std::make_pair(dataStat_iron, "histpe1"));
+    histAndOpts.push_back(std::make_pair(mcStat_iron,       "graphe3"));
+    histAndOpts.push_back(std::make_pair(mc_iron,       "graph0LX"));
+    histAndOpts.push_back(std::make_pair(data_iron,     "histpe1"));
+  }
+
+  else if  (reweight == "lead"){
+  histAndOpts.push_back(std::make_pair(dataStat_lead, "histpe1"));
+  histAndOpts.push_back(std::make_pair(mcStat_lead,       "graphe3"));
+  histAndOpts.push_back(std::make_pair(mc_lead,       "graph0LX"));
+  histAndOpts.push_back(std::make_pair(data_lead,     "histpe1"));
+  }
+
+  else{
+    std::cout << " Wrong reweight " << std::endl;
+  }
 
 
 
@@ -255,10 +254,10 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   // Adding title!
   TLegend* title = new TLegend(0.05, 0.95, 0.95, 1);
   if(targetID==99){
-    title->SetHeader(Form("%s: Cross-Section", trueZ.c_str()),"C"); // option "C" allows to center the header
+    title->SetHeader(Form("Daisy Tracker Cross-Section: %s", reweight.c_str()), "C"); // option "C" allows to center the header
   }
    else {
-    title->SetHeader(Form("Target %d %s: Cross-Section", targetID, trueZ.c_str()),"C"); 
+    title->SetHeader(Form("Daisy Tracker Cross-Section: %s", reweight.c_str()),"C"); 
   };
   title->SetBorderSize(0);
   title->SetFillStyle(0);
@@ -266,26 +265,41 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   title->Draw();
 
 
-  TLegend* leg=new TLegend(0.6, 0.1, 0.95, 0.32);
+  TLegend* leg=new TLegend(0.6, 0.2, 0.95, 0.27);
   leg->SetNColumns(2);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
-  leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mcStat, "MINERvA Tune v430", "l");
-  leg->AddEntry(mc_qe,"QE","l");
-  leg->AddEntry(mc_res,"RES","l");
-  leg->AddEntry(mc_2p2h,"2p2h","l");
-  leg->AddEntry(mc_dis,"DIS","l");
-  leg->AddEntry(mc_other,"Other","l");
+  if (reweight == "carbon"){
+    leg->AddEntry(dataStat_carbon, "Carbon data", "lpe");
+    leg->AddEntry(mcStat_carbon, "Carbon Tune v430", "l");
+  }
+  else if (reweight == "iron"){
+    leg->AddEntry(dataStat_iron, "Iron data", "lpe");
+    leg->AddEntry(mcStat_iron, "Iron Tune v430", "l");
+  }
+  else{
+    leg->AddEntry(dataStat_lead, "Lead data", "lpe");
+    leg->AddEntry(mcStat_lead, "Lead Tune v430", "l");
+  }
 
   TLegend* leg2 = new TLegend(0.6, 0.2525, 0.95, 0.32);
   leg2->SetNColumns(2);
   leg2->SetFillStyle(0);
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
-  leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mcStat, "MINERvA Tune v430", "l");
+  if (reweight == "carbon"){
+    leg2->AddEntry(dataStat_carbon, "Carbon data", "lpe");
+    leg2->AddEntry(mcStat_carbon, "Carbon Tune v430", "l");
+  }
+  if (reweight == "iron"){
+    leg2->AddEntry(dataStat_iron, "Iron data", "lpe");
+    leg2->AddEntry(mcStat_iron, "Iron Tune v430", "l");
+  }
+  else{
+    leg2->AddEntry(dataStat_lead, "Lead data", "lpe");
+    leg2->AddEntry(mcStat_lead, "Lead Tune v430", "l");
+  }
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);
@@ -317,7 +331,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   
   else{
     //gc->Print(doMultipliers ? "nu-2d-xsec-comps-pt-multiplier.eps" : "nu-2d-xsec-comps-pt.eps");
-    gc->Print(doMultipliers ? Form("%s/CrossSection2D_t%d_z%02d_%s_pt_multiplier.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/CrossSection2D_t%d_z%02d_%s_pt.png", outdir.c_str(), targetID, targetZ, plist.c_str()));
+    gc->Print(doMultipliers ? Form("%s/CrossSection2D_Daisy_%s_t%d_z%02d_%s_pt_multiplier.png", outdir.c_str(), reweight.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/CrossSection2D_Daisy_%s_t%d_z%02d_%s_pt.png", outdir.c_str(), reweight.c_str(),targetID, targetZ, plist.c_str()));
     //gc->Print(doMultipliers ? "nu-2d-xsec-comps-pt-multiplier.C" : "nu-2d-xsec-comps-pt.C");
   }
   
@@ -347,10 +361,10 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   // Adding title!
   TLegend* title2 = new TLegend(0.05, 0.95, 0.95, 1);
   if(targetID==99){
-    title2->SetHeader(Form("%s: Cross-Section", trueZ.c_str()),"C"); // option "C" allows to center the header
+    title2->SetHeader(Form("Daisy Tracker Cross-Section: %s", reweight.c_str()), "C"); // option "C" allows to center the header
   }
    else {
-    title2->SetHeader(Form("Target %d %s: Cross-Section", targetID, trueZ.c_str()),"C"); 
+    title2->SetHeader(Form("Daisy Tracker Cross-Section: %s", reweight.c_str()),"C"); 
   };
   title2->SetBorderSize(0);
   title2->SetFillStyle(0);
@@ -366,7 +380,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
 
   else{
     //gc2->Print(doMultipliers ? "nu-2d-xsec-comps-pz-multiplier.eps" : "nu-2d-xsec-comps-pz.eps");
-    gc2->Print(doMultipliers ? Form("%s/CrossSection2D_t%d_z%02d_%s_pz_multiplier.png", outdir.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/CrossSection2D_t%d_z%02d_%s_pz.png", outdir.c_str(),  targetID, targetZ, plist.c_str()));
+    gc2->Print(doMultipliers ? Form("%s/CrossSection2D_Daisy_%s_t%d_z%02d_%s_pz_multiplier.png", outdir.c_str(), reweight.c_str(), targetID, targetZ, plist.c_str()) : Form("%s/CrossSection2D_Daisy_%s_t%d_z%02d_%s_pz.png", outdir.c_str(),  reweight.c_str(), targetID, targetZ, plist.c_str()));
     //gc2->Print(doMultipliers ? "nu-2d-xsec-comps-pz-multiplier.C" : "nu-2d-xsec-comps-pz.C");
   }
 
@@ -378,13 +392,14 @@ int main(int argc, char* argv[])
   
   string indir = argv[1];
   string outdir = argv[2];
-  int targetID = atoi(argv[3]);
-  int targetZ = atoi(argv[4]);
-  const string playlist= argv[5];
+  int targetID = 99;
+  int targetZ = 99;
+  string reweight = argv[3];
+  const string playlist= argv[4];
 
   const std::string plist(playlist);
 
-  makePlots(true,false, indir, outdir, targetID, targetZ, plist);
+  makePlots(true,false, indir, outdir, targetID, targetZ, plist, reweight);
   // do multipliers, do ratios
 
   return 0;

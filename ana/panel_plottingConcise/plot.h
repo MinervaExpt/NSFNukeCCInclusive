@@ -1649,7 +1649,8 @@ GridCanvas* plotXAxis1DRebinPz(std::vector<std::pair<TH2*, const char*> > histAn
       proj->SetLineColor(h2d->GetLineColor());
       proj->SetLineStyle(h2d->GetLineStyle());
       proj->SetLineWidth(h2d->GetLineWidth());
-      proj->SetMarkerStyle(h2d->GetMarkerStyle());
+      proj->SetMarkerStyle(h2d->GetMarkerStyle()); 
+      proj->SetMarkerColor(h2d->GetMarkerColor());
       proj->SetMarkerSize(h2d->GetMarkerSize());
       proj->GetXaxis()->SetNdivisions(504);
       proj->GetYaxis()->SetNdivisions(504);
