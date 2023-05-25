@@ -237,11 +237,11 @@ for var in vars:
     ratio.GetXaxis().CenterTitle()
     ratio.Draw("X0")
     if var == "Enu":
-        ratio.SetMaximum(2.0)
-        ratio.SetMinimum(0.0)
+        ratio.SetMaximum(1.5)
+        ratio.SetMinimum(0.5)
     else:
-        ratio.SetMaximum(2)
-        ratio.SetMinimum(0.0)
+        ratio.SetMaximum(1.5)
+        ratio.SetMinimum(0.5)
     ratio.GetYaxis().SetNdivisions(505) #5 minor divisions between 5 major divisions
     # Copied from MINERvA-101-Cross-Section/backgroundStack.py
     # same as in void MnvPlotter::DrawDataMCRatio() in MnvPlotter
