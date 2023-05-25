@@ -6,7 +6,7 @@ python plotCVError_dataMCratio_comparison.py 3 06 1
 
 echo Iron
 python plotCVError_dataMCratio_comparison.py 2 26 1
-python plotCVError_dataMCratio_comparison.py3 26 1
+python plotCVError_dataMCratio_comparison.py 3 26 1
 python plotCVError_dataMCratio_comparison.py 5 26 1
 
 echo Lead
