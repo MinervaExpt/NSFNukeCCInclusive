@@ -93,7 +93,7 @@ int main(int argc, char *argv[]){
   PlotUtils::MinervaUniverse::SetAnalysisNuPDG(-14);
   PlotUtils::MinervaUniverse::SetNonResPiReweight(false);
   PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
-  PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(true);
+  PlotUtils::MinervaUniverse::SetDeuteriumGeniePiTune(false);
   PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
   // Defined for MnvHadronReweighter (GEANT Hadron sytematics)
   //Tracker or nuke (what clusters are accepted for reconstruction)
