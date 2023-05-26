@@ -86,6 +86,7 @@ leg.AddEntry(ndfLine, "Number of bins", "l")
 #leg.AddEntry(doubleNDFLine, "2x Number of Bins", "l")
 #leg.AddEntry(iterLine, str(iterChosen) + " iterations", "l")
 leg.Draw()
+can.SetLogx()
 
 
 if var == "Enu":
