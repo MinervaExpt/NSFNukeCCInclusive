@@ -70,7 +70,7 @@ PlotUtils::MnvH1D* UnfoldHist( PlotUtils::MnvH1D* h_folded, PlotUtils::MnvH2D* h
   //bool bUnfolded = false;
 
   TMatrixD dummyCovMatrix;
-  if(!unfold.UnfoldHisto( h_unfolded, dummyCovMatrix, h_migration, h_folded, RooUnfold::kBayes, num_iter, true, false ))
+  if(!unfold.UnfoldHisto( h_unfolded, dummyCovMatrix, h_migration, h_folded, RooUnfold::kBayes, num_iter, true, true ))
     return nullptr;
 
   /////////////////////////////////////////////////////////////////////////////////////////  
