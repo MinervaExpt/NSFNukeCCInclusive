@@ -529,7 +529,7 @@ double CVUniverse::GetWeight() const {
     // GEANT hadron weight
     wgt_geant = GetGeantHadronWeight();
     //Aaron's LowQ2 weights
-    wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
+    /*wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
     // coherent pion reweight
     if(GetInt("mc_intType") == 4){
        double angle = GetTrueAngleHighTpi();//*180./M_PI; //this is now in degrees
@@ -543,7 +543,7 @@ double CVUniverse::GetWeight() const {
        }
     }
     //GENIE FSI bug fix
-    //wgt_fsi = GetFSIWeight();
+    //wgt_fsi = GetFSIWeight();*/
 
     return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_mueff*wgt_target_mass*wgt_geant*wgt_lowq2*wgt_coh*wgt_fsi;
 
@@ -573,7 +573,7 @@ double CVUniverse::GetTruthWeight()const{
     // target mass systematics
     wgt_target_mass = GetTargetMassWeight();
     // Aaron's lowQ2 weight
-    wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
+    /*wgt_lowq2 = GetLowQ2PiWeight("MENU1PI");
     // coherent pion reweight
     if(GetInt("mc_intType") == 4){
        double angle = GetTrueAngleHighTpi();//*180./M_PI; //this is now in degrees
@@ -587,7 +587,7 @@ double CVUniverse::GetTruthWeight()const{
        }
     }
     //GENIE FSI bug fix
-    //wgt_fsi = GetFSIWeight();
+    //wgt_fsi = GetFSIWeight();*/
 
    // Note: truth weight has no GEANT hadron and MINOS weight      
    return wgt_genie*wgt_flux*wgt_2p2h*wgt_rpa*wgt_target_mass*wgt_lowq2*wgt_coh*wgt_fsi;
