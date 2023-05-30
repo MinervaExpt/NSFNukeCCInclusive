@@ -43,7 +43,7 @@ if targetZ == "99":
     trueZ = "Tracker"
     mat = "CH"
 
-vars = ["pZmu1D"]
+vars = ["x"]
 #["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
 
 for var in vars:
@@ -169,9 +169,12 @@ for var in vars:
     ratio.Draw("X0 SAME E1")
     ratio_tot.Draw("E1 SAME")
 
-    fit = ROOT.TF1( "fit", "pol3", 0, 20)  #plo6 is a 6th degree polynomial ypu can try other 
+    fit = ROOT.TF1( "fit", "pol2", 0, 20)  #plo6 is a 6th degree polynomial ypu can try other 
     ratio.Fit( "fit" )
     fit.Draw("X0 SAME")
+
+    print("Last bin value")
+    print(ratio.GetBinContent(ratio.GetNbinsX()))
 
 
     if targetZ == "99":
