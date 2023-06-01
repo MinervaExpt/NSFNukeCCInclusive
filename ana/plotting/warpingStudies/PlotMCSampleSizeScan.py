@@ -118,8 +118,8 @@ for i,g in enumerate(mygraphs):
     if var == "x":
         mnv.AddHistoTitle("Bjorken x, f = %f"%(f),  0.04, 1)
         yNDF = 6
-        g.SetMaximum(20)
-        g.SetMinimum(0)
+        g.SetMaximum(9)
+        g.SetMinimum(3)
         g.GetXaxis().SetRangeUser(0, 10)
         ndfLine = ROOT.TLine(0, yNDF, 11, yNDF)
         ndfLine.SetLineWidth(3)
@@ -128,8 +128,8 @@ for i,g in enumerate(mygraphs):
     if var == "pZmu1D":
         mnv.AddHistoTitle("Muon p_{Z} (GeV/c), f = %f"%(f),  0.04, 1)
         yNDF = 13
-        g.SetMaximum(yNDF+0.1)
-        g.SetMinimum(yNDF-0.1)
+        g.SetMaximum(16)
+        g.SetMinimum(10)
         g.GetXaxis().SetRangeUser(0, 10)
         ndfLine = ROOT.TLine(0, yNDF, 11, yNDF)
         ndfLine.SetLineWidth(3)
@@ -138,8 +138,8 @@ for i,g in enumerate(mygraphs):
     if var == "pTmu1D":
         mnv.AddHistoTitle("Muon p_{T} (GeV/c), f = %f"%(f),  0.04, 1)
         yNDF = 13
-        g.SetMaximum(yNDF+0.1)
-        g.SetMinimum(yNDF-0.1)
+        g.SetMaximum(16)
+        g.SetMinimum(10)
         g.GetXaxis().SetRangeUser(0, 10)
         ndfLine = ROOT.TLine(0, yNDF, 11, yNDF)
         ndfLine.SetLineWidth(3)
@@ -148,8 +148,8 @@ for i,g in enumerate(mygraphs):
     if var == "ThetamuDeg":
         mnv.AddHistoTitle("Muon Angle (Deg), f = %f"%(f),  0.04, 1)
         yNDF = 9
-        g.SetMaximum(yNDF+0.1)
-        g.SetMinimum(yNDF-0.1)
+        g.SetMaximum(12)
+        g.SetMinimum(6)
         g.GetXaxis().SetRangeUser(0, 10)
         ndfLine = ROOT.TLine(0, yNDF, 11, yNDF)
         ndfLine.SetLineWidth(3)
