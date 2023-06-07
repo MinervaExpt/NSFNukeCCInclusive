@@ -146,5 +146,5 @@ for fileName in sys.argv[1:]:
 
     can.Modified()
     can.Update()
-    mnv.AddHistoTitle("Pull Distribution: DeuteriumGeniePiTune ", 0.04, 1)
+    mnv.AddHistoTitle("Pull Distribution: CV ", 0.04, 1)
     can.Print(fileName + "_pulls.png")
