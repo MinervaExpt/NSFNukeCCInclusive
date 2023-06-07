@@ -128,8 +128,13 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, str
   TH2* mc_lead=new TH2D(mcMnv_lead->GetCVHistoWithStatError());
   TH2* mcStat_lead=new TH2D(mcMnv_lead->GetCVHistoWithStatError());
 
+  TH2* lineone=mcMnv_lead->Clone();
+
 
   // These line and marker styles will be propagated to the 1D plots
+  lineone->Divide(lineone, lineone);
+  lineone->SetLineColor(12);
+  lineone->SetLineWidth(1.0);
   vector<int> mycolors = MnvColors::GetColors(9);
   mc_carbon->SetLineColor(46);
   mc_carbon->SetLineWidth(1.5);
@@ -249,6 +254,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, str
   histAndOpts.push_back(std::make_pair(mcStat_lead,       "graphe3"));
   histAndOpts.push_back(std::make_pair(mc_lead,       "graph0LX"));
   histAndOpts.push_back(std::make_pair(data_lead,     "histpe1"));
+  histAndOpts.push_back(std::make_pair(lineone,     "graph0LX"));
   
 
 
@@ -264,7 +270,8 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, str
   // Set the y range manually. Can also use gc->Remax() to guess automatically
 
   if(doRatio) gc->SetYLimits(0,1.99);
-  else  gc->SetYLimits(-1., 3.59);
+  else  gc->SetYLimits(0.49, 1.49);
+  //else  gc->SetYLimits(-1., 3.59);
   if(doRatio) gc->SetYTitle("Ratio bkgType/TotalBkg");
   else{
     gc->SetYTitle("d^{2}#sigma_{A}/dp_{t}dp_{||} / d^{2}#sigma_{CH}/dp_{t}dp_{||}");

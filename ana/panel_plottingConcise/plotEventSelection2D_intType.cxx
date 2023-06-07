@@ -107,7 +107,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
     }
     else{
       dataMnv->Scale(1e-4, "width");
-      mcMnv->Scale(1e-4/2, "width");
+      mcMnv->Scale(1e-4, "width");
       mcMnv_QE->Scale(1e-4, "width");
       mcMnv_RES->Scale(1e-4, "width");
       mcMnv_DIS->Scale(1e-4, "width");
@@ -299,7 +299,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v4", "l");
+  leg->AddEntry(mc, "MINERvA Tune", "l");
   leg->AddEntry(mc_qe,"QE","l");
   leg->AddEntry(mc_res,"RES","l");
   leg->AddEntry(mc_2p2h,"2p2h","l");

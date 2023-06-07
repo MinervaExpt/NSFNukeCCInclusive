@@ -275,7 +275,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v1.4", "l");
+  leg->AddEntry(mc, "MINERvA Tune", "l");
   //leg->AddEntry(mc_res,"Resonant","l");
   //leg->AddEntry(mc_dis_dis,"True DIS","l");
   //leg->AddEntry(mc_dis_sis,"Soft DIS","l");
@@ -288,7 +288,7 @@ void makePlots(int petal, bool doMultipliers,bool doRatio, string indir, string 
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mc, "MINERvA Tune v1.4", "l");
+  leg2->AddEntry(mc, "MINERvA Tune", "l");
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);

@@ -283,7 +283,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v4", "fl");
+  leg->AddEntry(mc, "MINERvA Tune", "fl");
   leg->AddEntry(mc_NotTracker,"Not tracker","l");
   leg->AddEntry(mc_WrongSign,"Wrong sign","l");
   leg->AddEntry(mc_NC,"Neutral current","l");
@@ -295,7 +295,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mc, "MINERvA Tune v4", "l");
+  leg2->AddEntry(mc, "MINERvA Tune", "l");
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);

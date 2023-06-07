@@ -342,7 +342,12 @@ void makePlots(bool pt, bool drawGroups, int areanorm,  string indir, string out
       gcPT->cd(0);
       gcPT->SetYTitle("Fractional uncertainty");
       //gcPT->SetYLimits(0, 0.29);
-      gcPT->SetYLimits(0, 0.5);
+      if (targetID == 99){
+        gcPT->SetYLimits(0, 0.29);
+      }
+      else{
+        gcPT->SetYLimits(0, 0.5);
+      }
       gcPT->Modified();
       leg->SetNColumns(2);
       //0.78, 0.05, 0.95, 0.32

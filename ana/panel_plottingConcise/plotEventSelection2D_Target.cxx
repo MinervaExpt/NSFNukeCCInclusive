@@ -103,7 +103,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   }
   else{
     dataMnv->Scale(1e-4, "width");
-    mcMnv->Scale(1e-4/2, "width");
+    mcMnv->Scale(1e-4, "width");
     mcMnv_USplastic->Scale(1e-4, "width");
     mcMnv_DSplastic->Scale(1e-4, "width");
     mcMnv_other->Scale(1e-4, "width");
@@ -303,7 +303,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg->SetBorderSize(0);
   leg->SetTextSize(0.03);
   leg->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg->AddEntry(mc, "MINERvA Tune v4", "fl");
+  leg->AddEntry(mc, "MINERvA Tune", "fl");
   leg->AddEntry(mc_USplastic,"Upstream plastic","l");
   leg->AddEntry(mc_DSplastic,"Downstream plastic","l");
   leg->AddEntry(mc_other,"Other","l");
@@ -316,7 +316,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg2->SetBorderSize(0);
   leg2->SetTextSize(0.03);
   leg2->AddEntry(dataStat, "MINERvA data", "lpe");
-  leg2->AddEntry(mc, "MINERvA Tune v4", "l");
+  leg2->AddEntry(mc, "MINERvA Tune", "l");
 
   TLegend* leg3=new TLegend(0.6, 0.05, 0.95, 0.23);
   leg3->SetNColumns(2);
