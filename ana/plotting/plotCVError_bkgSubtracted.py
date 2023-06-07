@@ -263,27 +263,27 @@ for var in vars:
 
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 k.SetY1(0.2) #Enu
                 if targetZ == "06":
-                    k.SetY1(0.22) #Enu
+                    k.SetY1(0.2) #Enu
                 if targetZ == "99":
                     k.SetY1(0.18) #Enu
                 if targetZ == "82":
                     if targetID == "2":
-                        k.SetY1(0.23) #x
+                        k.SetY1(0.2) #x
                     if targetID == "3":
-                        k.SetY1(0.34) #x
+                        k.SetY1(0.2) #x
                     if targetID == "4":
-                        k.SetY1(0.22) #x
+                        k.SetY1(0.2) #x
                     if targetID == "5":
-                        k.SetY1(0.3) #x
+                        k.SetY1(0.2) #x
                 if targetZ == "26":
-                    k.SetY1(0.23) #x
+                    k.SetY1(0.2) #x
                     if targetID == "5":
-                        k.SetY1(0.22) #Enu
+                        k.SetY1(0.2) #Enu
                     if targetID == "3":
-                        k.SetY1(0.3) #Enu
+                        k.SetY1(0.2) #Enu
             if var == "pZmu1D":
                 k.SetNColumns(2)
                 k.SetX2(20) #Enu
@@ -401,26 +401,26 @@ for var in vars:
             
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 k.SetY1(0.25) #Enu
                 if targetZ == "82":
-                    k.SetY1(0.23) #Enu
+                    k.SetY1(0.08) #Enu
                     if targetID == "3":
-                        k.SetY1(0.28) #x
+                        k.SetY1(0.1) #x
                     if targetID == "4":
-                        k.SetY1(0.21) #x
+                        k.SetY1(0.1) #x
                     if targetID == "5":
-                        k.SetY1(0.3) #x
+                        k.SetY1(0.12) #x
                 if targetZ == "06":
-                    k.SetY1(0.2) #Enu
+                    k.SetY1(0.07) #Enu
                 if targetZ == "99":
-                    k.SetY1(0.038) #Enu
+                    k.SetY1(0.011) #Enu
                 if targetZ == "26":
-                    k.SetY1(0.3) #Enu
+                    k.SetY1(0.07) #Enu
                     if targetID == "3":
-                        k.SetY1(0.6) #Enu
+                        k.SetY1(0.09) #Enu
                     if targetID == "5":
-                        k.SetY1(0.24) #Enu
+                        k.SetY1(0.1) #Enu
             if var == "pZmu1D":
                 k.SetNColumns(2)
                 k.SetX2(20) #Enu
@@ -538,24 +538,24 @@ for var in vars:
 
                 if var == "pTmu1D":
                     k.SetNColumns(2)
-                    k.SetX2(3) #Enu
+                    k.SetX2(2.5) #Enu
                     k.SetY1(0.25) #Enu
                     if targetZ == "82":
-                        k.SetY1(0.23) #Enu
+                        k.SetY1(0.08) #Enu
                         if targetID == "3":
-                            k.SetY1(0.28) #x
+                            k.SetY1(0.1) #x
                         if targetID == "4":
-                            k.SetY1(0.21) #x
+                            k.SetY1(0.1) #x
                         if targetID == "5":
-                            k.SetY1(0.3) #x
+                            k.SetY1(0.12) #x
                     if targetZ == "06":
-                        k.SetY1(0.21) #Enu
+                        k.SetY1(0.07) #Enu
                     if targetZ == "26":
-                        k.SetY1(0.3) #Enu
+                        k.SetY1(0.07) #Enu
                         if targetID == "3":
-                            k.SetY1(0.8) #Enu
+                            k.SetY1(0.09) #Enu
                         if targetID == "5":
-                            k.SetY1(0.24) #Enu
+                            k.SetY1(0.1) #Enu
                 if var == "pZmu1D":
                     k.SetNColumns(2)
                     k.SetX2(20) #Enu

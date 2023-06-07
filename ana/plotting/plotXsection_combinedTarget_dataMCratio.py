@@ -46,7 +46,7 @@ mcScale = dataPOT/mcPOT
 if scale == "1":
     mcScale = 1
 
-vars = ["Enu", "x", "pZmu1D", "pTmu1D", "ThetamuDeg"]
+vars = ["Enu", "x", "pZmu1D", "pTmu1D"] #, "ThetamuDeg"]
 
 #steps = ['unfolded','unfolded_effCorrected', 'crossSection', 'crossSection_total']
 steps = ['total_unfolded_effCorrected','crossSection', 'crossSection_total']

@@ -358,24 +358,30 @@ for var in vars:
                 if targetZ =="26":
                     k.SetY1(0.09) #x
                     if len(sys.argv) > 4:
-                        k.SetY1(0.075) #x
+                        k.SetY1(0.07) #x
                 if targetZ =="82":
                     k.SetY1(0.05)
                     if len(sys.argv) > 4:
-                        k.SetY1(0.045) #x
+                        k.SetY1(0.055) #x
 
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 if targetZ =="06":
-                    k.SetY1(0.45) #x
+                    k.SetY1(0.09) #x
                 if targetZ =="26":
-                    k.SetY1(0.3) #x
+                    k.SetY1(0.07) #x
                 if targetZ =="82":
-                    k.SetY1(0.25) #x
+                    k.SetY1(0.08) #x
             if var == "pZmu1D":
                 k.SetNColumns(2)
                 k.SetX2(20) #Enu
+                if targetZ =="06":
+                    k.SetY1(0.06) #x
+                if targetZ =="26":
+                    k.SetY1(0.08) #x
+                if targetZ =="82":
+                    k.SetY1(0.06) #x
             if var == "ThetamuDeg":
                 k.SetNColumns(2)
                 k.SetX2(17) #Enu

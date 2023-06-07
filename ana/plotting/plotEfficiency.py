@@ -295,7 +295,7 @@ for var in vars:
 
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 k.SetY1(0.145) #Enu
                 if targetZ == "99":
                     k.SetY1(0.13) #Enu
@@ -342,7 +342,7 @@ for var in vars:
             
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 k.SetY1(0.2) #Enu
             
             if var == "pZmu1D":
@@ -423,10 +423,22 @@ for var in vars:
             
             if var == "pTmu1D":
                 k.SetNColumns(2)
-                k.SetX2(3) #Enu
+                k.SetX2(2.5) #Enu
                 k.SetY1(0.18) #Enu
                 if targetZ == "99":
-                    k.SetY1(0.035) #Enu
+                    k.SetY1(0.023) #Enu
+                if targetZ == "26":
+                    k.SetY1(0.07) #Enu
+                    if targetID == "3":
+                        k.SetY1(0.06) #Enu
+                if targetZ == "82":
+                    k.SetY1(0.09) #Enu
+                    if targetID == "4":
+                        k.SetY1(0.06) #Enu
+                    if targetID == "5":
+                        k.SetY1(0.07) #Enu
+                if targetZ == "06":
+                    k.SetY1(0.055) #Enu
 
             if var == "pZmu1D":
                 k.SetNColumns(2)
