@@ -27,7 +27,7 @@ infile = ROOT.TFile(str(pwd)+"/EventSelection/EventSelection_%s_t%s_z%02s_sys.ro
 # Scale factor to scale MC to data
 mcPOT = infile.Get("MCPOT").GetVal()
 dataPOT = infile.Get("DataPOT").GetVal()
-mcScale =  dataPOT/mcPOT
+mcScale =  1 # dataPOT/mcPOT
 
 # files to write results in
 out1 = ROOT.TFile("BkgSubtracted_EventSelection2D_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ),"RECREATE")
