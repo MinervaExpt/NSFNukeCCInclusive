@@ -11,7 +11,7 @@ targetID = sys.argv[2]
 targetZ = sys.argv[3]
 plist = sys.argv[4]
 
-infile= ROOT.TFile(str(dirpwd)+"/Migration_2D_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
+infile= ROOT.TFile(str(dirpwd)+"/Migration2D_%s_t%s_z%02s_sys.root"%(plist, targetID, targetZ))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 mnv.SetRedHeatPalette()

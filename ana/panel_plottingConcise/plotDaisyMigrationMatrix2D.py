@@ -9,7 +9,7 @@ ROOT.TH1.AddDirectory(False)
 dirpwd = sys.argv[1]
 plist = sys.argv[2]
 
-infile= ROOT.TFile(str(dirpwd)+"/Migration_Daisy_2D_%s_t99_z99_sys.root"%(plist))
+infile= ROOT.TFile(str(dirpwd)+"/Migration2D_Daisy_%s_t99_z99_sys.root"%(plist))
 canvas1 = ROOT.TCanvas() # have to declare canvas before calling mnvplotter :))
 mnv = PlotUtils.MnvPlotter()
 mnv.SetRedHeatPalette()
