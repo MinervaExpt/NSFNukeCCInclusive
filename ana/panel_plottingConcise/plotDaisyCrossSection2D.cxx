@@ -272,15 +272,15 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg->SetTextSize(0.03);
   if (reweight == "carbon"){
     leg->AddEntry(dataStat_carbon, "Carbon data", "lpe");
-    leg->AddEntry(mcStat_carbon, "Carbon Tune v430", "l");
+    leg->AddEntry(mcStat_carbon, "Carbon Tune", "l");
   }
   else if (reweight == "iron"){
     leg->AddEntry(dataStat_iron, "Iron data", "lpe");
-    leg->AddEntry(mcStat_iron, "Iron Tune v430", "l");
+    leg->AddEntry(mcStat_iron, "Iron Tune", "l");
   }
   else{
     leg->AddEntry(dataStat_lead, "Lead data", "lpe");
-    leg->AddEntry(mcStat_lead, "Lead Tune v430", "l");
+    leg->AddEntry(mcStat_lead, "Lead Tune", "l");
   }
 
   TLegend* leg2 = new TLegend(0.6, 0.2525, 0.95, 0.32);
@@ -290,7 +290,7 @@ void makePlots(bool doMultipliers,bool doRatio, string indir, string outdir, int
   leg2->SetTextSize(0.03);
   if (reweight == "carbon"){
     leg2->AddEntry(dataStat_carbon, "Carbon data", "lpe");
-    leg2->AddEntry(mcStat_carbon, "Carbon Tune v430", "l");
+    leg2->AddEntry(mcStat_carbon, "Carbon Tune", "l");
   }
   if (reweight == "iron"){
     leg2->AddEntry(dataStat_iron, "Iron data", "lpe");
