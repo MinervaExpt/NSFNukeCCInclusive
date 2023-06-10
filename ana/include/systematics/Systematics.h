@@ -108,14 +108,19 @@ std::map<std::string, std::vector<CVUniverse*> > GetErrorBands(PlotUtils::ChainW
     const bool use_new = false;
     const bool use_proton = true;
     std::string name_tag = "allNonMuonClusters";
-    std::vector<std::string> subdetectors = {"tracker", "ecal","hcal", "nucl"};
+    const bool use_ID = true;
+    const bool use_OD = true;
+    const bool use_nucl = false;
+    const bool use_tracker = false;
+    const bool use_ecal = false;
+    const bool use_hcal = false;
     // Particle response
     // -> 2nd argument: name_tag
-    // -> 3rd argument: subdetector_tag
-    // -> 4th argument: NEUTRON
-    // -> 5th argument: use_new_part_response
-    // -> 6th argument: PROTON
-    SystMap response_systematics = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain, name_tag, subdetectors, use_neutron, use_new, use_proton);
+    // -> 3th argument: NEUTRON
+    // -> 4th argument: use_new_part_response
+    // -> 5th argument: PROTON
+    // ID, OD, nucl, tracker, ecal, hcal
+    SystMap response_systematics = PlotUtils::GetResponseSystematicsMap<CVUniverse>(chain, name_tag, use_neutron, use_new, use_proton, use_ID, use_OD, use_nucl, use_tracker, use_ecal, use_hcal);
     error_bands.insert(response_systematics.begin(), response_systematics.end());
 
     /*
