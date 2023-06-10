@@ -75,8 +75,8 @@ int main(int argc, char *argv[]){
     //const std::string data_file_list("../include/playlists/minervame6A_data_DualVertex.txt");
     //const std::string reco_tree_name("MasterAnaDev");  
     const std::string plist_string(playlist);
-    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_Davidp4.txt", plist_string.c_str()));
-    const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
+    const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_prep4_Official.txt", plist_string.c_str()));
+    const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s_prep4_Official.txt",plist_string.c_str()));
     const std::string reco_tree_name("MasterAnaDev");
   
     const bool wants_truth = false;

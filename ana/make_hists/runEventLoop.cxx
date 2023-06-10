@@ -94,9 +94,9 @@ int main(int argc, char *argv[]){
   // NukeCC Tuples ?
   const std::string plist_string(playlist);
   
-  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_Davidp4.txt", plist_string.c_str()));
-  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s.txt",plist_string.c_str()));
-  const std::string reco_tree_name("MasterAnaDev");
+  const std::string mc_file_list(Form("../include/playlists/MasterAnaDev_MC_%s_prep4_Official.txt", plist_string.c_str()));
+  const std::string data_file_list(Form("../include/playlists/MasterAnaDev_Data_%s_prep4_Official.txt",plist_string.c_str()));
+  const std::string reco_tree_name("MasterAnaDev"); 
   
   const bool wants_truth = false;
   //const bool is_grid = false;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
 
   PlotUtils::MacroUtil util(reco_tree_name, mc_file_list, data_file_list, plist_string, wants_truth);
 
-  util.PrintMacroConfiguration("main");
+  util.PrintMacroConfiguration("main"); 
 
   // SYSTEMATICS
 
