@@ -57,7 +57,7 @@ for var in vars:
         mc_hist.GetYaxis().SetTitle("Events/GeV")
 
     if var == "Q2":
-        mc_hist.GetXaxis().SetTitle("Reconstructed Q^{2}  GeV^{2}")
+        mc_hist.GetXaxis().SetTitle("Reconstructed Q^{2}  (GeV^{2})")
         mc_hist.GetYaxis().SetTitle("Events/GeV^{2}")
 
     if var == "Enu":
